@@ -13,10 +13,10 @@ Crear una aplicación web que permita registrar y hacer seguimiento a faltas de 
 Un sistema digital que integre una aplicación móvil para aviso y denuncia y una plataforma digital web de gestión para administradores permitirá agilizar la detección, registro y rastreo de infraccionesd de tránsito, favoreciendo la transparencia, la eficiencia de los procesos y la seguridad vial.
 
 # Identificación de Stakeholders:
-##- Conductores y  peatones: Pueden reportar infracciones mediante la aplicación móvil.
-##- Administradores del sistema: Gestionan y validan los reportes en la plataforma web.
-##- Autoridades de tránsito: Recien información confiable para fiscalización y toma de decisiones.
-##- Comunidad en general: Se beneficia de un entorno vial seguro y regulado.
+- Conductores y  peatones: Pueden reportar infracciones mediante la aplicación móvil.
+- Administradores del sistema: Gestionan y validan los reportes en la plataforma web.
+- Autoridades de tránsito: Recien información confiable para fiscalización y toma de decisiones.
+- Comunidad en general: Se beneficia de un entorno vial seguro y regulado.
 
 # Relevancia:
 El proyecto aporta a la convivencia y seguridad vial, mediante la reducción de infracciones no fiscalizadas, promueve la participación cuidadana y fortalece la capacidad de gestión de las autoridades frente a una problemática cotidiana con gran impacto social.
