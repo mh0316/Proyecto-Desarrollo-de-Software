@@ -1,4 +1,4 @@
-# Proyecto Desarrollo de Software
+# Proyecto de Desarrollo de Software
 
 
 ## Descripción del Problema:
