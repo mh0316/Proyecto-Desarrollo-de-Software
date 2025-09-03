@@ -26,3 +26,29 @@ Un sistema digital que integre una aplicación móvil para aviso y denuncia y un
 
 ## Relevancia:
 El proyecto aporta a la convivencia y seguridad vial, mediante la reducción de infracciones no fiscalizadas, promueve la participación cuidadana y fortalece la capacidad de gestión de las autoridades frente a una problemática cotidiana con gran impacto social.
+
+
+# Actividad 1
+
+## Problema
+En la actualidad, los ciudadanos carecen de un medio accesible y confiable para reportar vehículos que incumplemn las normas de tránsito o de seguridad vial.
+Aunque existen canales oficiales como Carabineros o autoridades de tránsito, estos suelen ser poco prácticos para denuncias rápidas, requieren largos trámites, o no permiten un seguimiento ciudadano transparente.
+Esto genera que muchas conductas peligrosas, como lo son el exceso de velocidad, estacionar en lugares indebudos, conducción temeraria, vehículos en mal estado, entre otros, queden sin registrar, perpetuando la impunidad de conductores irresponsables.
+
+## Necesidad
+- Brindar a la sociedad una herramienta simple y rápida para denunciar irregularidades viales.
+- Fomentar la participación ciudadana en la seguridad vial.
+- Recopilar información confiable que sirva para análisis de patrones de infracciones y apoyo a políticas públicas.
+
+## Contexto
+- Social: Aumentan los accidentes de tránsito por imprudencias y falta de control. Los ciudadanos son testigos cotidianos de faltas que no llegan a instancias formales.
+- Tecnológico: La alta penetración de smartphones y el uso cotidiano de aplicaciones móbiles y redes sociles hacen viable un aplicación colaborativa que permita subir reportes con evidencia (fotos, patentes, ubicación).
+- Institucional: Si bien los organismos de tránsito tienen canales formales, estos no están pensados para denuncias rápidas ni permiten a la ciudadanía tener una visión global de los problemas viales en su comunidad.
+- Legal: Se deberá analizar cómo manejar los reportes para cumplir con normativas de privacidad y evitar difamaciones sin pruebas.
+
+## Stakeholders
+- Usuarios Ciudadanos: Quienes reportan las fallas.
+- Conductores Denunciados: Sujetos a los reportes.
+- Instituciones de Tránsito y Seguridad Vial: Potenciales receptores y validadores de datos.
+- Gobiernos Locales: Interesados en datos estadísticos para mejorara políticas viales.
+- Desarrolladores del Sistema: Equipo encargado de implementar y mantener la aplicación.
