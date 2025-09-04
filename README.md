@@ -42,7 +42,7 @@ Esto genera que muchas conductas peligrosas, como lo son el exceso de velocidad,
 
 ## Contexto
 - Social: Aumentan los accidentes de tránsito por imprudencias y falta de control. Los ciudadanos son testigos cotidianos de faltas que no llegan a instancias formales.
-- Tecnológico: La alta penetración de smartphones y el uso cotidiano de aplicaciones móbiles y redes sociles hacen viable un aplicación colaborativa que permita subir reportes con evidencia (fotos, patentes, ubicación).
+- Tecnológico: La alta influencia de smartphones y el uso cotidiano de aplicaciones móbiles y redes sociles hacen viable una aplicación colaborativa que permita subir reportes con evidencia (fotos, patentes, ubicación) y descripción textual.
 - Institucional: Si bien los organismos de tránsito tienen canales formales, estos no están pensados para denuncias rápidas ni permiten a la ciudadanía tener una visión global de los problemas viales en su comunidad.
 - Legal: Se deberá analizar cómo manejar los reportes para cumplir con normativas de privacidad y evitar difamaciones sin pruebas.
 
