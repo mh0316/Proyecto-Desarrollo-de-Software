@@ -3,9 +3,9 @@
 # Actividad A1: Problema y Contexto
 
 ## Problema:
-En la actualidad, los ciudadanos carecen de un medio accesible y confiable para reportar vehículos que incumplemn las normas de tránsito o de seguridad vial.
+En la actualidad, los ciudadanos carecen de un medio accesible y confiable para reportar vehículos que incumplen las normas de tránsito o de seguridad vial.
 Aunque existen canales oficiales como Carabineros o autoridades de tránsito, estos suelen ser poco prácticos para denuncias rápidas, requieren largos trámites, o no permiten un seguimiento ciudadano transparente.
-Esto genera que muchas conductas peligrosas, como lo son el exceso de velocidad, estacionar en lugares indebudos, conducción temeraria, vehículos en mal estado, entre otros, queden sin registrar, perpetuando la impunidad de conductores irresponsables.
+Esto genera que muchas conductas peligrosas, como lo son el exceso de velocidad, estacionar en lugares indebidos, conducción temeraria, vehículos en mal estado, entre otros, queden sin registrar, perpetuando la impunidad de conductores irresponsables.
 
 ## Necesidad:
 - Brindar a la sociedad una herramienta simple y rápida para denunciar irregularidades viales.
@@ -14,7 +14,7 @@ Esto genera que muchas conductas peligrosas, como lo son el exceso de velocidad,
 
 ## Contexto:
 - Social: Aumentan los accidentes de tránsito por imprudencias y falta de control. Los ciudadanos son testigos cotidianos de faltas que no llegan a instancias formales.
-- Tecnológico: La alta influencia de smartphones y el uso cotidiano de aplicaciones móbiles y redes sociles hacen viable una aplicación colaborativa que permita subir reportes con evidencia (fotos, patentes, ubicación) y descripción textual.
+- Tecnológico: La alta influencia de smartphones y el uso cotidiano de aplicaciones móviles y redes sociales hacen viable una aplicación colaborativa que permita subir reportes con evidencia (fotos, patentes, ubicación) y descripción textual.
 - Institucional: Si bien los organismos de tránsito tienen canales formales, estos no están pensados para denuncias rápidas ni permiten a la ciudadanía tener una visión global de los problemas viales en su comunidad.
 - Legal: Se deberá analizar cómo manejar los reportes para cumplir con normativas de privacidad y evitar difamaciones sin pruebas.
 
@@ -22,12 +22,12 @@ Esto genera que muchas conductas peligrosas, como lo son el exceso de velocidad,
 - Usuarios Ciudadanos: Quienes reportan las fallas.
 - Conductores Denunciados: Sujetos a los reportes.
 - Instituciones de Tránsito y Seguridad Vial: Potenciales receptores y validadores de datos.
-- Gobiernos Locales: Interesados en datos estadísticos para mejorara políticas viales.
+- Gobiernos Locales: Interesados en datos estadísticos para mejorar políticas viales.
 - Desarrolladores del Sistema: Equipo encargado de implementar y mantener la aplicación.
 
 
 ## Justificación:
-Un sistema digital que integre una aplicación móvil para aviso y denuncia y una plataforma digital web de gestión para administradores permitirá agilizar la detección, registro y rastreo de infraccionesd de tránsito, favoreciendo la transparencia, la eficiencia de los procesos y la seguridad vial.<br><br>
+Un sistema digital que integre una aplicación móvil para aviso y denuncia y una plataforma digital web de gestión para administradores permitirá agilizar la detección, registro y rastreo de infracciones de tránsito, favoreciendo la transparencia, la eficiencia de los procesos y la seguridad vial.<br><br>
 
 ## Relevancia:
 El proyecto aporta a la convivencia y seguridad vial, mediante la reducción de infracciones no fiscalizadas, promueve la participación cuidadana y fortalece la capacidad de gestión de las autoridades frente a una problemática cotidiana con gran impacto social.
@@ -37,14 +37,14 @@ El proyecto aporta a la convivencia y seguridad vial, mediante la reducción de 
 
 ## Metodología de Desarrollo:
 Elegimos usar la metodología Scrum por las siguientes razones:
-- Permite trabajar en iteraciones cortas (sprints) para is desarrollando las funcionalidades principales de la aplicación, como el registro de denuncias, la carga de evidencias, el panel de análisis, etc.
+- Permite trabajar en iteraciones cortas (sprints) para ir desarrollando las funcionalidades principales de la aplicación, como el registro de denuncias, la carga de evidencias, el panel de análisis, etc.
 - Facilita la comunicación con los stakeholders, validando periódicamente que lo desarrollado responda a la necesidad real.
 - Ayuda a priorizar tareas y adaptarse a cambios en los requerimientos, como nuevas normativas o mejoras en privacidad.
 
 ## Herramientas Colaborativas:
 - Control de Versiones: Git + GitHub para manejo de código, ramas y colaboración.
-- Gestión de tareas: Trello o Jira para organizar backlog, tareas de cada sprint y reponsables.
-- Documentación: Notion o Google Docs para especificaciones, actas de runión y decisiones.
+- Gestión de tareas: Trello o Jira para organizar backlog, tareas de cada sprint y responsables.
+- Documentación: Notion o Google Docs para especificaciones, actas de reunión y decisiones.
 - Comunicación: Discord y Google Meet para reuniones rápidas y coordinación del equipo.
 
 ## Plan de Trabajo:
@@ -52,7 +52,7 @@ Elegimos usar la metodología Scrum por las siguientes razones:
 2. Sprint 2 (2 semanas): Bases técnicas del trabajo.
 3. Sprint 3 (2 semanas): Creación de módulos principales.
 4. Sprint 4 (2 semanas): Integración con mapa georreferenciado, api para estadísticas y pruebas piloto.
-5. Sprint 5 (2 semanas): Ajustes finales, pruebas de usuario y despligue inicial.
+5. Sprint 5 (2 semanas): Ajustes finales, pruebas de usuario y despliegue inicial.
 
 ## Responsabilidades Iniciales:
 - Scrum Master: Coordinar el flujo de trabajo y eliminar obstáculos.
