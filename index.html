@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Panel de Gestión | Faltas de Tránsito</title>
+  <style>
+    :root{
+      --bg:#0f172a;           /* slate-900 */
+      --card:#111827;         /* gray-900 */
+      --muted:#1f2937;        /* gray-800 */
+      --soft:#e5e7eb;         /* gray-200 */
+      --text:#e5e7eb;         /* gray-200 */
+      --sub:#9ca3af;          /* gray-400 */
+      --brand:#22d3ee;        /* cyan-400 */
+      --brand-2:#60a5fa;      /* blue-400 */
+      --ok:#34d399;           /* green-400 */
+      --warn:#fbbf24;         /* amber-400 */
+      --danger:#fb7185;       /* rose-400 */
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;background:linear-gradient(180deg, #0f172a 0%, #0b1220 100%);color:var(--text);font:15px/1.4 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial}
+    a{color:inherit;text-decoration:none}
+    .app{display:grid;grid-template-columns:280px 1fr;min-height:100vh}
+    aside{background:rgba(255,255,255,.03);backdrop-filter: blur(6px);border-right:1px solid rgba(255,255,255,.06);padding:20px 16px;position:sticky;top:0;height:100vh}
+    .logo{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:.3px}
+    .logo-badge{width:34px;height:34px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(135deg,var(--brand),var(--brand-2));box-shadow:0 10px 30px rgba(96,165,250,.25)}
+    .logo svg{width:18px;height:18px}
+    .muted{color:var(--sub)}
+    .side-section{margin-top:22px}
+    .side-section h4{margin:16px 0 8px 4px;font-size:12px;letter-spacing:.3px;color:var(--sub);text-transform:uppercase}
+    .nav a{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;color:var(--text)}
+    .nav a.active,.nav a:hover{background:rgba(255,255,255,.06)}
+    .chip{display:inline-block;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);font-size:12px}
+    .cats{display:grid;gap:8px}
+    .cat{display:flex;align-items:center;gap:8px;padding:8px;border-radius:10px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03)}
+    .cat input{accent-color:var(--brand)}
+    .footer-note{position:absolute;bottom:16px;left:16px;right:16px;font-size:12px;color:var(--sub)}
+
+    header{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid rgba(255,255,255,.06);position:sticky;top:0;background:rgba(15,23,42,.8);backdrop-filter: blur(6px);z-index:5}
+    .search{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.04);border-radius:12px;min-width:320px}
+    .search input{background:transparent;border:0;outline:0;color:var(--text);width:100%}
+
+    main{padding:22px;display:grid;gap:18px}
+    .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:18px}
+    .card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:16px}
+    .kpi{display:flex;align-items:center;justify-content:space-between}
+    .kpi .n{font-size:28px;font-weight:800}
+
+    .filters{display:flex;flex-wrap:wrap;gap:10px}
+    .btn,button{padding:10px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);color:var(--text);cursor:pointer}
+    .btn.primary{background:linear-gradient(135deg,var(--brand),var(--brand-2));border:0}
+
+    table{width:100%;border-collapse:separate;border-spacing:0 10px}
+    thead th{font-size:12px;text-transform:uppercase;color:var(--sub);text-align:left;padding:0 12px}
+    tbody tr{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08)}
+    tbody td{padding:14px 12px;border-top:1px solid rgba(255,255,255,.08);border-bottom:1px solid rgba(255,255,255,.08)}
+    tbody tr{border-radius:14px;overflow:hidden}
+
+    .status{padding:6px 10px;border-radius:999px;font-size:12px;border:1px solid rgba(255,255,255,.12)}
+    .st-pend{background:rgba(251,191,36,.08);border-color:rgba(251,191,36,.28)}
+    .st-valid{background:rgba(52,211,153,.08);border-color:rgba(52,211,153,.28)}
+    .st-rech{background:rgba(251,113,133,.08);border-color:rgba(251,113,133,.28)}
+
+    .tag{font-size:12px;padding:6px 8px;border:1px solid rgba(255,255,255,.12);border-radius:10px;background:rgba(255,255,255,.04)}
+
+    .pill{padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.06);font-size:12px}
+
+    .modal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;padding:20px;z-index:20}
+    .modal .panel{max-width:900px;width:100%;background:var(--card);border:1px solid rgba(255,255,255,.1);border-radius:16px;overflow:hidden}
+    .panel header{position:relative;display:flex;justify-content:space-between}
+    .panel header h3{margin:0}
+    .panel .content{padding:16px}
+    .media{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .media .box{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;min-height:220px;display:grid;place-items:center}
+
+    @media (max-width: 1100px){
+      .app{grid-template-columns:1fr}
+      aside{position:relative;height:auto}
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <aside>
+    <div class="logo">
+      <div class="logo-badge" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 3h7l2 3h9v12H3z"/>
+          <path d="M7 13h10"/>
+          <path d="M7 17h7"/>
+        </svg>
+      </div>
+      <div>
+        Panel Tránsito<br><span class="muted" style="font-weight:500">Gestión de denuncias</span>
+      </div>
+    </div>
+
+    <div class="side-section">
+      <h4>Navegación</h4>
+      <nav class="nav">
+        <a href="#" class="active" onclick="switchTab('tablero')">Tablero</a>
+        <a href="#" onclick="switchTab('reportes')">Reportes</a>
+        <a href="#" onclick="switchTab('mapa')">Mapa</a>
+        <a href="#" onclick="switchTab('config')">Configuración</a>
+      </nav>
+    </div>
+
+    <div class="side-section">
+      <h4>Categorías (7)</h4>
+      <div class="cats">
+        <!-- 7 categorías solicitadas -->
+        <label class="cat"><input type="checkbox" class="cat-filter" value="falta-placa" checked> Falta de placa patente</label>
+        <label class="cat"><input type="checkbox" class="cat-filter" value="botar-basura" checked> Botar basura a la calle</label>
+        <label class="cat"><input type="checkbox" class="cat-filter" value="exceso-velocidad" checked> Exceso de velocidad</label>
+        <label class="cat"><input type="checkbox" class="cat-filter" value="conduccion-imprudente" checked> Conducción imprudente</label>
+        <label class="cat"><input type="checkbox" class="cat-filter" value="estacionar-prohibido" checked> Estacionar en lugar prohibido</label>
+        <label class="cat"><input type="checkbox" class="cat-filter" value="uso-celular" checked> Uso de celular al conducir</label>
+        <label class="cat"><input type="checkbox" class="cat-filter" value="luz-roja" checked> Pasarse luz roja</label>
+      </div>
+    </div>
+  </aside>
+
+  <section>
+    <header>
+      <div class="search">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+        <input id="q" placeholder="Buscar por ID, ubicación, denunciante…" oninput="applyFilters()" />
+      </div>
+      <div class="filters">
+        <select id="statusFilter" class="btn" onchange="applyFilters()">
+          <option value="">Estado: Todos</option>
+          <option value="pendiente">Pendiente</option>
+          <option value="validada">Validada</option>
+          <option value="rechazada">Rechazada</option>
+        </select>
+        <input type="date" id="fromDate" class="btn" onchange="applyFilters()" />
+        <input type="date" id="toDate" class="btn" onchange="applyFilters()" />
+        <button class="btn" onclick="resetFilters()">Limpiar</button>
+        <button class="btn primary" onclick="newReport()">+ Nueva denuncia</button>
+      </div>
+    </header>
+
+    <main>
+      <!-- KPIs -->
+      <div class="grid">
+        <div class="card kpi" style="grid-column: span 3">
+          <div>
+            <div class="muted">Total denuncias</div>
+            <div class="n" id="kpi-total">—</div>
+          </div>
+          <div class="pill">Últimos 30 días</div>
+        </div>
+        <div class="card kpi" style="grid-column: span 3">
+          <div>
+            <div class="muted">Pendientes</div>
+            <div class="n" id="kpi-pend">—</div>
+          </div>
+          <div class="status st-pend">Pendiente</div>
+        </div>
+        <div class="card kpi" style="grid-column: span 3">
+          <div>
+            <div class="muted">Validadas</div>
+            <div class="n" id="kpi-valid">—</div>
+          </div>
+          <div class="status st-valid">Validada</div>
+        </div>
+        <div class="card kpi" style="grid-column: span 3">
+          <div>
+            <div class="muted">Rechazadas</div>
+            <div class="n" id="kpi-rech">—</div>
+          </div>
+          <div class="status st-rech">Rechazada</div>
+        </div>
+      </div>
+
+      <!-- Tabla de reportes -->
+      <div class="card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+          <h3 style="margin:0">Reportes</h3>
+          <div class="muted">Vista de administración</div>
+        </div>
+        <table id="tbl">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Fecha</th>
+              <th>Categoría</th>
+              <th>Ubicación</th>
+              <th>Estado</th>
+              <th>Denunciante</th>
+              <th>Evidencia</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Filas de ejemplo (mock) -->
+            <tr data-id="R-1024" data-cat="exceso-velocidad" data-status="pendiente" data-date="2025-08-25">
+              <td>R-1024</td>
+              <td>2025-08-25</td>
+              <td><span class="tag">Exceso de velocidad</span></td>
+              <td>Av. Los Leones 123</td>
+              <td><span class="status st-pend">Pendiente</span></td>
+              <td>Ana Soto</td>
+              <td><button class="btn" onclick="openModal('R-1024')">Ver</button></td>
+              <td>
+                <button class="btn" onclick="setStatus(this,'validada')">Validar</button>
+                <button class="btn" onclick="setStatus(this,'rechazada')">Rechazar</button>
+              </td>
+            </tr>
+            <tr data-id="R-1025" data-cat="falta-placa" data-status="validada" data-date="2025-08-26">
+              <td>R-1025</td>
+              <td>2025-08-26</td>
+              <td><span class="tag">Falta de placa patente</span></td>
+              <td>Ruta 5 Sur, Km 210</td>
+              <td><span class="status st-valid">Validada</span></td>
+              <td>Pedro Núñez</td>
+              <td><button class="btn" onclick="openModal('R-1025')">Ver</button></td>
+              <td>
+                <button class="btn" onclick="setStatus(this,'pendiente')">A Pend.</button>
+                <button class="btn" onclick="setStatus(this,'rechazada')">Rechazar</button>
+              </td>
+            </tr>
+            <tr data-id="R-1026" data-cat="botar-basura" data-status="rechazada" data-date="2025-08-27">
+              <td>R-1026</td>
+              <td>2025-08-27</td>
+              <td><span class="tag">Botar basura a la calle</span></td>
+              <td>Plaza Central</td>
+              <td><span class="status st-rech">Rechazada</span></td>
+              <td>Carla R.</td>
+              <td><button class="btn" onclick="openModal('R-1026')">Ver</button></td>
+              <td>
+                <button class="btn" onclick="setStatus(this,'pendiente')">A Pend.</button>
+                <button class="btn" onclick="setStatus(this,'validada')">Validar</button>
+              </td>
+            </tr>
+            <tr data-id="R-1027" data-cat="estacionar-prohibido" data-status="validada" data-date="2025-08-27">
+              <td>R-1027</td>
+              <td>2025-08-27</td>
+              <td><span class="tag">Estacionar en lugar prohibido</span></td>
+              <td>Calle Pino 45</td>
+              <td><span class="status st-valid">Validada</span></td>
+              <td>Ignacio V.</td>
+              <td><button class="btn" onclick="openModal('R-1027')">Ver</button></td>
+              <td>
+                <button class="btn" onclick="setStatus(this,'pendiente')">A Pend.</button>
+                <button class="btn" onclick="setStatus(this,'rechazada')">Rechazar</button>
+              </td>
+            </tr>
+            <tr data-id="R-1028" data-cat="uso-celular" data-status="pendiente" data-date="2025-08-28">
+              <td>R-1028</td>
+              <td>2025-08-28</td>
+              <td><span class="tag">Uso de celular al conducir</span></td>
+              <td>Av. Matta 911</td>
+              <td><span class="status st-pend">Pendiente</span></td>
+              <td>Marcos Q.</td>
+              <td><button class="btn" onclick="openModal('R-1028')">Ver</button></td>
+              <td>
+                <button class="btn" onclick="setStatus(this,'validada')">Validar</button>
+                <button class="btn" onclick="setStatus(this,'rechazada')">Rechazar</button>
+              </td>
+            </tr>
+            <tr data-id="R-1029" data-cat="luz-roja" data-status="pendiente" data-date="2025-08-28">
+              <td>R-1029</td>
+              <td>2025-08-28</td>
+              <td><span class="tag">Pasarse luz roja</span></td>
+              <td>Av. Providencia 2300</td>
+              <td><span class="status st-pend">Pendiente</span></td>
+              <td>Luis A.</td>
+              <td><button class="btn" onclick="openModal('R-1029')">Ver</button></td>
+              <td>
+                <button class="btn" onclick="setStatus(this,'validada')">Validar</button>
+                <button class="btn" onclick="setStatus(this,'rechazada')">Rechazar</button>
+              </td>
+            </tr>
+            <tr data-id="R-1030" data-cat="conduccion-imprudente" data-status="validada" data-date="2025-08-29">
+              <td>R-1030</td>
+              <td>2025-08-29</td>
+              <td><span class="tag">Conducción imprudente</span></td>
+              <td>Autopista Vespucio</td>
+              <td><span class="status st-valid">Validada</span></td>
+              <td>Daniela T.</td>
+              <td><button class="btn" onclick="openModal('R-1030')">Ver</button></td>
+              <td>
+                <button class="btn" onclick="setStatus(this,'pendiente')">A Pend.</button>
+                <button class="btn" onclick="setStatus(this,'rechazada')">Rechazar</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pestañas -->
+      <div id="tab-tablero" class="card">
+        <h3 style="margin-top:0">Tablero</h3>
+        <p class="muted">Resumen de actividad y métricas clave. Usa los filtros superiores para reducir el conjunto.</p>
+      </div>
+
+      <div id="tab-reportes" class="card" style="display:none">
+        <h3 style="margin-top:0">Reportes (gestión masiva)</h3>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+          <button class="btn" onclick="bulk('validada')">Validar seleccionados</button>
+          <button class="btn" onclick="bulk('rechazada')">Rechazar seleccionados</button>
+          <button class="btn" onclick="exportCSV()">Exportar CSV</button>
+        </div>
+        <p class="muted">(Vista conceptual para operaciones masivas y exportación)</p>
+      </div>
+
+      <div id="tab-mapa" class="card" style="display:none">
+        <h3 style="margin-top:0">Mapa</h3>
+        <div class="media">
+          <div class="box">Mapa georreferenciado (placeholder)</div>
+          <div class="box">Heatmap de denuncias (placeholder)</div>
+        </div>
+      </div>
+
+      <div id="tab-config" class="card" style="display:none">
+        <h3 style="margin-top:0">Configuración</h3>
+        <p class="muted">Definición de categorías, umbrales, privacidad y flujos de validación.</p>
+        <div style="display:grid;gap:10px;max-width:680px">
+          <label>Nombre del organismo / equipo<br><input class="btn" style="width:100%" placeholder="Ej: Observatorio Vial Ciudadano"/></label>
+          <label>Correo de notificaciones<br><input class="btn" style="width:100%" placeholder="alertas@dominio.cl"/></label>
+          <button class="btn primary">Guardar cambios</button>
+        </div>
+      </div>
+
+    </main>
+  </section>
+</div>
+
+<!-- Modal de evidencia -->
+<div id="modal" class="modal" role="dialog" aria-modal="true" aria-hidden="true">
+  <div class="panel">
+    <header>
+      <h3 style="margin:0">Evidencia del reporte <span id="modal-id"></span></h3>
+      <button class="btn" onclick="closeModal()">Cerrar</button>
+    </header>
+    <div class="content">
+      <div class="media">
+        <div class="box">Imagen/Fotografía (placeholder)</div>
+        <div class="box">Video/Clip (placeholder)</div>
+      </div>
+      <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+        <select class="btn" id="assignee">
+          <option>Asignar revisor…</option>
+          <option>J. Acevedo</option>
+          <option>J. Huircaleo</option>
+          <option>M. Henríquez</option>
+        </select>
+        <button class="btn" onclick="alert('Asignado')">Asignar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const $ = (sel, ctx=document) => ctx.querySelector(sel);
+  const $$ = (sel, ctx=document) => Array.from(ctx.querySelectorAll(sel));
+
+  function switchTab(name){
+    ['tablero','reportes','mapa','config'].forEach(t=>{
+      $('#tab-'+t).style.display = (t===name)? 'block' : 'none';
+    });
+    $$('.nav a').forEach(a=>a.classList.remove('active'));
+    const link = Array.from($$('.nav a')).find(a=>a.textContent.toLowerCase().includes(name));
+    if(link) link.classList.add('active');
+  }
+
+  function statusBadge(el, status){
+    el.className = 'status ' + (status==='pendiente'?'st-pend':status==='validada'?'st-valid':'st-rech');
+    el.textContent = status.charAt(0).toUpperCase()+status.slice(1);
+  }
+
+  function setStatus(btn, status){
+    const tr = btn.closest('tr');
+    tr.dataset.status = status;
+    statusBadge(tr.querySelector('.status'), status);
+    updateKPIs();
+  }
+
+  function openModal(id){
+    $('#modal-id').textContent = id;
+    $('#modal').style.display = 'flex';
+    $('#modal').setAttribute('aria-hidden','false');
+  }
+  function closeModal(){
+    $('#modal').style.display = 'none';
+    $('#modal').setAttribute('aria-hidden','true');
+  }
+
+  function visibleByCategory(tr){
+    const enabledCats = $$('.cat-filter:checked').map(c=>c.value);
+    return enabledCats.includes(tr.dataset.cat);
+  }
+
+  function visibleByStatus(tr){
+    const s = $('#statusFilter').value;
+    return !s || tr.dataset.status === s;
+  }
+
+  function visibleBySearch(tr){
+    const q = $('#q').value.trim().toLowerCase();
+    if(!q) return true;
+    const content = tr.textContent.toLowerCase();
+    return content.includes(q);
+  }
+
+  function visibleByDate(tr){
+    const from = $('#fromDate').value; // yyyy-mm-dd
+    const to = $('#toDate').value;
+    const d = tr.dataset.date;
+    if(from && d < from) return false;
+    if(to && d > to) return false;
+    return true;
+  }
+
+  function applyFilters(){
+    $$('#tbl tbody tr').forEach(tr=>{
+      const show = visibleByCategory(tr) && visibleByStatus(tr) && visibleBySearch(tr) && visibleByDate(tr);
+      tr.style.display = show? '' : 'none';
+    });
+    updateKPIs();
+  }
+
+  function resetFilters(){
+    $('#q').value = '';
+    $('#statusFilter').value = '';
+    $('#fromDate').value = '';
+    $('#toDate').value = '';
+    $$('.cat-filter').forEach(c=>c.checked=true);
+    applyFilters();
+  }
+
+  function newReport(){
+    alert('Este es un prototipo. Aquí iría el flujo para crear una nueva denuncia.');
+  }
+
+  function bulk(status){
+    const rows = $$('#tbl tbody tr').filter(r=>r.style.display !== 'none');
+    rows.forEach(r=>{ r.dataset.status = status; statusBadge(r.querySelector('.status'), status); });
+    updateKPIs();
+  }
+
+  function exportCSV(){
+    const rows = $$('#tbl tbody tr').filter(r=>r.style.display !== 'none');
+    const header = ['ID','Fecha','Categoria','Ubicacion','Estado','Denunciante'];
+    const body = rows.map(r=>[
+      r.dataset.id,
+      r.dataset.date,
+      r.querySelector('td:nth-child(3)').innerText.trim(),
+      r.querySelector('td:nth-child(4)').innerText.trim(),
+      r.dataset.status,
+      r.querySelector('td:nth-child(6)').innerText.trim()
+    ]);
+    const csv = [header].concat(body).map(row=>row.map(x=>"${(x||'').replaceAll('"','""')}").join(',')).join('\n');
+    const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'reportes.csv'; a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  function updateKPIs(){
+    const rows = $$('#tbl tbody tr').filter(r=>r.style.display !== 'none');
+    const total = rows.length;
+    const pend = rows.filter(r=>r.dataset.status==='pendiente').length;
+    const valid = rows.filter(r=>r.dataset.status==='validada').length;
+    const rech = rows.filter(r=>r.dataset.status==='rechazada').length;
+    $('#kpi-total').textContent = total;
+    $('#kpi-pend').textContent = pend;
+    $('#kpi-valid').textContent = valid;
+    $('#kpi-rech').textContent = rech;
+  }
+
+  // Eventos
+  $$('.cat-filter').forEach(c=>c.addEventListener('change', applyFilters));
+
+  // Init
+  applyFilters();
+</script>
+</body>
+</html>
