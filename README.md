@@ -1,34 +1,6 @@
 # Proyecto de Desarrollo de Software
 
-
-## Descripción del Problema:
-La falta de un sistema eficiente para registrar y dar seguimiento a las infracciones de tránsito genera que muchas faltas pasen inadvertidas o no sean denunciadas, dificultando la fiscalización y el control vial, así como también el cumplimiento de la ley, lo que impacta directamente en la seguridad de los conductores, peatones y a la comunidad en general.<br><br>
-
-
-## Claridad del Problema:
-Actualmente no existen mecanismos digitales accesibles y centralizados que permitan a la ciudadanía y autoridades poder reportar, gestionar y dar seguimiento a las infracciones de tránsito, lo que provoca un bajo nivel de control y respuesta a estas situaciones.<br><br>
-
-
-## Idea para Resolver esta Problemática:
-Crear una aplicación web que permita registrar y hacer seguimiento a faltas de tránsito, sumándole una aplicación móvil para darle a los usuarios un acceso e interacción más fácil y rápido, además de una web con administrador.<br><br>
-
-
-## Justificación:
-Un sistema digital que integre una aplicación móvil para aviso y denuncia y una plataforma digital web de gestión para administradores permitirá agilizar la detección, registro y rastreo de infraccionesd de tránsito, favoreciendo la transparencia, la eficiencia de los procesos y la seguridad vial.<br><br>
-
-
-## Identificación de Stakeholders:
-- Conductores y  peatones: Pueden reportar infracciones mediante la aplicación móvil.
-- Administradores del sistema: Gestionan y validan los reportes en la plataforma web.
-- Autoridades de tránsito: Recien información confiable para fiscalización y toma de decisiones.
-- Comunidad en general: Se beneficia de un entorno vial seguro y regulado.<br><br>
-
-
-## Relevancia:
-El proyecto aporta a la convivencia y seguridad vial, mediante la reducción de infracciones no fiscalizadas, promueve la participación cuidadana y fortalece la capacidad de gestión de las autoridades frente a una problemática cotidiana con gran impacto social.
-
-
-# Actividad 1
+# Actividad A1: Problema y Contexto
 
 ## Problema
 En la actualidad, los ciudadanos carecen de un medio accesible y confiable para reportar vehículos que incumplemn las normas de tránsito o de seguridad vial.
@@ -52,3 +24,45 @@ Esto genera que muchas conductas peligrosas, como lo son el exceso de velocidad,
 - Instituciones de Tránsito y Seguridad Vial: Potenciales receptores y validadores de datos.
 - Gobiernos Locales: Interesados en datos estadísticos para mejorara políticas viales.
 - Desarrolladores del Sistema: Equipo encargado de implementar y mantener la aplicación.
+
+
+## Justificación:
+Un sistema digital que integre una aplicación móvil para aviso y denuncia y una plataforma digital web de gestión para administradores permitirá agilizar la detección, registro y rastreo de infraccionesd de tránsito, favoreciendo la transparencia, la eficiencia de los procesos y la seguridad vial.<br><br>
+
+## Relevancia:
+El proyecto aporta a la convivencia y seguridad vial, mediante la reducción de infracciones no fiscalizadas, promueve la participación cuidadana y fortalece la capacidad de gestión de las autoridades frente a una problemática cotidiana con gran impacto social.
+
+
+# Actividad A2: Metodología y Herramientas
+
+## Metodología de Desarrollo:
+Elegimos usar la metodología Scrum por las siguientes razones:
+- Permite trabajar en iteraciones cortas (sprints) para is desarrollando las funcionalidades principales de la aplicación, como el registro de denuncias, la carga de evidencias, el panel de análisis, etc.
+- Facilita la comunicación con los stakeholders, validando periódicamente que lo desarrollado responda a la necesidad real.
+- Ayuda a priorizar tareas y adaptarse a cambios en los requerimientos, como nuevas normativas o mejoras en privacidad.
+
+## Herramientas Colaborativas:
+- Control de Versiones: Git + GitHub para manejo de código, ramas y colaboración.
+- Gestión de tareas: Trello o Jira para organizar backlog, tareas de cada sprint y reponsables.
+- Documentación: Notion o Google Docs para especificaciones, actas de runión y decisiones.
+- Comunicación: Discord y Google Meet para reuniones rápidas y coordinación del equipo.
+
+## Plan de Trabajo:
+1. Sprint 1 (2 semanas): Definir arquitectura, prototipos de interfaz, configuración del repositorio y configuración de entorno de trabajo.
+2. Sprint 2 (2 semanas): Bases técnicas del trabajo.
+3. Sprint 3 (2 semanas): Creación de módulos principales.
+4. Sprint 4 (2 semanas): Integración con mapa georreferenciado, api para estadísticas y pruebas piloto.
+5. Sprint 5 (2 semanas): Ajustes finales, pruebas de usuario y despligue inicial.
+
+## Responsabilidades Iniciales
+- Scrum Master: Coordinar el flujo de trabajo y eliminar obstáculos.
+- Product Owner: Definir prioridades y validar stakeholders.
+- Equipo de Desarrollo: Implementar funcionalidades técnicas.
+- Equipo de Diseño UX/UI: Construir interfaces accesibles y atractivas.
+
+
+# Cronograma de Trabajo:
+<img width="1248" height="445" alt="image" src="https://github.com/user-attachments/assets/c771b1c5-154e-44f0-a9a4-cbdceb5c15c0" />
+
+# Versión Preliminar de Página Web Administrador:
+<img width="1600" height="749" alt="image" src="https://github.com/user-attachments/assets/7c1db0fd-815b-4440-9cc5-36c131d87f00" />
