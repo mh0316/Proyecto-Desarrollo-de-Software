@@ -6,18 +6,40 @@
   <title>Panel de Gestión | Faltas de Tránsito</title>
   <style>
     :root{
-      --bg:#0f172a;           /* slate-900 */
-      --card:#111827;         /* gray-900 */
-      --muted:#1f2937;        /* gray-800 */
-      --soft:#e5e7eb;         /* gray-200 */
-      --text:#e5e7eb;         /* gray-200 */
-      --sub:#9ca3af;          /* gray-400 */
-      --brand:#22d3ee;        /* cyan-400 */
-      --brand-2:#60a5fa;      /* blue-400 */
-      --ok:#34d399;           /* green-400 */
-      --warn:#fbbf24;         /* amber-400 */
-      --danger:#fb7185;       /* rose-400 */
+      --bg:#0f172a;
+      --card:#111827;
+      --muted:#1f2937;
+      --soft:#e5e7eb;
+      --text:#e5e7eb;
+      --sub:#9ca3af;
+      --brand:#22d3ee;
+      --brand-2:#60a5fa;
+      --ok:#34d399;
+      --warn:#fbbf24;
+      --danger:#fb7185;
     }
+    body.light {
+      background: linear-gradient(180deg, #f1f5f9 0%, #e2e8f0 100%);
+      color: #222;
+    }
+    body.light aside,
+    body.light .card,
+    body.light .modal .panel,
+    body.light .media .box {
+      background: #fff !important;
+      border-color: #ddd !important;
+      color: #222 !important;
+    }
+    body.light .status.st-pend { background: #fffbe6; border-color:#ffc107; color:#222; }
+    body.light .status.st-valid { background: #e6fff5; border-color:#34d399; color:#222;}
+    body.light .status.st-rech { background: #ffe6ef; border-color:#fb7185; color:#222;}
+    body.light .tag,
+    body.light .pill { background: #f1f5f9 !important; color:#222;}
+    body.light .nav a.active,
+    body.light .nav a:hover { background: #e0e7ef !important; color:#222;}
+    body.light .btn, body.light button { background: #f1f5f9 !important; color:#222; border-color: #ddd;}
+    body.light .btn.primary { background: linear-gradient(135deg,#60a5fa,#22d3ee)!important; color:#fff!important;}
+
     *{box-sizing:border-box}
     html,body{height:100%}
     body{margin:0;background:linear-gradient(180deg, #0f172a 0%, #0b1220 100%);color:var(--text);font:15px/1.4 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial}
@@ -41,6 +63,23 @@
     header{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid rgba(255,255,255,.06);position:sticky;top:0;background:rgba(15,23,42,.8);backdrop-filter: blur(6px);z-index:5}
     .search{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.04);border-radius:12px;min-width:320px}
     .search input{background:transparent;border:0;outline:0;color:var(--text);width:100%}
+    .admin-user {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,.06);
+      border-radius: 12px;
+      padding: 8px 16px;
+      font-weight: 500;
+      color: var(--brand-2);
+      box-shadow: 0 2px 10px rgba(96,165,250,.12);
+    }
+    .admin-user svg {
+      width: 22px;
+      height: 22px;
+      stroke: var(--brand-2);
+      flex-shrink: 0;
+    }
 
     main{padding:22px;display:grid;gap:18px}
     .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:18px}
@@ -110,7 +149,6 @@
     <div class="side-section">
       <h4>Categorías (7)</h4>
       <div class="cats">
-        <!-- 7 categorías solicitadas -->
         <label class="cat"><input type="checkbox" class="cat-filter" value="falta-placa" checked> Falta de placa patente</label>
         <label class="cat"><input type="checkbox" class="cat-filter" value="botar-basura" checked> Botar basura a la calle</label>
         <label class="cat"><input type="checkbox" class="cat-filter" value="exceso-velocidad" checked> Exceso de velocidad</label>
@@ -139,6 +177,15 @@
         <input type="date" id="toDate" class="btn" onchange="applyFilters()" />
         <button class="btn" onclick="resetFilters()">Limpiar</button>
         <button class="btn primary" onclick="newReport()">+ Nueva denuncia</button>
+        <button class="btn" onclick="toggleTheme()" style="margin-left:10px">🌗 Tema</button>
+      </div>
+      <!-- Visual usuario admin -->
+      <div class="admin-user" title="Usuario administrador">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="8" r="4"/>
+          <path d="M2 20c0-4 8-4 10-4s10 0 10 4"/>
+        </svg>
+        <span>Admin</span>
       </div>
     </header>
 
@@ -321,15 +368,15 @@
         <div style="display:grid;gap:10px;max-width:680px">
           <label>Nombre del organismo / equipo<br><input class="btn" style="width:100%" placeholder="Ej: Observatorio Vial Ciudadano"/></label>
           <label>Correo de notificaciones<br><input class="btn" style="width:100%" placeholder="alertas@dominio.cl"/></label>
-          <button class="btn primary">Guardar cambios</button>
+          <button class="btn primary" onclick="showToast('Cambios guardados')">Guardar cambios</button>
         </div>
       </div>
-
     </main>
   </section>
 </div>
 
-<!-- Modal de evidencia -->
+<div id="toast" style="position:fixed;bottom:24px;right:24px;display:none;z-index:999;background:var(--brand);color:#fff;padding:14px 24px;border-radius:10px;font-weight:500"></div>
+
 <div id="modal" class="modal" role="dialog" aria-modal="true" aria-hidden="true">
   <div class="panel">
     <header>
@@ -348,7 +395,7 @@
           <option>J. Huircaleo</option>
           <option>M. Henríquez</option>
         </select>
-        <button class="btn" onclick="alert('Asignado')">Asignar</button>
+        <button class="btn" onclick="showToast('Asignado')">Asignar</button>
       </div>
     </div>
   </div>
@@ -372,11 +419,19 @@
     el.textContent = status.charAt(0).toUpperCase()+status.slice(1);
   }
 
+  function showToast(msg){
+    const toast = document.getElementById('toast');
+    toast.textContent = msg;
+    toast.style.display = 'block';
+    setTimeout(()=>toast.style.display='none',2200);
+  }
+
   function setStatus(btn, status){
     const tr = btn.closest('tr');
     tr.dataset.status = status;
     statusBadge(tr.querySelector('.status'), status);
     updateKPIs();
+    showToast('Reporte ' + (status==='validada'?'validado':status==='rechazado'?'rechazado':'pendiente') + ' exitosamente');
   }
 
   function openModal(id){
@@ -407,7 +462,7 @@
   }
 
   function visibleByDate(tr){
-    const from = $('#fromDate').value; // yyyy-mm-dd
+    const from = $('#fromDate').value;
     const to = $('#toDate').value;
     const d = tr.dataset.date;
     if(from && d < from) return false;
@@ -430,16 +485,18 @@
     $('#toDate').value = '';
     $$('.cat-filter').forEach(c=>c.checked=true);
     applyFilters();
+    showToast('Filtros restablecidos');
   }
 
   function newReport(){
-    alert('Este es un prototipo. Aquí iría el flujo para crear una nueva denuncia.');
+    showToast('Este es un prototipo. Aquí iría el flujo para crear una nueva denuncia.');
   }
 
   function bulk(status){
     const rows = $$('#tbl tbody tr').filter(r=>r.style.display !== 'none');
     rows.forEach(r=>{ r.dataset.status = status; statusBadge(r.querySelector('.status'), status); });
     updateKPIs();
+    showToast('Operación masiva (' + (status==='validada'?'validar':'rechazar') + ') realizada');
   }
 
   function exportCSV(){
@@ -453,12 +510,13 @@
       r.dataset.status,
       r.querySelector('td:nth-child(6)').innerText.trim()
     ]);
-    const csv = [header].concat(body).map(row=>row.map(x=>"${(x||'').replaceAll('"','""')}").join(',')).join('\n');
+    const csv = [header].concat(body).map(row=>row.map(x=>`"${(x||'').replaceAll('"','""')}"`).join(',')).join('\n');
     const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url; a.download = 'reportes.csv'; a.click();
     URL.revokeObjectURL(url);
+    showToast('Archivo CSV exportado');
   }
 
   function updateKPIs(){
@@ -473,10 +531,12 @@
     $('#kpi-rech').textContent = rech;
   }
 
-  // Eventos
-  $$('.cat-filter').forEach(c=>c.addEventListener('change', applyFilters));
+  function toggleTheme() {
+    document.body.classList.toggle('light');
+    showToast(document.body.classList.contains('light') ? 'Modo claro activado' : 'Modo oscuro activado');
+  }
 
-  // Init
+  $$('.cat-filter').forEach(c=>c.addEventListener('change', applyFilters));
   applyFilters();
 </script>
 </body>
