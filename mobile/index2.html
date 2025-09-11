@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Maqueta App - Denuncias de Tránsito</title>
+<style>
+  /* Reset + mobile frame */
+  :root{
+    --bg:#f3f4f6;
+    --card:#ffffff;
+    --accent:#0ea5a4;
+    --muted:#6b7280;
+    --danger:#ef4444;
+    --glass: rgba(15,23,42,0.03);
+    --shadow: 0 6px 18px rgba(2,6,23,0.08);
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  }
+  body{margin:20px;background:linear-gradient(180deg,#eef2ff, #f3f4f6);color:#0f172a}
+  .phone {width:375px;max-width:94vw;margin:0 auto;background:var(--card);border-radius:28px;padding:14px;border:12px solid #11182733;box-shadow:var(--shadow)}
+  .topbar{display:flex;align-items:center;gap:12px}
+  .logo{width:42px;height:42px;border-radius:10px;background:linear-gradient(135deg,#06b6d4,#60a5fa);display:grid;place-items:center;color:white;font-weight:700}
+  h1{font-size:18px;margin:0}
+  p.lead{margin:6px 0 14px;color:var(--muted);font-size:13px}
+  /* Tabs/screens stack */
+  .screen{display:none}
+  .screen.active{display:block}
+  .card{background:var(--card);border-radius:14px;padding:12px;margin-bottom:12px;box-shadow:0 6px 18px rgba(2,6,23,0.04);border:1px solid #e6edf7}
+  .btn{display:inline-block;padding:10px 12px;border-radius:10px;border:0;background:var(--accent);color:white;font-weight:600}
+  .btn.secondary{background:#e6eef3;color:#0f172a}
+  .row{display:flex;gap:8px;align-items:center}
+  .muted{color:var(--muted);font-size:13px}
+  /* Categories */
+  .cats{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+  .cat{padding:10px;border-radius:10px;border:1px solid #e6edf7;background:var(--glass);cursor:pointer;font-size:14px}
+  .cat.selected{background:linear-gradient(135deg,#06b6d4,#60a5fa);color:white;border:0;box-shadow:0 8px 20px rgba(6,182,212,0.12)}
+  /* Inputs */
+  textarea{width:100%;min-height:84px;border-radius:10px;border:1px solid #e6edf7;padding:10px;font-size:14px}
+  input[type="file"]{display:none}
+  .media-preview{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+  .media-thumb{width:88px;height:88px;border-radius:8px;overflow:hidden;border:1px solid #e6edf7;background:#f8fafc;display:grid;place-items:center;font-size:12px;color:var(--muted)}
+  .media-thumb img, .media-thumb video{width:100%;height:100%;object-fit:cover}
+  /* Map placeholder */
+  .map{height:160px;border-radius:10px;border:1px solid #e6edf7;background:linear-gradient(180deg,#e7f6fa,#f0fcfb);display:grid;place-items:center;position:relative;overflow:hidden}
+  .map .hint{position:absolute;left:10px;top:10px;background:rgba(255,255,255,0.9);padding:6px 8px;border-radius:8px;font-size:12px}
+  .coords{font-size:13px;color:var(--muted);margin-top:8px}
+  /* Bottom actions */
+  .actions{display:flex;gap:8px;justify-content:space-between;align-items:center;margin-top:12px}
+  .secondary-outline{border:1px solid #cfeff0;background:white;color:#0f172a;padding:10px 12px;border-radius:10px}
+  .confirmation{background:linear-gradient(90deg,#06b6d4,#60a5fa);padding:10px;border-radius:10px;color:white;text-align:center;font-weight:600;}
+  /* small footer */
+  .small{font-size:12px;color:var(--muted);text-align:center;margin-top:8px}
+  /* simple nav */
+  .nav{display:flex;gap:8px;justify-content:space-around;margin-top:12px}
+  .nav button{background:transparent;border:1px solid transparent;padding:8px 10px;border-radius:10px}
+  .nav button.active{background:#0ea5a4;color:white;border:0}
+  /* modal */
+  .modal{position:fixed;inset:0;background:rgba(2,6,23,0.45);display:none;align-items:center;justify-content:center;padding:18px}
+  .modal.open{display:flex}
+  .modal .panel{width:360px;max-width:94vw;background:white;border-radius:14px;padding:12px}
+  /* responsive tweak */
+  @media (max-width:420px){ .phone{width:92vw} }
+</style>
+</head>
+<body>
+<div class="phone" role="application" aria-label="Prototipo App Denuncias">
+  <div class="topbar">
+    <div class="logo">DT</div>
+    <div>
+      <h1>Denuncias de Tránsito</h1>
+      <p class="lead">Reporta faltas de tránsito en Temuco — rápido y sencillo</p>
+    </div>
+  </div>
+
+  <!-- NAV -->
+  <div class="nav card" aria-hidden="false">
+    <button id="navHome" class="active" onclick="show('home')">Inicio</button>
+    <button id="navNew" onclick="show('new')">Nueva denuncia</button>
+    <button id="navHelp" onclick="show('help')">Ayuda</button>
+  </div>
+
+  <!-- SCREEN: HOME -->
+  <section id="home" class="screen active">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <strong>Últimas denuncias</strong>
+          <div class="muted" style="font-size:12px">Ver denuncias en tu área</div>
+        </div>
+        <button class="btn" onclick="show('new')">+ Denunciar</button>
+      </div>
+      <hr style="margin:10px 0;border:none;border-top:1px solid #f1f5f9">
+      <!-- ejemplo breve -->
+      <div style="display:flex;gap:10px;align-items:center">
+        <div style="width:56px;height:56px;border-radius:8px;background:#fff;border:1px solid #e6edf7;display:grid;place-items:center">📷</div>
+        <div>
+          <div style="font-weight:600">Exceso de velocidad · Av. Alemania</div>
+          <div class="muted">24 ago — Pendiente</div>
+        </div>
+      </div>
+      <div style="margin-top:10px" class="small">Tu participación ayuda a mejorar la seguridad vial. Mantén evidencia clara y respetuosa.</div>
+    </div>
+
+    <div class="card">
+      <strong>Selecciona una acción rápida</strong>
+      <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
+        <button class="secondary-outline" onclick="show('new')">Reportar ahora</button>
+        <button class="secondary-outline" onclick="show('map')">Explorar mapa</button>
+        <button class="secondary-outline" onclick="show('help')">Cómo denunciar</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCREEN: NEW REPORT -->
+  <section id="new" class="screen">
+    <div class="card">
+      <strong>1. Elige la categoría</strong>
+      <div class="muted" style="font-size:12px">Toca para seleccionar una sola categoría</div>
+      <div class="cats" id="cats">
+        <!-- 7 categorías -->
+        <div class="cat" data-key="falta-placa" onclick="toggleCat(this)">Falta de placa patente</div>
+        <div class="cat" data-key="botar-basura" onclick="toggleCat(this)">Botar basura a la calle</div>
+        <div class="cat" data-key="exceso-velocidad" onclick="toggleCat(this)">Exceso de velocidad</div>
+        <div class="cat" data-key="conduccion-imprudente" onclick="toggleCat(this)">Conducción imprudente</div>
+        <div class="cat" data-key="estacionar-prohibido" onclick="toggleCat(this)">Estacionar en lugar prohibido</div>
+        <div class="cat" data-key="uso-celular" onclick="toggleCat(this)">Uso de celular al conducir</div>
+        <div class="cat" data-key="luz-roja" onclick="toggleCat(this)">Pasarse luz roja</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <strong>2. Descripción (opcional)</strong>
+      <textarea id="desc" placeholder="Añade detalles: dirección, sentido, color del vehículo, matrícula visible..."></textarea>
+      <div class="muted" style="margin-top:6px">Sé objetivo/a y evita comentarios ofensivos o improperios.</div>
+    </div>
+
+    <div class="card">
+      <strong>3. Evidencia</strong>
+      <div class="muted" style="font-size:12px">Puedes subir foto(s), un video o solo texto.</div>
+      <div style="display:flex;gap:8px;margin-top:10px">
+        <label class="btn" for="pickImage">📷 Foto</label>
+        <label class="btn" for="pickVideo">🎥 Video</label>
+        <button class="btn secondary" onclick="openMediaModal()">Ver selección</button>
+      </div>
+
+      <input id="pickImage" type="file" accept="image/*" multiple onchange="handleFiles(this.files, false)">
+      <input id="pickVideo" type="file" accept="video/*" onchange="handleFiles(this.files, true)">
+
+      <div class="media-preview" id="mediaPreview" aria-live="polite"></div>
+    </div>
+
+    <div class="card" id="mapCard">
+      <strong>4. Ubicación (Temuco)</strong>
+      <div class="muted" style="font-size:12px">Mantén presionado en el mapa para fijar la ubicación exacta</div>
+      <div class="map" id="miniMap" onclick="pickRandomCoord()" role="img" aria-label="Mapa de Temuco (simulado)">
+        <div class="hint">Mapa — Temuco (simulado)</div>
+        <div style="font-size:12px;color:#064e4e">[Mapa interactivo placeholder]</div>
+      </div>
+      <div class="coords" id="coords">Ubicación: no seleccionada</div>
+    </div>
+
+    <div class="actions">
+      <button class="secondary-outline" onclick="show('home')">Cancelar</button>
+      <div style="flex:1"></div>
+      <button class="btn" onclick="previewSubmit()">Siguiente: revisar</button>
+    </div>
+  </section>
+
+  <!-- SCREEN: MAP FULL (simulación de selección más grande) -->
+  <section id="map" class="screen">
+    <div class="card">
+      <strong>Mapa — Seleccionar ubicación</strong>
+      <div class="muted" style="font-size:12px">Toca un punto del mapa para colocar el marcador</div>
+      <div class="map" id="fullMap" onclick="pickRandomCoord(true)">
+        <div class="hint">Toca para seleccionar ubicación</div>
+        <div style="font-size:12px;color:#064e4e">Mapa real se integraría con Google Maps / Leaflet</div>
+      </div>
+      <div class="coords" id="coordsFull">Ubicación: no seleccionada</div>
+    </div>
+    <div class="actions">
+      <button class="secondary-outline" onclick="show('new')">Volver</button>
+      <div style="flex:1"></div>
+      <button class="btn" onclick="confirmMap()">Usar ubicación</button>
+    </div>
+  </section>
+
+  <!-- SCREEN: PREVIEW / CONFIRM -->
+  <section id="preview" class="screen">
+    <div class="card">
+      <strong>Revisión antes de enviar</strong>
+      <div class="muted" style="font-size:13px;margin-top:6px" id="summaryText">Resumen...</div>
+    </div>
+    <div class="card">
+      <strong>Evidencia</strong>
+      <div id="mediaPreview2" class="media-preview"></div>
+    </div>
+    <div class="card">
+      <strong>Ubicación</strong>
+      <div id="summaryCoords" class="muted">No seleccionada</div>
+    </div>
+
+    <div class="actions">
+      <button class="secondary-outline" onclick="show('new')">Editar</button>
+      <div style="flex:1"></div>
+      <button class="confirmation" onclick="sendFake()">Enviar denuncia</button>
+    </div>
+    <div class="small">Al enviar aceptas que la evidencia será revisada por el equipo administrador.</div>
+  </section>
+
+  <!-- SCREEN: HELP -->
+  <section id="help" class="screen">
+    <div class="card">
+      <strong>Cómo hacer una buena denuncia</strong>
+      <ul style="margin:8px 0 0 16px;color:var(--muted)">
+        <li>Incluye foto o video nítido si es posible.</li>
+        <li>Describe ubicación y hora con precisión.</li>
+        <li>No difundas datos sensibles; la plataforma manejará la validación.</li>
+      </ul>
+    </div>
+    <div class="actions">
+      <button class="secondary-outline" onclick="show('home')">Volver</button>
+      <div style="flex:1"></div>
+      <button class="btn" onclick="show('new')">Reportar ahora</button>
+    </div>
+  </section>
+</div>
+
+<!-- simple modal for media details -->
+<div id="modal" class="modal" role="dialog" aria-modal="true">
+  <div class="panel">
+    <strong>Contenido seleccionado</strong>
+    <div id="modalBody" class="muted" style="margin-top:8px"></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
+      <button class="secondary-outline" onclick="closeModal()">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Basic UI flow & state (mock, no backend)
+  let state = {
+    category: null,
+    description: '',
+    media: [], // {uri:name, isVideo:boolean, blob?}
+    coords: null
+  };
+
+  function show(id){
+    document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    // nav active
+    document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));
+    if(id==='home') document.getElementById('navHome').classList.add('active');
+    if(id==='new')  document.getElementById('navNew').classList.add('active');
+  }
+
+  // categories (single-select)
+  function toggleCat(el){
+    document.querySelectorAll('.cat').forEach(c=>c.classList.remove('selected'));
+    el.classList.add('selected');
+    state.category = el.dataset.key;
+  }
+
+  // files handling
+  function handleFiles(files, isVideo){
+    for(let f of files){
+      // store minimal info, in real app store file object / blob
+      state.media.push({name: f.name, isVideo: isVideo, size: f.size});
+    }
+    renderMedia();
+  }
+  function renderMedia(target='mediaPreview'){
+    const wrap = document.getElementById(target);
+    wrap.innerHTML = '';
+    state.media.forEach((m, i)=>{
+      const div = document.createElement('div'); div.className='media-thumb';
+      div.innerHTML = m.isVideo ? '🎞️<div style="font-size:11px;margin-top:6px">'+m.name+'</div>' : '📷<div style="font-size:11px;margin-top:6px">'+m.name+'</div>';
+      div.onclick = ()=>openModalMedia(i);
+      wrap.appendChild(div);
+    });
+    // duplicate preview for confirm screen
+    const p2 = document.getElementById('mediaPreview2'); if(p2) { p2.innerHTML = wrap.innerHTML }
+  }
+
+  // modal
+  function openModalMedia(i){
+    const m = state.media[i];
+    document.getElementById('modalBody').innerText = (m.isVideo ? 'Video: ' : 'Imagen: ') + m.name + '\\nTamaño: '+ Math.round(m.size/1024) + ' KB';
+    document.getElementById('modal').classList.add('open');
+  }
+  function closeModal(){ document.getElementById('modal').classList.remove('open') }
+
+  // map mock: pick random coords near Temuco or accept provided
+  function pickRandomCoord(full=false){
+    // Temuco approx: lat -38.7396, lng -72.5981
+    const baseLat = -38.74, baseLng = -72.59;
+    const lat = (baseLat + (Math.random()-0.5)*0.06).toFixed(5);
+    const lng = (baseLng + (Math.random()-0.5)*0.06).toFixed(5);
+    state.coords = {lat, lng};
+    document.getElementById('coords').innerText = 'Ubicación: ' + lat + ', ' + lng;
+    document.getElementById('coordsFull').innerText = 'Ubicación: ' + lat + ', ' + lng;
+    if(full) {
+      // make visible selection for full map
+      document.getElementById('coordsFull').style.fontWeight = '600';
+    }
+  }
+  function confirmMap(){
+    // copy coords from full to main (already in state)
+    show('new');
+    document.getElementById('coords').innerText = 'Ubicación: ' + state.coords.lat + ', ' + state.coords.lng;
+  }
+
+  function previewSubmit(){
+    // gather description
+    state.description = document.getElementById('desc').value.trim();
+    // summary text
+    const summary = [];
+    summary.push('Categoría: ' + (state.category || 'No seleccionada'));
+    summary.push('Descripción: ' + (state.description || '—'));
+    summary.push('Medios: ' + (state.media.length ? state.media.map(m=>m.name).join(', ') : 'Sin evidencia'));
+    summary.push('Ubicación: ' + (state.coords ? (state.coords.lat + ', ' + state.coords.lng) : 'No seleccionada'));
+    document.getElementById('summaryText').innerText = summary.join('\\n');
+    document.getElementById('summaryCoords').innerText = state.coords ? (state.coords.lat + ', ' + state.coords.lng) : 'No seleccionada';
+    renderMedia('mediaPreview2');
+    show('preview');
+  }
+
+  function sendFake(){
+    // mock send: validate
+    if(!state.category){ alert('Selecciona una categoría.'); show('new'); return; }
+    if(!state.coords){ alert('Selecciona la ubicación en el mapa.'); show('new'); return; }
+    // pretend to send
+    alert('Denuncia enviada (prototipo).\\nCategoría: ' + state.category + '\\nEvidencias: ' + state.media.length);
+    // reset
+    state = {category:null, description:'', media:[], coords:null};
+    document.getElementById('desc').value = '';
+    document.getElementById('mediaPreview').innerHTML = '';
+    document.getElementById('coords').innerText = 'Ubicación: no seleccionada';
+    show('home');
+  }
+
+  function openMediaModal(){ // quick list view
+    if(state.media.length===0){ alert('No hay evidencia seleccionada.'); return; }
+    const list = state.media.map(m=> (m.isVideo ? 'Video: ' : 'Imagen: ') + m.name + ' ('+Math.round(m.size/1024)+'KB)').join('\\n');
+    document.getElementById('modalBody').innerText = list;
+    document.getElementById('modal').classList.add('open');
+  }
+
+  // small accessibility: allow enter to start new
+  document.addEventListener('keydown', (e)=>{ if(e.key==='n') show('new') });
+</script>
+</body>
+</html>
