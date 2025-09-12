@@ -1,28 +1,28 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portafolio - Proyecto de Desarrollo de Software</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Portafolio - Proyecto Denuncias de Tránsito</title>
     <style>
         * {
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
+            box-sizing: border-box
         }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.6;
             color: #333;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
             min-height: 100vh;
         }
 
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 20px
         }
 
         h1 {
@@ -30,123 +30,144 @@
             color: white;
             font-size: 2.5em;
             margin-bottom: 40px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.25);
         }
 
         .portfolio-section {
             background: white;
             margin-bottom: 20px;
             border-radius: 12px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
             overflow: hidden;
-            transition: transform 0.3s ease;
+            transition: transform .3s ease;
         }
 
         .portfolio-section:hover {
-            transform: translateY(-5px);
+            transform: translateY(-4px)
         }
 
         .section-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
             color: white;
             padding: 20px;
             cursor: pointer;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            transition: background 0.3s ease;
+            transition: background .3s ease;
         }
 
         .section-header:hover {
-            background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+            background: linear-gradient(135deg, #0891b2 0%, #2563eb 100%);
         }
 
         .section-header h2 {
             font-size: 1.5em;
-            font-weight: 600;
+            font-weight: 600
         }
 
         .dropdown-arrow {
             font-size: 1.2em;
-            transition: transform 0.3s ease;
+            transition: transform .3s ease
         }
 
         .section-content {
             padding: 30px;
             display: none;
-            animation: slideDown 0.3s ease;
+            animation: slideDown .3s ease
         }
 
         .section-content.active {
-            display: block;
+            display: block
         }
 
         @keyframes slideDown {
             from {
                 opacity: 0;
-                transform: translateY(-10px);
+                transform: translateY(-8px)
             }
             to {
                 opacity: 1;
-                transform: translateY(0);
+                transform: translateY(0)
             }
         }
 
         .section-header.active .dropdown-arrow {
-            transform: rotate(180deg);
+            transform: rotate(180deg)
         }
 
         .subsection {
-            margin-bottom: 25px;
+            margin-bottom: 25px
         }
 
         .subsection h3 {
-            color: #667eea;
+            color: #0ea5e9;
             font-size: 1.3em;
             margin-bottom: 15px;
-            border-left: 4px solid #667eea;
+            border-left: 4px solid #0ea5e9;
             padding-left: 15px;
         }
 
         .subsection h4 {
-            color: #555;
+            color: #444;
             font-size: 1.1em;
-            margin-bottom: 10px;
-            margin-top: 20px;
+            margin: 15px 0 10px
         }
 
         .subsection p, .subsection li {
-            margin-bottom: 10px;
             text-align: justify;
+            margin-bottom: 10px
         }
 
         .subsection ul {
-            padding-left: 20px;
-        }
-
-        .subsection ul li {
-            margin-bottom: 8px;
+            padding-left: 20px
         }
 
         .image-container {
             text-align: center;
-            margin: 20px 0;
+            margin: 20px 0
         }
 
         .image-container img {
             max-width: 100%;
-            height: auto;
             border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, .1);
         }
 
-        .empty-content {
-            text-align: center;
-            color: #888;
-            font-style: italic;
-            padding: 40px;
-            background: #f9f9f9;
-            border-radius: 8px;
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            font-size: 14px
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left
+        }
+
+        th {
+            background: #f1f5f9;
+            color: #0f172a
+        }
+
+        tr:nth-child(even) {
+            background: #f9fafb
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em
+            }
+
+            .section-content {
+                padding: 20px
+            }
+
+            table {
+                font-size: 12px
+            }
         }
 
         .methodology-grid {
@@ -167,203 +188,443 @@
             color: #667eea;
             margin-bottom: 10px;
         }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 10px;
-            }
-
-            h1 {
-                font-size: 2em;
-            }
-
-            .section-header {
-                padding: 15px;
-            }
-
-            .section-content {
-                padding: 20px;
-            }
-
-            .methodology-grid {
-                grid-template-columns: 1fr;
-            }
-        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Portafolio - Proyecto de Desarrollo de Software</h1>
+<div class="container">
+    <h1>Portafolio - Proyecto para Denuncias de Faltas de Tránsito</h1>
 
-        <!-- Actividad A1 -->
-        <div class="portfolio-section">
-            <div class="section-header" onclick="toggleSection('a1')">
-                <h2>Actividad A1: Problema y Contexto</h2>
-                <span class="dropdown-arrow">▼</span>
+    <!-- A1 -->
+    <div class="portfolio-section">
+        <div class="section-header" onclick="toggleSection('a1')">
+            <h2>Actividad A1: Problema y Contexto</h2><span class="dropdown-arrow">▼</span>
+        </div>
+        <div class="section-content" id="a1">
+            <div class="subsection">
+                <h3>Problema</h3>
+                <p>En la actualidad, los ciudadanos carecen de un medio accesible y confiable para reportar vehículos
+                    que incumplen las normas de tránsito o de seguridad vial. Aunque existen canales oficiales como
+                    Carabineros o autoridades de tránsito, estos suelen ser poco prácticos para denuncias rápidas,
+                    requieren largos trámites, o no permiten un seguimiento ciudadano transparente.</p>
+                <p>Esto genera que muchas conductas peligrosas, como lo son el exceso de velocidad, estacionar en
+                    lugares indebidos, conducción temeraria, vehículos en mal estado, entre otros, queden sin registrar,
+                    perpetuando la impunidad de conductores irresponsables.</p>
             </div>
-            <div class="section-content" id="a1">
-                <div class="subsection">
-                    <h3>Problema</h3>
-                    <p>En la actualidad, los ciudadanos carecen de un medio accesible y confiable para reportar vehículos que incumplen las normas de tránsito o de seguridad vial. Aunque existen canales oficiales como Carabineros o autoridades de tránsito, estos suelen ser poco prácticos para denuncias rápidas, requieren largos trámites, o no permiten un seguimiento ciudadano transparente.</p>
-                    <p>Esto genera que muchas conductas peligrosas, como lo son el exceso de velocidad, estacionar en lugares indebidos, conducción temeraria, vehículos en mal estado, entre otros, queden sin registrar, perpetuando la impunidad de conductores irresponsables.</p>
-                </div>
+            <div class="subsection">
+                <h3>Necesidad</h3>
+                <ul>
+                    <li>Brindar a la sociedad una herramienta simple y rápida para denunciar irregularidades viales.
+                    </li>
+                    <li>Fomentar la participación ciudadana en la seguridad vial.</li>
+                    <li>Recopilar información confiable que sirva para análisis de patrones de infracciones y apoyo a
+                        políticas públicas.
+                    </li>
+                </ul>
+            </div>
+            <div class="subsection">
+                <h3>Contexto</h3>
+                <h4>Social:</h4>
+                <p>Aumentan los accidentes de tránsito por imprudencias y falta de control. Los ciudadanos son testigos
+                    cotidianos de faltas que no llegan a instancias formales.</p>
 
-                <div class="subsection">
-                    <h3>Necesidad</h3>
-                    <ul>
-                        <li>Brindar a la sociedad una herramienta simple y rápida para denunciar irregularidades viales.</li>
-                        <li>Fomentar la participación ciudadana en la seguridad vial.</li>
-                        <li>Recopilar información confiable que sirva para análisis de patrones de infracciones y apoyo a políticas públicas.</li>
-                    </ul>
-                </div>
+                <h4>Tecnológico:</h4>
+                <p>La alta influencia de smartphones y el uso cotidiano de aplicaciones móviles y redes sociales hacen
+                    viable una aplicación colaborativa que permita subir reportes con evidencia (fotos, patentes,
+                    ubicación) y descripción textual.</p>
 
-                <div class="subsection">
-                    <h3>Contexto</h3>
-                    <h4>Social:</h4>
-                    <p>Aumentan los accidentes de tránsito por imprudencias y falta de control. Los ciudadanos son testigos cotidianos de faltas que no llegan a instancias formales.</p>
-                    
-                    <h4>Tecnológico:</h4>
-                    <p>La alta influencia de smartphones y el uso cotidiano de aplicaciones móviles y redes sociales hacen viable una aplicación colaborativa que permita subir reportes con evidencia (fotos, patentes, ubicación) y descripción textual.</p>
-                    
-                    <h4>Institucional:</h4>
-                    <p>Si bien los organismos de tránsito tienen canales formales, estos no están pensados para denuncias rápidas ni permiten a la ciudadanía tener una visión global de los problemas viales en su comunidad.</p>
-                    
-                    <h4>Legal:</h4>
-                    <p>Se deberá analizar cómo manejar los reportes para cumplir con normativas de privacidad y evitar difamaciones sin pruebas.</p>
-                </div>
+                <h4>Institucional:</h4>
+                <p>Si bien los organismos de tránsito tienen canales formales, estos no están pensados para denuncias
+                    rápidas ni permiten a la ciudadanía tener una visión global de los problemas viales en su
+                    comunidad.</p>
 
-                <div class="subsection">
-                    <h3>Stakeholders</h3>
-                    <ul>
-                        <li><strong>Usuarios Ciudadanos:</strong> Quienes reportan las fallas.</li>
-                        <li><strong>Conductores Denunciados:</strong> Sujetos a los reportes.</li>
-                        <li><strong>Instituciones de Tránsito y Seguridad Vial:</strong> Potenciales receptores y validadores de datos.</li>
-                        <li><strong>Gobiernos Locales:</strong> Interesados en datos estadísticos para mejorar políticas viales.</li>
-                        <li><strong>Desarrolladores del Sistema:</strong> Equipo encargado de implementar y mantener la aplicación.</li>
-                    </ul>
-                </div>
+                <h4>Legal:</h4>
+                <p>Se deberá analizar cómo manejar los reportes para cumplir con normativas de privacidad y evitar
+                    difamaciones sin pruebas.</p>
+            </div>
+            <div class="subsection">
+                <h3>Stakeholders</h3>
+                <ul>
+                    <li><strong>Usuarios Ciudadanos:</strong> Quienes reportan las fallas.</li>
+                    <li><strong>Conductores Denunciados:</strong> Sujetos a los reportes.</li>
+                    <li><strong>Instituciones de Tránsito y Seguridad Vial:</strong> Potenciales receptores y
+                        validadores de datos.
+                    </li>
+                    <li><strong>Gobiernos Locales:</strong> Interesados en datos estadísticos para mejorar políticas
+                        viales.
+                    </li>
+                    <li><strong>Desarrolladores del Sistema:</strong> Equipo encargado de implementar y mantener la
+                        aplicación.
+                    </li>
+                </ul>
+            </div>
+            <div class="subsection">
+                <h3>Justificación</h3>
+                <p>Un sistema digital que integre una aplicación móvil para aviso y denuncia y una plataforma digital
+                    web de gestión para administradores permitirá agilizar la detección, registro y rastreo de
+                    infracciones de tránsito, favoreciendo la transparencia, la eficiencia de los procesos y la
+                    seguridad vial.</p>
+            </div>
 
-                <div class="subsection">
-                    <h3>Justificación</h3>
-                    <p>Un sistema digital que integre una aplicación móvil para aviso y denuncia y una plataforma digital web de gestión para administradores permitirá agilizar la detección, registro y rastreo de infracciones de tránsito, favoreciendo la transparencia, la eficiencia de los procesos y la seguridad vial.</p>
-                </div>
-
-                <div class="subsection">
-                    <h3>Relevancia</h3>
-                    <p>El proyecto aporta a la convivencia y seguridad vial, mediante la reducción de infracciones no fiscalizadas, promueve la participación ciudadana y fortalece la capacidad de gestión de las autoridades frente a una problemática cotidiana con gran impacto social.</p>
-                </div>
+            <div class="subsection">
+                <h3>Relevancia</h3>
+                <p>El proyecto aporta a la convivencia y seguridad vial, mediante la reducción de infracciones no
+                    fiscalizadas, promueve la participación ciudadana y fortalece la capacidad de gestión de las
+                    autoridades frente a una problemática cotidiana con gran impacto social.</p>
             </div>
         </div>
+    </div>
 
-        <!-- Actividad A2 -->
-        <div class="portfolio-section">
-            <div class="section-header" onclick="toggleSection('a2')">
-                <h2>Actividad A2: Metodología y Herramientas</h2>
-                <span class="dropdown-arrow">▼</span>
-            </div>
-            <div class="section-content" id="a2">
-                <div class="subsection">
-                    <h3>Metodología de Desarrollo</h3>
-                    <p>Elegimos usar la metodología <strong>Scrum</strong> por las siguientes razones:</p>
-                    <ul>
-                        <li>Permite trabajar en iteraciones cortas (sprints) para ir desarrollando las funcionalidades principales de la aplicación, como el registro de denuncias, la carga de evidencias, el panel de análisis, etc.</li>
-                        <li>Facilita la comunicación con los stakeholders, validando periódicamente que lo desarrollado responda a la necesidad real.</li>
-                        <li>Ayuda a priorizar tareas y adaptarse a cambios en los requerimientos, como nuevas normativas o mejoras en privacidad.</li>
-                    </ul>
-                </div>
-
-                <div class="methodology-grid">
-                    <div class="methodology-card">
-                        <h4>Herramientas Colaborativas</h4>
-                        <ul>
-                            <li><strong>Control de Versiones:</strong> Git + GitHub para manejo de código, ramas y colaboración.</li>
-                            <li><strong>Gestión de tareas:</strong> Trello o Jira para organizar backlog, tareas de cada sprint y responsables.</li>
-                            <li><strong>Documentación:</strong> Notion o Google Docs para especificaciones, actas de reunión y decisiones.</li>
-                            <li><strong>Comunicación:</strong> Discord y Google Meet para reuniones rápidas y coordinación del equipo.</li>
-                        </ul>
-                    </div>
-
-                    <div class="methodology-card">
-                        <h4>Responsabilidades Iniciales</h4>
-                        <ul>
-                            <li><strong>Scrum Master:</strong> Coordinar el flujo de trabajo y eliminar obstáculos.</li>
-                            <li><strong>Product Owner:</strong> Definir prioridades y validar stakeholders.</li>
-                            <li><strong>Equipo de Desarrollo:</strong> Implementar funcionalidades técnicas.</li>
-                            <li><strong>Equipo de Diseño UX/UI:</strong> Construir interfaces accesibles y atractivas.</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="subsection">
-                    <h3>Plan de Trabajo</h3>
-                    <ol>
-                        <li><strong>Sprint 1 (2 semanas):</strong> Definir arquitectura, prototipos de interfaz, configuración del repositorio y configuración de entorno de trabajo.</li>
-                        <li><strong>Sprint 2 (2 semanas):</strong> Bases técnicas del trabajo.</li>
-                        <li><strong>Sprint 3 (2 semanas):</strong> Creación de módulos principales.</li>
-                        <li><strong>Sprint 4 (2 semanas):</strong> Integración con mapa georreferenciado, api para estadísticas y pruebas piloto.</li>
-                        <li><strong>Sprint 5 (2 semanas):</strong> Ajustes finales, pruebas de usuario y despliegue inicial.</li>
-                    </ol>
-                </div>
-
-                <div class="subsection">
-                    <h3>Cronograma de Trabajo</h3>
-                    <div class="image-container">
-                        <img src="https://github.com/user-attachments/assets/c771b1c5-154e-44f0-a9a4-cbdceb5c15c0" alt="Cronograma de Trabajo" />
-                    </div>
-                </div>
-
-                <div class="subsection">
-                    <h3>Versión Preliminar de Página Web Administrador</h3>
-                    <div class="image-container">
-                        <img src="https://github.com/user-attachments/assets/7c1db0fd-815b-4440-9cc5-36c131d87f00" alt="Página Web Administrador" />
-                    </div>
-                </div>
-            </div>
+    <!-- A2 -->
+    <div class="portfolio-section">
+        <div class="section-header" onclick="toggleSection('a2')">
+            <h2>Actividad A2: Metodología y Herramientas</h2><span class="dropdown-arrow">▼</span>
         </div>
-
-        <!-- Actividad A3 -->
-        <div class="portfolio-section">
-            <div class="section-header" onclick="toggleSection('a3')">
-                <h2>Actividad A3: [Por Definir]</h2>
-                <span class="dropdown-arrow">▼</span>
+        <div class="section-content" id="a2">
+            <div class="subsection">
+                <h3>Metodología de Desarrollo</h3>
+                <p>Elegimos usar la metodología <strong>Scrum</strong> por las siguientes razones:</p>
+                <ul>
+                    <li>Permite trabajar en iteraciones cortas (sprints) para ir desarrollando las funcionalidades
+                        principales de la aplicación, como el registro de denuncias, la carga de evidencias, el panel de
+                        análisis, etc.
+                    </li>
+                    <li>Facilita la comunicación con los stakeholders, validando periódicamente que lo desarrollado
+                        responda a la necesidad real.
+                    </li>
+                    <li>Ayuda a priorizar tareas y adaptarse a cambios en los requerimientos, como nuevas normativas o
+                        mejoras en privacidad.
+                    </li>
+                </ul>
             </div>
-            <div class="section-content" id="a3">
-                <div class="empty-content">
-                    <h3>Esta sección está pendiente de desarrollo</h3>
-                    <p>El contenido de la Actividad A3 será agregado en futuras iteraciones del proyecto.</p>
+
+            <div class="subsection">
+                <h3>Herramientas Colaborativas</h3>
+                <ul>
+                    <li><strong>Control de Versiones:</strong> Git + GitHub para manejo de código, ramas y colaboración.
+                    </li>
+                    <li><strong>Gestión de tareas:</strong> Trello o Jira para organizar backlog, tareas de cada sprint
+                        y responsables.
+                    </li>
+                    <li><strong>Documentación:</strong> Notion o Google Docs para especificaciones, actas de reunión y
+                        decisiones.
+                    </li>
+                    <li><strong>Comunicación:</strong> Discord y Google Meet para reuniones rápidas y coordinación del
+                        equipo.
+                    </li>
+                </ul>
+            </div>
+
+            <div class="subsection">
+                <h3>Responsabilidades Iniciales</h3>
+                <ul>
+                    <li><strong>Scrum Master:</strong> Coordinar el flujo de trabajo y eliminar obstáculos.</li>
+                    <li><strong>Product Owner:</strong> Definir prioridades y validar stakeholders.</li>
+                    <li><strong>Equipo de Desarrollo:</strong> Implementar funcionalidades técnicas.</li>
+                    <li><strong>Equipo de Diseño UX/UI:</strong> Construir interfaces accesibles y atractivas.</li>
+                </ul>
+            </div>
+            <br>
+
+            <div class="subsection">
+                <h3>Plan de Trabajo</h3>
+                <ol>
+                    <li><strong>Sprint 1 (2 semanas):</strong> Definir arquitectura, prototipos de interfaz, configuración del repositorio y configuración de entorno de trabajo.</li>
+                    <li><strong>Sprint 2 (2 semanas):</strong> Bases técnicas del trabajo.</li>
+                    <li><strong>Sprint 3 (2 semanas):</strong> Creación de módulos principales.</li>
+                    <li><strong>Sprint 4 (2 semanas):</strong> Integración con mapa georreferenciado, api para estadísticas y pruebas piloto.</li>
+                    <li><strong>Sprint 5 (2 semanas):</strong> Ajustes finales, pruebas de usuario y despliegue inicial.</li>
+                </ol>
+            </div>
+            <div class="subsection">
+                <h3>Cronograma de Trabajo</h3>
+                <div class="image-container">
+                    <img src="https://github.com/user-attachments/assets/c771b1c5-154e-44f0-a9a4-cbdceb5c15c0" alt="Cronograma de Trabajo" />
+                </div>
+            </div>
+            <div class="subsection">
+                <h3>Versión Preliminar de Página Web Administrador</h3>
+                <div class="image-container">
+                    <img src="https://github.com/user-attachments/assets/7c1db0fd-815b-4440-9cc5-36c131d87f00" alt="Página Web Administrador" />
                 </div>
             </div>
         </div>
     </div>
 
-    <script>
-        function toggleSection(sectionId) {
-            const content = document.getElementById(sectionId);
-            const header = content.previousElementSibling;
-            const arrow = header.querySelector('.dropdown-arrow');
-            
-            // Close all other sections
-            const allContents = document.querySelectorAll('.section-content');
-            const allHeaders = document.querySelectorAll('.section-header');
-            const allArrows = document.querySelectorAll('.dropdown-arrow');
-            
-            allContents.forEach((element, index) => {
-                if (element !== content) {
-                    element.classList.remove('active');
-                    allHeaders[index].classList.remove('active');
-                }
-            });
-            
-            // Toggle current section
-            content.classList.toggle('active');
-            header.classList.toggle('active');
-        }
+    <!-- A3 -->
+    <div class="portfolio-section">
+        <div class="section-header" onclick="toggleSection('a3')">
+            <h2>Actividad A3: Requerimientos y Documentación</h2><span class="dropdown-arrow">▼</span>
+        </div>
+        <div class="section-content" id="a3">
+                <p>Los requerimientos exhibidos a continuación han sido recopilados intentando dar solución a la problematica que afecta a las partes interesadas del proyecto.</p>
+            <br>
 
-        // Optional: Open first section by default
-        document.addEventListener('DOMContentLoaded', function() {
-            // Uncomment the line below if you want the first section open by default
-            // toggleSection('a1');
+            <div class="subsection">
+                <h3>Requerimientos Funcionales Estratégicos (15)</h3>
+                <table>
+                    <tr>
+                        <th>ID</th>
+                        <th>Descripción</th>
+                    </tr>
+                    <tr>
+                        <td>E1</td>
+                        <td>Generar indicadores mensuales de denuncias.</td>
+                    </tr>
+                    <tr>
+                        <td>E2</td>
+                        <td>Mostrar tendencias por categoría.</td>
+                    </tr>
+                    <tr>
+                        <td>E3</td>
+                        <td>Pronosticar cantidad de denuncias futuras.</td>
+                    </tr>
+                    <tr>
+                        <td>E4</td>
+                        <td>Ranking de categorías con más infracciones.</td>
+                    </tr>
+                    <tr>
+                        <td>E5</td>
+                        <td>Indicadores de participación ciudadana.</td>
+                    </tr>
+                    <tr>
+                        <td>E6</td>
+                        <td>Tasa de validación vs. rechazo.</td>
+                    </tr>
+                    <tr>
+                        <td>E7</td>
+                        <td>Tiempo promedio de validación.</td>
+                    </tr>
+                    <tr>
+                        <td>E8</td>
+                        <td>Comparar denuncias entre sectores de Temuco.</td>
+                    </tr>
+                    <tr>
+                        <td>E9</td>
+                        <td>Gráficos de tendencias por comuna.</td>
+                    </tr>
+                    <tr>
+                        <td>E10</td>
+                        <td>Reincidencia por patente.</td>
+                    </tr>
+                    <tr>
+                        <td>E11</td>
+                        <td>Crecimiento porcentual mensual.</td>
+                    </tr>
+                    <tr>
+                        <td>E12</td>
+                        <td>Tendencias por horario.</td>
+                    </tr>
+                    <tr>
+                        <td>E13</td>
+                        <td>Indicador de efectividad de denuncias.</td>
+                    </tr>
+                    <tr>
+                        <td>E14</td>
+                        <td>Mapas de calor de zonas críticas.</td>
+                    </tr>
+                    <tr>
+                        <td>E15</td>
+                        <td>Reportes trimestrales con pronósticos.</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="subsection">
+                <h3>Requerimientos Funcionales Tácticos (15)</h3>
+                <table>
+                    <tr>
+                        <th>ID</th>
+                        <th>Descripción</th>
+                    </tr>
+                    <tr>
+                        <td>T1</td>
+                        <td>Tabla resumen por categoría.</td>
+                    </tr>
+                    <tr>
+                        <td>T2</td>
+                        <td>Filtros por fecha, categoría y estado.</td>
+                    </tr>
+                    <tr>
+                        <td>T3</td>
+                        <td>Gráfico circular de distribución.</td>
+                    </tr>
+                    <tr>
+                        <td>T4</td>
+                        <td>Tabla por usuario denunciante.</td>
+                    </tr>
+                    <tr>
+                        <td>T5</td>
+                        <td>Gráfico de barras semanales.</td>
+                    </tr>
+                    <tr>
+                        <td>T6</td>
+                        <td>Exportar reportes a CSV/PDF.</td>
+                    </tr>
+                    <tr>
+                        <td>T7</td>
+                        <td>Tabla por estado (pendiente, validada, rechazada).</td>
+                    </tr>
+                    <tr>
+                        <td>T8</td>
+                        <td>Gráfico de líneas de evolución diaria.</td>
+                    </tr>
+                    <tr>
+                        <td>T9</td>
+                        <td>Tabla comparativa por ubicación.</td>
+                    </tr>
+                    <tr>
+                        <td>T10</td>
+                        <td>Ranking de usuarios más activos.</td>
+                    </tr>
+                    <tr>
+                        <td>T11</td>
+                        <td>Gráfico de barras por hora.</td>
+                    </tr>
+                    <tr>
+                        <td>T12</td>
+                        <td>Reporte de desempeño de administradores.</td>
+                    </tr>
+                    <tr>
+                        <td>T13</td>
+                        <td>Tabla de categorías menos frecuentes.</td>
+                    </tr>
+                    <tr>
+                        <td>T14</td>
+                        <td>Gráficos acumulativos históricos.</td>
+                    </tr>
+                    <tr>
+                        <td>T15</td>
+                        <td>Resumen de métricas por sprint.</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="subsection">
+                <h3>Requerimientos Funcionales Operacionales (20)</h3>
+                <table>
+                    <tr>
+                        <th>ID</th>
+                        <th>Descripción</th>
+                    </tr>
+                    <tr>
+                        <td>O1</td>
+                        <td>Registrar nueva denuncia.</td>
+                    </tr>
+                    <tr>
+                        <td>O2</td>
+                        <td>Seleccionar categoría de falta.</td>
+                    </tr>
+                    <tr>
+                        <td>O3</td>
+                        <td>Subir fotos como evidencia.</td>
+                    </tr>
+                    <tr>
+                        <td>O4</td>
+                        <td>Subir videos como evidencia.</td>
+                    </tr>
+                    <tr>
+                        <td>O5</td>
+                        <td>Agregar descripción textual.</td>
+                    </tr>
+                    <tr>
+                        <td>O6</td>
+                        <td>Seleccionar ubicación en mapa.</td>
+                    </tr>
+                    <tr>
+                        <td>O7</td>
+                        <td>Enviar denuncia al servidor web.</td>
+                    </tr>
+                    <tr>
+                        <td>O8</td>
+                        <td>Visualizar denuncias recibidas (admin).</td>
+                    </tr>
+                    <tr>
+                        <td>O9</td>
+                        <td>Validar o rechazar denuncia (admin).</td>
+                    </tr>
+                    <tr>
+                        <td>O10</td>
+                        <td>Asignar denuncias a revisores.</td>
+                    </tr>
+                    <tr>
+                        <td>O11</td>
+                        <td>Cambiar estado de denuncia.</td>
+                    </tr>
+                    <tr>
+                        <td>O12</td>
+                        <td>Mostrar evidencia adjunta.</td>
+                    </tr>
+                    <tr>
+                        <td>O13</td>
+                        <td>Buscar denuncias por ID o patente.</td>
+                    </tr>
+                    <tr>
+                        <td>O14</td>
+                        <td>Notificar al usuario sobre validación/rechazo.</td>
+                    </tr>
+                    <tr>
+                        <td>O15</td>
+                        <td>Permitir múltiples denuncias por usuario.</td>
+                    </tr>
+                    <tr>
+                        <td>O16</td>
+                        <td>Comentarios internos de administradores.</td>
+                    </tr>
+                    <tr>
+                        <td>O17</td>
+                        <td>Restringir acceso a panel admin.</td>
+                    </tr>
+                    <tr>
+                        <td>O18</td>
+                        <td>Editar o eliminar denuncias con error.</td>
+                    </tr>
+                    <tr>
+                        <td>O19</td>
+                        <td>Historial de acciones por denuncia.</td>
+                    </tr>
+                    <tr>
+                        <td>O20</td>
+                        <td>Registro de fecha y hora de denuncia.</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="subsection">
+                <h3>Requerimientos No Funcionales (3)</h3>
+                <table>
+                    <tr>
+                        <th>ID</th>
+                        <th>Descripción</th>
+                    </tr>
+                    <tr>
+                        <td>NF1</td>
+                        <td>Seguridad: encriptación y autenticación segura.</td>
+                    </tr>
+                    <tr>
+                        <td>NF2</td>
+                        <td>Rendimiento: procesar 500 denuncias simultáneas.</td>
+                    </tr>
+                    <tr>
+                        <td>NF3</td>
+                        <td>Disponibilidad: 99% en horario hábil.</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleSection(sectionId) {
+        const content = document.getElementById(sectionId);
+        const header = content.previousElementSibling;
+        document.querySelectorAll('.section-content').forEach(el => {
+            if (el !== content) el.classList.remove('active')
         });
-    </script>
+        document.querySelectorAll('.section-header').forEach(h => h.classList.remove('active'));
+        content.classList.toggle('active');
+        header.classList.toggle('active');
+    }
+</script>
 </body>
 </html>
