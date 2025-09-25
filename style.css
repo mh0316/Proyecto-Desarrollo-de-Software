@@ -1,212 +1,224 @@
-/* Custom CSS para complementar Bootstrap */
-
-/* Gradientes personalizados */
-.bg-gradient-primary {
-    background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%) !important;
-}
-
-/* Estructura de página para footer sticky */
-html, body {
-    height: 100%;
-}
-
 body {
-    background: linear-gradient(135deg, #043C6C
-    0%, #3b82f6 100%);
-    min-height: 100vh;
-    padding-top: 76px; /* Para compensar el navbar fijo */
-    display: flex;
-    flex-direction: column;
-}
-
-/* Main content debe expandirse */
-.main-content {
-    flex: 1;
-}
-
-/* Footer sticky */
-footer {
-    margin-top: auto;
-}
-
-/* Estilos para las secciones del portafolio */
-.portfolio-section {
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    border: none;
-}
-
-.portfolio-section:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
-}
-
-/* Header de las secciones */
-.portfolio-header {
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.portfolio-header:hover {
-    background: linear-gradient(135deg, #0891b2 0%, #2563eb 100%) !important;
-}
-
-/* Iconos de colapso */
-.collapse-icon {
-    transition: transform 0.3s ease;
-}
-
-.portfolio-header[aria-expanded="true"] .collapse-icon {
-    transform: rotate(180deg);
-}
-
-/* Badges del hero */
-.hero-badges .badge {
-    font-size: 0.9rem;
-    padding: 0.5rem 1rem !important;
-}
-
-/* Estilos para enlaces de badges */
-.hero-badge-link {
-    transition: all 0.3s ease;
-    display: inline-block;
-}
-
-.hero-badge-link:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    color: #333 !important;
-    background-color: #f8f9fa !important;
-}
-
-/* Timeline personalizada */
-.timeline-item {
-    position: relative;
-}
-
-.timeline-item:not(:last-child)::after {
-    content: '';
-    position: absolute;
-    left: 23px;
-    top: 100%;
-    width: 2px;
-    height: 20px;
-    background: #dee2e6;
-}
-
-/* Texto justificado */
-.text-justify {
-    text-align: justify;
-}
-
-/* Mejorar las tablas responsivas */
-.table-responsive {
-    border-radius: 0.5rem;
-    overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-/* Estilos para badges en tablas */
-.badge {
-    font-size: 0.75rem;
-    font-weight: 600;
-}
-
-/* Imágenes responsivas con sombra */
-.img-fluid.shadow {
-    transition: transform 0.3s ease;
-}
-
-.img-fluid.shadow:hover {
-    transform: scale(1.02);
-}
-
-/* Cards de contexto */
-.card.bg-light:hover {
-    background-color: #f8f9fa !important;
-    transform: translateY(-2px);
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-/* Navbar personalizada */
-.navbar-brand {
-    font-size: 1.4rem;
-    font-weight: 700;
-}
-
-.nav-link {
-    font-weight: 500;
-    transition: color 0.3s ease;
-}
-
-.nav-link:hover {
-    color: #e0f2fe !important;
-}
-
-/* Animaciones suaves */
-.card, .badge, .btn, .list-group-item {
-    transition: all 0.3s ease;
-}
-
-/* Scroll suave */
-html {
-    scroll-behavior: smooth;
-}
-
-/* Mejorar la legibilidad en dispositivos móviles */
-@media (max-width: 768px) {
-    body {
-        padding-top: 70px;
-    }
-
-    .display-4 {
-        font-size: 2rem;
-    }
-
-    .hero-badges .badge {
-        display: block;
-        margin-bottom: 0.5rem;
-    }
-
-    .timeline-item .d-flex {
-        flex-direction: column;
-    }
-
-    .timeline-item .badge {
-        align-self: flex-start;
-        margin-bottom: 0.5rem;
-    }
-}
-
-/* Estados de hover para elementos interactivos */
-.list-group-item:hover {
-    background-color: #f8f9fa;
-}
-
-.card-body:hover .card-title {
-    color: #0d6efd !important;
-}
-
-/* Mejoras para accesibilidad */
-.portfolio-header:focus {
-    outline: 2px solid #fff;
-    outline-offset: 2px;
-}
-
-/* Estilo para enlaces del navbar con smooth scroll */
-.navbar-nav .nav-link[href^="#"] {
-    position: relative;
-}
-
-.navbar-nav .nav-link[href^="#"]:hover::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 80%;
-    height: 2px;
-    background: #e0f2fe;
-    border-radius: 1px;
-}
+            background: #fff;
+            color: #1e293b;
+            padding-top: 70px; /* Espacio para el header fijo */
+        }
+        section {
+            scroll-margin-top: 100px;
+        }
+        /* Header fijo */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1030;
+            height: 70px;
+        }
+        
+        .sidebar {
+            position: fixed;
+            top: 70px; /* Debajo del header */
+            left: 0;
+            width: 15%; /* Ancho fijo para el sidebar */
+            height: calc(100vh - 70px); /* Altura completa menos el header */
+            overflow-y: auto; /* Scroll si el contenido excede */
+            background: #f8fafc;
+            border-right: 1px solid #e5e7eb;
+            z-index: 1020;
+            padding: 1rem;
+        }
+        
+        .sidebar .nav-link.active {
+            background: #e0e7ef;
+            font-weight: bold;
+            color: #2563eb !important;
+        }
+        .sidebar .nav-link {
+            color: #334155;
+        }
+        
+        /* Contenido principal con margen para el sidebar */
+        .main-content {
+            margin-left: 15%; /* Mismo ancho que el sidebar */
+            padding: 2rem;
+            min-height: calc(100vh - 70px); /* Altura mínima menos el header */
+            position: relative;
+        }
+        
+        .main-content h1, .main-content h2, .main-content h3, .main-content h4 {
+            color: #2563eb;
+            font-weight: 700;
+        }
+        .main-content h2 {
+            margin-top: 2.5rem;
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+        }
+        .main-content h3 {
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+        .main-content h4 {
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+            font-size: 1.1rem;
+        }
+        .main-content ul, .main-content ol {
+            margin-bottom: 1.5rem;
+        }
+        .main-content p {
+            margin-bottom: 1.2rem;
+            text-align: justify;
+        }
+        .main-content .table {
+            margin-bottom: 2rem;
+        }
+        .main-content .alert, .main-content .badge {
+            font-size: 1rem;
+        }
+        .main-content img {
+            max-width: 100%;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+            box-shadow: 0 2px 12px #0001;
+        }
+        .main-content .subsection {
+            margin-bottom: 2.5rem;
+        }
+        .main-content .list-group-item {
+            background: none;
+            border: none;
+            padding-left: 0;
+        }
+        .main-content .timeline .timeline-item {
+            margin-bottom: 1rem;
+        }
+        .main-content .timeline .badge {
+            font-size: 1rem;
+        }
+        .main-content .table th, .main-content .table td {
+            vertical-align: middle;
+        }
+        .main-content .table th {
+            background: #f1f5f9;
+        }
+        .main-content .alert-info {
+            background: #e0f2fe;
+            color: #0369a1;
+            border: none;
+        }
+        .main-content .alert-primary {
+            background: #dbeafe;
+            color: #1d4ed8;
+            border: none;
+        }
+        .main-content .alert-warning {
+            background: #fef9c3;
+            color: #b45309;
+            border: none;
+        }
+        .main-content .alert-success {
+            background: #dcfce7;
+            color: #166534;
+            border: none;
+        }
+        .main-content .alert-danger {
+            background: #fee2e2;
+            color: #991b1b;
+            border: none;
+        }
+        .main-content .text-justify {
+            text-align: justify;
+        }
+        .main-content .hero-badges a {
+            font-size: 1rem;
+            margin-right: 0.5rem;
+        }
+        
+        /* Header azul */
+        .navbar.bg-blue {
+            background: linear-gradient(90deg, #2563eb 0%, #1e40af 100%) !important;
+        }
+        .navbar.bg-blue .navbar-brand,
+        .navbar.bg-blue .btn,
+        .navbar.bg-blue .dropdown-toggle,
+        .navbar.bg-blue .dropdown-item {
+            color: #fff !important;
+        }
+        .navbar.bg-blue .btn-outline-secondary {
+            border-color: #fff;
+            color: #fff;
+        }
+        .navbar.bg-blue .btn-outline-secondary:hover,
+        .navbar.bg-blue .btn-outline-secondary:focus {
+            background: #1e40af;
+            color: #fff;
+        }
+        .navbar.bg-blue .dropdown-menu {
+            background: #1e293b;
+        }
+        .navbar.bg-blue .dropdown-item:hover {
+            background: #2563eb;
+            color: #fff;
+        }
+        
+        /* Footer */
+        footer {
+            margin-left: 250px; /* Mismo margen que el contenido principal */
+        }
+        
+        /* Responsive */
+        @media (max-width: 991px) {
+            .sidebar {
+                position: fixed;
+                left: -250px; /* Oculto por defecto */
+                transition: left 0.3s ease;
+            }
+            
+            .sidebar.show {
+                left: 0; /* Mostrar cuando tenga la clase 'show' */
+            }
+            
+            .main-content {
+                margin-left: 0; /* Sin margen en móvil */
+            }
+            
+            footer {
+                margin-left: 0; /* Sin margen en móvil */
+            }
+            
+            body {
+                padding-top: 70px;
+            }
+            
+            /* Botón para toggle del sidebar en móvil */
+            .sidebar-toggle {
+                display: block;
+            }
+        }
+        
+        @media (min-width: 992px) {
+            .sidebar-toggle {
+                display: none;
+            }
+        }
+        
+        /* Overlay para móvil */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 70px;
+            left: 0;
+            width: 100%;
+            height: calc(100vh - 70px);
+            background: rgba(0,0,0,0.5);
+            z-index: 1019;
+        }
+        
+        @media (max-width: 991px) {
+            .sidebar-overlay.show {
+                display: block;
+            }
+        }
