@@ -45,14 +45,14 @@
     body{margin:0;background:linear-gradient(180deg, #0f172a 0%, #0b1220 100%);color:var(--text);font:15px/1.4 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial}
     a{color:inherit;text-decoration:none}
     .app{display:grid;grid-template-columns:280px 1fr;min-height:100vh}
-    aside{background:rgba(255,255,255,.03);backdrop-filter: blur(6px);border-right:1px solid rgba(255,255,255,.06);padding:20px 16px;position:sticky;top:0;height:100vh}
+    aside{background:rgba(255,255,255,.03);backdrop-filter: blur(6px);border-right:1px solid rgba(255,255,255,.06);padding:20px 16px;position:sticky;top:0;height:100vh;overflow-y:auto}
     .logo{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:.3px}
     .logo-badge{width:34px;height:34px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(135deg,var(--brand),var(--brand-2));box-shadow:0 10px 30px rgba(96,165,250,.25)}
     .logo svg{width:18px;height:18px}
     .muted{color:var(--sub)}
     .side-section{margin-top:22px}
     .side-section h4{margin:16px 0 8px 4px;font-size:12px;letter-spacing:.3px;color:var(--sub);text-transform:uppercase}
-    .nav a{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;color:var(--text)}
+    .nav a{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;color:var(--text);cursor:pointer}
     .nav a.active,.nav a:hover{background:rgba(255,255,255,.06)}
     .chip{display:inline-block;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);font-size:12px}
     .cats{display:grid;gap:8px}
@@ -60,7 +60,7 @@
     .cat input{accent-color:var(--brand)}
     .footer-note{position:absolute;bottom:16px;left:16px;right:16px;font-size:12px;color:var(--sub)}
 
-    header{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid rgba(255,255,255,.06);position:sticky;top:0;background:rgba(15,23,42,.8);backdrop-filter: blur(6px);z-index:5}
+    header{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid rgba(255,255,255,.06);position:sticky;top:0;background:rgba(15,23,42,.8);backdrop-filter: blur(6px);z-index:5;flex-wrap:wrap;gap:12px}
     .search{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.04);border-radius:12px;min-width:320px}
     .search input{background:transparent;border:0;outline:0;color:var(--text);width:100%}
     .admin-user {
@@ -97,12 +97,12 @@
     tbody td{padding:14px 12px;border-top:1px solid rgba(255,255,255,.08);border-bottom:1px solid rgba(255,255,255,.08)}
     tbody tr{border-radius:14px;overflow:hidden}
 
-    .status{padding:6px 10px;border-radius:999px;font-size:12px;border:1px solid rgba(255,255,255,.12)}
+    .status{padding:6px 10px;border-radius:999px;font-size:12px;border:1px solid rgba(255,255,255,.12);display:inline-block}
     .st-pend{background:rgba(251,191,36,.08);border-color:rgba(251,191,36,.28)}
     .st-valid{background:rgba(52,211,153,.08);border-color:rgba(52,211,153,.28)}
     .st-rech{background:rgba(251,113,133,.08);border-color:rgba(251,113,133,.28)}
 
-    .tag{font-size:12px;padding:6px 8px;border:1px solid rgba(255,255,255,.12);border-radius:10px;background:rgba(255,255,255,.04)}
+    .tag{font-size:12px;padding:6px 8px;border:1px solid rgba(255,255,255,.12);border-radius:10px;background:rgba(255,255,255,.04);display:inline-block}
 
     .pill{padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.06);font-size:12px}
 
@@ -117,6 +117,8 @@
     @media (max-width: 1100px){
       .app{grid-template-columns:1fr}
       aside{position:relative;height:auto}
+      .filters{width:100%}
+      .search{min-width:100%}
     }
   </style>
 </head>
@@ -139,14 +141,38 @@
     <div class="side-section">
       <h4>Navegación</h4>
       <nav class="nav">
-        <a href="#" class="active" onclick="switchTab('tablero')">Tablero</a>
-        <a href="#" onclick="switchTab('reportes')">Reportes</a>
-        <a href="#" onclick="switchTab('mapa')">Mapa</a>
-        <a href="#" onclick="switchTab('config')">Configuración</a>
+        <a class="active" onclick="switchTab('tablero')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+          Tablero
+        </a>
+        <a onclick="switchTab('reportes')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+          Reportes
+        </a>
+        <a onclick="switchTab('mapa')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon><line x1="8" y1="2" x2="8" y2="18"></line><line x1="16" y1="6" x2="16" y2="22"></line></svg>
+          Mapa
+        </a>
+        <a onclick="switchTab('config')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M12 1v6m0 6v6m8.66-15.66l-4.24 4.24m-4.24 4.24l-4.24 4.24M23 12h-6m-6 0H1m20.66 8.66l-4.24-4.24m-4.24-4.24l-4.24-4.24"></path></svg>
+          Configuración
+        </a>
       </nav>
     </div>
 
-    <div class="side-section">
+    <div class="side-section" id="filters-sidebar">
+      <h4>Filtros de búsqueda</h4>
+      <div style="display:grid;gap:10px;margin-bottom:14px">
+        <select id="statusFilter" class="btn" onchange="applyFilters()">
+          <option value="">Estado: Todos</option>
+          <option value="pendiente">Pendiente</option>
+          <option value="validada">Validada</option>
+          <option value="rechazada">Rechazada</option>
+        </select>
+        <input type="date" id="fromDate" class="btn" onchange="applyFilters()" />
+        <input type="date" id="toDate" class="btn" onchange="applyFilters()" />
+      </div>
+      
       <h4>Categorías (7)</h4>
       <div class="cats">
         <label class="cat"><input type="checkbox" class="cat-filter" value="falta-placa" checked> Falta de placa patente</label>
@@ -157,6 +183,8 @@
         <label class="cat"><input type="checkbox" class="cat-filter" value="uso-celular" checked> Uso de celular al conducir</label>
         <label class="cat"><input type="checkbox" class="cat-filter" value="luz-roja" checked> Pasarse luz roja</label>
       </div>
+      
+      <button class="btn" onclick="resetFilters()" style="width:100%;margin-top:12px">Limpiar filtros</button>
     </div>
   </aside>
 
@@ -167,17 +195,8 @@
         <input id="q" placeholder="Buscar por ID, ubicación, denunciante…" oninput="applyFilters()" />
       </div>
       <div class="filters">
-        <select id="statusFilter" class="btn" onchange="applyFilters()">
-          <option value="">Estado: Todos</option>
-          <option value="pendiente">Pendiente</option>
-          <option value="validada">Validada</option>
-          <option value="rechazada">Rechazada</option>
-        </select>
-        <input type="date" id="fromDate" class="btn" onchange="applyFilters()" />
-        <input type="date" id="toDate" class="btn" onchange="applyFilters()" />
-        <button class="btn" onclick="resetFilters()">Limpiar</button>
         <button class="btn primary" onclick="newReport()">+ Nueva denuncia</button>
-        <button class="btn" onclick="toggleTheme()" style="margin-left:10px">🌗 Tema</button>
+        <button class="btn" onclick="toggleTheme()">🌗 Tema</button>
       </div>
       <!-- Visual usuario admin -->
       <div class="admin-user" title="Usuario administrador">
@@ -190,212 +209,392 @@
     </header>
 
     <main>
-      <!-- KPIs -->
-      <div class="grid">
-        <div class="card kpi" style="grid-column: span 3">
-          <div>
-            <div class="muted">Total denuncias</div>
-            <div class="n" id="kpi-total">—</div>
+      <!-- Pestañas de contenido -->
+      
+      <!-- TAB: TABLERO -->
+      <div id="tab-tablero">
+        <!-- KPIs -->
+        <div class="grid">
+          <div class="card kpi" style="grid-column: span 3">
+            <div>
+              <div class="muted">Total denuncias</div>
+              <div class="n" id="kpi-total">—</div>
+            </div>
+            <div class="pill">Filtradas</div>
           </div>
-          <div class="pill">Últimos 30 días</div>
+          <div class="card kpi" style="grid-column: span 3">
+            <div>
+              <div class="muted">Pendientes</div>
+              <div class="n" id="kpi-pend">—</div>
+            </div>
+            <div class="status st-pend">Pendiente</div>
+          </div>
+          <div class="card kpi" style="grid-column: span 3">
+            <div>
+              <div class="muted">Validadas</div>
+              <div class="n" id="kpi-valid">—</div>
+            </div>
+            <div class="status st-valid">Validada</div>
+          </div>
+          <div class="card kpi" style="grid-column: span 3">
+            <div>
+              <div class="muted">Rechazadas</div>
+              <div class="n" id="kpi-rech">—</div>
+            </div>
+            <div class="status st-rech">Rechazada</div>
+          </div>
         </div>
-        <div class="card kpi" style="grid-column: span 3">
-          <div>
-            <div class="muted">Pendientes</div>
-            <div class="n" id="kpi-pend">—</div>
+
+        <!-- Tabla de reportes -->
+        <div class="card">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+            <h3 style="margin:0">Denuncias</h3>
+            <div class="muted">Vista de administración</div>
           </div>
-          <div class="status st-pend">Pendiente</div>
+          <table id="tbl">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Fecha</th>
+                <th>Categoría</th>
+                <th>Ubicación</th>
+                <th>Estado</th>
+                <th>Denunciante</th>
+                <th>Evidencia</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Filas de ejemplo (mock) -->
+              <tr data-id="R-1024" data-cat="exceso-velocidad" data-status="pendiente" data-date="2025-08-25">
+                <td>R-1024</td>
+                <td>2025-08-25</td>
+                <td><span class="tag">Exceso de velocidad</span></td>
+                <td>Av. Los Leones 123</td>
+                <td><span class="status st-pend">Pendiente</span></td>
+                <td>Ana Soto</td>
+                <td><button class="btn" onclick="openModal('R-1024')">Ver</button></td>
+                <td>
+                  <button class="btn" onclick="setStatus(this,'validada')">Validar</button>
+                  <button class="btn" onclick="setStatus(this,'rechazada')">Rechazar</button>
+                </td>
+              </tr>
+              <tr data-id="R-1025" data-cat="falta-placa" data-status="validada" data-date="2025-08-26">
+                <td>R-1025</td>
+                <td>2025-08-26</td>
+                <td><span class="tag">Falta de placa patente</span></td>
+                <td>Ruta 5 Sur, Km 210</td>
+                <td><span class="status st-valid">Validada</span></td>
+                <td>Pedro Núñez</td>
+                <td><button class="btn" onclick="openModal('R-1025')">Ver</button></td>
+                <td>
+                  <button class="btn" onclick="setStatus(this,'pendiente')">A Pend.</button>
+                  <button class="btn" onclick="setStatus(this,'rechazada')">Rechazar</button>
+                </td>
+              </tr>
+              <tr data-id="R-1026" data-cat="botar-basura" data-status="rechazada" data-date="2025-08-27">
+                <td>R-1026</td>
+                <td>2025-08-27</td>
+                <td><span class="tag">Botar basura a la calle</span></td>
+                <td>Plaza Central</td>
+                <td><span class="status st-rech">Rechazada</span></td>
+                <td>Carla R.</td>
+                <td><button class="btn" onclick="openModal('R-1026')">Ver</button></td>
+                <td>
+                  <button class="btn" onclick="setStatus(this,'pendiente')">A Pend.</button>
+                  <button class="btn" onclick="setStatus(this,'validada')">Validar</button>
+                </td>
+              </tr>
+              <tr data-id="R-1027" data-cat="estacionar-prohibido" data-status="validada" data-date="2025-08-27">
+                <td>R-1027</td>
+                <td>2025-08-27</td>
+                <td><span class="tag">Estacionar en lugar prohibido</span></td>
+                <td>Calle Pino 45</td>
+                <td><span class="status st-valid">Validada</span></td>
+                <td>Ignacio V.</td>
+                <td><button class="btn" onclick="openModal('R-1027')">Ver</button></td>
+                <td>
+                  <button class="btn" onclick="setStatus(this,'pendiente')">A Pend.</button>
+                  <button class="btn" onclick="setStatus(this,'rechazada')">Rechazar</button>
+                </td>
+              </tr>
+              <tr data-id="R-1028" data-cat="uso-celular" data-status="pendiente" data-date="2025-08-28">
+                <td>R-1028</td>
+                <td>2025-08-28</td>
+                <td><span class="tag">Uso de celular al conducir</span></td>
+                <td>Av. Matta 911</td>
+                <td><span class="status st-pend">Pendiente</span></td>
+                <td>Marcos Q.</td>
+                <td><button class="btn" onclick="openModal('R-1028')">Ver</button></td>
+                <td>
+                  <button class="btn" onclick="setStatus(this,'validada')">Validar</button>
+                  <button class="btn" onclick="setStatus(this,'rechazada')">Rechazar</button>
+                </td>
+              </tr>
+              <tr data-id="R-1029" data-cat="luz-roja" data-status="pendiente" data-date="2025-08-28">
+                <td>R-1029</td>
+                <td>2025-08-28</td>
+                <td><span class="tag">Pasarse luz roja</span></td>
+                <td>Av. Providencia 2300</td>
+                <td><span class="status st-pend">Pendiente</span></td>
+                <td>Luis A.</td>
+                <td><button class="btn" onclick="openModal('R-1029')">Ver</button></td>
+                <td>
+                  <button class="btn" onclick="setStatus(this,'validada')">Validar</button>
+                  <button class="btn" onclick="setStatus(this,'rechazada')">Rechazar</button>
+                </td>
+              </tr>
+              <tr data-id="R-1030" data-cat="conduccion-imprudente" data-status="validada" data-date="2025-08-29">
+                <td>R-1030</td>
+                <td>2025-08-29</td>
+                <td><span class="tag">Conducción imprudente</span></td>
+                <td>Autopista Vespucio</td>
+                <td><span class="status st-valid">Validada</span></td>
+                <td>Daniela T.</td>
+                <td><button class="btn" onclick="openModal('R-1030')">Ver</button></td>
+                <td>
+                  <button class="btn" onclick="setStatus(this,'pendiente')">A Pend.</button>
+                  <button class="btn" onclick="setStatus(this,'rechazada')">Rechazar</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
-        <div class="card kpi" style="grid-column: span 3">
-          <div>
-            <div class="muted">Validadas</div>
-            <div class="n" id="kpi-valid">—</div>
+
+        <div class="card">
+          <h3 style="margin-top:0">📊 Análisis de datos</h3>
+          <p class="muted">Resumen de actividad y métricas clave. Los filtros de la barra lateral afectan los datos mostrados en esta vista.</p>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:14px">
+            <div style="padding:14px;background:rgba(255,255,255,.04);border-radius:10px;border:1px solid rgba(255,255,255,.08)">
+              <div class="muted">Promedio de resolución</div>
+              <div style="font-size:20px;font-weight:700;margin-top:4px">2.3 días</div>
+            </div>
+            <div style="padding:14px;background:rgba(255,255,255,.04);border-radius:10px;border:1px solid rgba(255,255,255,.08)">
+              <div class="muted">Tasa de validación</div>
+              <div style="font-size:20px;font-weight:700;margin-top:4px">68%</div>
+            </div>
+            <div style="padding:14px;background:rgba(255,255,255,.04);border-radius:10px;border:1px solid rgba(255,255,255,.08)">
+              <div class="muted">Categoría más frecuente</div>
+              <div style="font-size:20px;font-weight:700;margin-top:4px">Velocidad</div>
+            </div>
           </div>
-          <div class="status st-valid">Validada</div>
-        </div>
-        <div class="card kpi" style="grid-column: span 3">
-          <div>
-            <div class="muted">Rechazadas</div>
-            <div class="n" id="kpi-rech">—</div>
-          </div>
-          <div class="status st-rech">Rechazada</div>
         </div>
       </div>
 
-      <!-- Tabla de reportes -->
-      <div class="card">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-          <h3 style="margin:0">Reportes</h3>
-          <div class="muted">Vista de administración</div>
-        </div>
-        <table id="tbl">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Fecha</th>
-              <th>Categoría</th>
-              <th>Ubicación</th>
-              <th>Estado</th>
-              <th>Denunciante</th>
-              <th>Evidencia</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            <!-- Filas de ejemplo (mock) -->
-            <tr data-id="R-1024" data-cat="exceso-velocidad" data-status="pendiente" data-date="2025-08-25">
-              <td>R-1024</td>
-              <td>2025-08-25</td>
-              <td><span class="tag">Exceso de velocidad</span></td>
-              <td>Av. Los Leones 123</td>
-              <td><span class="status st-pend">Pendiente</span></td>
-              <td>Ana Soto</td>
-              <td><button class="btn" onclick="openModal('R-1024')">Ver</button></td>
-              <td>
-                <button class="btn" onclick="setStatus(this,'validada')">Validar</button>
-                <button class="btn" onclick="setStatus(this,'rechazada')">Rechazar</button>
-              </td>
-            </tr>
-            <tr data-id="R-1025" data-cat="falta-placa" data-status="validada" data-date="2025-08-26">
-              <td>R-1025</td>
-              <td>2025-08-26</td>
-              <td><span class="tag">Falta de placa patente</span></td>
-              <td>Ruta 5 Sur, Km 210</td>
-              <td><span class="status st-valid">Validada</span></td>
-              <td>Pedro Núñez</td>
-              <td><button class="btn" onclick="openModal('R-1025')">Ver</button></td>
-              <td>
-                <button class="btn" onclick="setStatus(this,'pendiente')">A Pend.</button>
-                <button class="btn" onclick="setStatus(this,'rechazada')">Rechazar</button>
-              </td>
-            </tr>
-            <tr data-id="R-1026" data-cat="botar-basura" data-status="rechazada" data-date="2025-08-27">
-              <td>R-1026</td>
-              <td>2025-08-27</td>
-              <td><span class="tag">Botar basura a la calle</span></td>
-              <td>Plaza Central</td>
-              <td><span class="status st-rech">Rechazada</span></td>
-              <td>Carla R.</td>
-              <td><button class="btn" onclick="openModal('R-1026')">Ver</button></td>
-              <td>
-                <button class="btn" onclick="setStatus(this,'pendiente')">A Pend.</button>
-                <button class="btn" onclick="setStatus(this,'validada')">Validar</button>
-              </td>
-            </tr>
-            <tr data-id="R-1027" data-cat="estacionar-prohibido" data-status="validada" data-date="2025-08-27">
-              <td>R-1027</td>
-              <td>2025-08-27</td>
-              <td><span class="tag">Estacionar en lugar prohibido</span></td>
-              <td>Calle Pino 45</td>
-              <td><span class="status st-valid">Validada</span></td>
-              <td>Ignacio V.</td>
-              <td><button class="btn" onclick="openModal('R-1027')">Ver</button></td>
-              <td>
-                <button class="btn" onclick="setStatus(this,'pendiente')">A Pend.</button>
-                <button class="btn" onclick="setStatus(this,'rechazada')">Rechazar</button>
-              </td>
-            </tr>
-            <tr data-id="R-1028" data-cat="uso-celular" data-status="pendiente" data-date="2025-08-28">
-              <td>R-1028</td>
-              <td>2025-08-28</td>
-              <td><span class="tag">Uso de celular al conducir</span></td>
-              <td>Av. Matta 911</td>
-              <td><span class="status st-pend">Pendiente</span></td>
-              <td>Marcos Q.</td>
-              <td><button class="btn" onclick="openModal('R-1028')">Ver</button></td>
-              <td>
-                <button class="btn" onclick="setStatus(this,'validada')">Validar</button>
-                <button class="btn" onclick="setStatus(this,'rechazada')">Rechazar</button>
-              </td>
-            </tr>
-            <tr data-id="R-1029" data-cat="luz-roja" data-status="pendiente" data-date="2025-08-28">
-              <td>R-1029</td>
-              <td>2025-08-28</td>
-              <td><span class="tag">Pasarse luz roja</span></td>
-              <td>Av. Providencia 2300</td>
-              <td><span class="status st-pend">Pendiente</span></td>
-              <td>Luis A.</td>
-              <td><button class="btn" onclick="openModal('R-1029')">Ver</button></td>
-              <td>
-                <button class="btn" onclick="setStatus(this,'validada')">Validar</button>
-                <button class="btn" onclick="setStatus(this,'rechazada')">Rechazar</button>
-              </td>
-            </tr>
-            <tr data-id="R-1030" data-cat="conduccion-imprudente" data-status="validada" data-date="2025-08-29">
-              <td>R-1030</td>
-              <td>2025-08-29</td>
-              <td><span class="tag">Conducción imprudente</span></td>
-              <td>Autopista Vespucio</td>
-              <td><span class="status st-valid">Validada</span></td>
-              <td>Daniela T.</td>
-              <td><button class="btn" onclick="openModal('R-1030')">Ver</button></td>
-              <td>
-                <button class="btn" onclick="setStatus(this,'pendiente')">A Pend.</button>
-                <button class="btn" onclick="setStatus(this,'rechazada')">Rechazar</button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Pestañas -->
-      <div id="tab-tablero" class="card">
-        <h3 style="margin-top:0">Tablero</h3>
-        <p class="muted">Resumen de actividad y métricas clave. Usa los filtros superiores para reducir el conjunto.</p>
-      </div>
-
+      <!-- TAB: REPORTES -->
       <div id="tab-reportes" class="card" style="display:none">
-        <h3 style="margin-top:0">Reportes (gestión masiva)</h3>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
-          <button class="btn" onclick="bulk('validada')">Validar seleccionados</button>
-          <button class="btn" onclick="bulk('rechazada')">Rechazar seleccionados</button>
-          <button class="btn" onclick="exportCSV()">Exportar CSV</button>
+        <h3 style="margin-top:0">📋 Gestión masiva de reportes</h3>
+        <p class="muted">Herramientas para operaciones en lote y exportación de datos.</p>
+        
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin:20px 0">
+          <button class="btn primary" onclick="bulk('validada')">✓ Validar seleccionados</button>
+          <button class="btn" onclick="bulk('rechazada')">✗ Rechazar seleccionados</button>
+          <button class="btn" onclick="bulk('pendiente')">⟳ Marcar como pendientes</button>
+          <button class="btn" onclick="exportCSV()">📥 Exportar CSV</button>
+          <button class="btn" onclick="exportPDF()">📄 Exportar PDF</button>
         </div>
-        <p class="muted">(Vista conceptual para operaciones masivas y exportación)</p>
+
+        <div style="background:rgba(96,165,250,.08);border:1px solid rgba(96,165,250,.28);border-radius:12px;padding:16px;margin-top:16px">
+          <h4 style="margin:0 0 8px 0;color:var(--brand-2)">💡 Consejos de uso</h4>
+          <ul style="margin:8px 0;padding-left:20px;color:var(--sub)">
+            <li>Utiliza los filtros del Tablero para segmentar las denuncias antes de aplicar acciones masivas</li>
+            <li>Las operaciones en lote afectarán únicamente a las denuncias visibles después de aplicar filtros</li>
+            <li>La exportación incluirá todos los campos relevantes para análisis posterior</li>
+          </ul>
+        </div>
+
+        <div style="margin-top:24px">
+          <h4>Estadísticas de exportación</h4>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-top:10px">
+            <div style="padding:12px;background:rgba(255,255,255,.04);border-radius:10px;border:1px solid rgba(255,255,255,.08)">
+              <div class="muted" style="font-size:12px">Última exportación</div>
+              <div style="font-weight:600;margin-top:4px">15 Oct 2025</div>
+            </div>
+            <div style="padding:12px;background:rgba(255,255,255,.04);border-radius:10px;border:1px solid rgba(255,255,255,.08)">
+              <div class="muted" style="font-size:12px">Total exportado (mes)</div>
+              <div style="font-weight:600;margin-top:4px">342 registros</div>
+            </div>
+            <div style="padding:12px;background:rgba(255,255,255,.04);border-radius:10px;border:1px solid rgba(255,255,255,.08)">
+              <div class="muted" style="font-size:12px">Formato preferido</div>
+              <div style="font-weight:600;margin-top:4px">CSV</div>
+            </div>
+          </div>
+        </div>
       </div>
 
+      <!-- TAB: MAPA -->
       <div id="tab-mapa" class="card" style="display:none">
-        <h3 style="margin-top:0">Mapa</h3>
-        <div class="media">
-          <div class="box">Mapa georreferenciado (placeholder)</div>
-          <div class="box">Heatmap de denuncias (placeholder)</div>
+        <h3 style="margin-top:0">🗺️ Vista georreferenciada</h3>
+        <p class="muted">Visualización espacial de las denuncias registradas en el sistema.</p>
+        
+        <div class="media" style="margin-top:16px">
+          <div class="box" style="min-height:400px">
+            <div style="text-align:center;color:var(--sub)">
+              <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="opacity:.3">
+                <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon>
+                <line x1="8" y1="2" x2="8" y2="18"></line>
+                <line x1="16" y1="6" x2="16" y2="22"></line>
+              </svg>
+              <div style="margin-top:12px">Mapa georreferenciado</div>
+              <div style="font-size:12px;margin-top:4px">(Integración con API de mapas)</div>
+            </div>
+          </div>
+          <div class="box" style="min-height:400px">
+            <div style="text-align:center;color:var(--sub)">
+              <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="opacity:.3">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                <circle cx="12" cy="10" r="3"></circle>
+              </svg>
+              <div style="margin-top:12px">Heatmap de incidencias</div>
+              <div style="font-size:12px;margin-top:4px">(Zonas de mayor concentración)</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:20px;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px">
+          <div style="padding:14px;background:rgba(255,255,255,.04);border-radius:10px;border:1px solid rgba(255,255,255,.08)">
+            <div class="muted">Zona con más denuncias</div>
+            <div style="font-weight:700;margin-top:6px">Centro histórico</div>
+          </div>
+          <div style="padding:14px;background:rgba(255,255,255,.04);border-radius:10px;border:1px solid rgba(255,255,255,.08)">
+            <div class="muted">Cobertura geográfica</div>
+            <div style="font-weight:700;margin-top:6px">23 sectores</div>
+          </div>
+          <div style="padding:14px;background:rgba(255,255,255,.04);border-radius:10px;border:1px solid rgba(255,255,255,.08)">
+            <div class="muted">Puntos registrados</div>
+            <div style="font-weight:700;margin-top:6px">487 ubicaciones</div>
+          </div>
         </div>
       </div>
 
+      <!-- TAB: CONFIGURACIÓN -->
       <div id="tab-config" class="card" style="display:none">
-        <h3 style="margin-top:0">Configuración</h3>
-        <p class="muted">Definición de categorías, umbrales, privacidad y flujos de validación.</p>
-        <div style="display:grid;gap:10px;max-width:680px">
-          <label>Nombre del organismo / equipo<br><input class="btn" style="width:100%" placeholder="Ej: Observatorio Vial Ciudadano"/></label>
-          <label>Correo de notificaciones<br><input class="btn" style="width:100%" placeholder="alertas@dominio.cl"/></label>
-          <button class="btn primary" onclick="showToast('Cambios guardados')">Guardar cambios</button>
+        <h3 style="margin-top:0">⚙️ Configuración del sistema</h3>
+        <p class="muted">Administración de parámetros, categorías y flujos de validación.</p>
+        
+        <div style="display:grid;gap:20px;max-width:720px;margin-top:24px">
+          <div>
+            <h4 style="margin:0 0 12px 0">Información general</h4>
+            <div style="display:grid;gap:12px">
+              <label>
+                <div style="margin-bottom:6px;font-weight:500">Nombre del organismo / equipo</div>
+                <input class="btn" style="width:100%" placeholder="Ej: Observatorio Vial Ciudadano" value="Dirección de Tránsito Municipal"/>
+              </label>
+              <label>
+                <div style="margin-bottom:6px;font-weight:500">Correo de notificaciones</div>
+                <input class="btn" style="width:100%" type="email" placeholder="alertas@dominio.cl" value="admin@transito.cl"/>
+              </label>
+              <label>
+                <div style="margin-bottom:6px;font-weight:500">Teléfono de contacto</div>
+                <input class="btn" style="width:100%" type="tel" placeholder="+56 9 XXXX XXXX" value="+56 9 8765 4321"/>
+              </label>
+            </div>
+          </div>
+
+          <div>
+            <h4 style="margin:0 0 12px 0">Gestión de categorías</h4>
+            <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:14px">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+                <span style="font-weight:500">Categorías activas</span>
+                <button class="btn" onclick="showToast('Función en desarrollo')">+ Añadir categoría</button>
+              </div>
+              <div style="font-size:13px;color:var(--sub)">
+                Actualmente hay 7 categorías configuradas. Puedes activar, desactivar o crear nuevas categorías según las necesidades del municipio.
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <h4 style="margin:0 0 12px 0">Privacidad y datos</h4>
+            <div style="display:grid;gap:10px">
+              <label style="display:flex;align-items:center;gap:10px">
+                <input type="checkbox" checked style="accent-color:var(--brand)">
+                <span>Anonimizar datos de denunciantes en exportaciones</span>
+              </label>
+              <label style="display:flex;align-items:center;gap:10px">
+                <input type="checkbox" checked style="accent-color:var(--brand)">
+                <span>Requerir verificación de identidad para nuevas denuncias</span>
+              </label>
+              <label style="display:flex;align-items:center;gap:10px">
+                <input type="checkbox" style="accent-color:var(--brand)">
+                <span>Permitir denuncias anónimas</span>
+              </label>
+            </div>
+          </div>
+
+          <div>
+            <h4 style="margin:0 0 12px 0">Flujo de validación</h4>
+            <select class="btn" style="width:100%">
+              <option>Revisión manual obligatoria</option>
+              <option>Validación automática con revisión posterior</option>
+              <option>Validación mixta (automática + manual)</option>
+            </select>
+            <div style="font-size:13px;color:var(--sub);margin-top:8px">
+              Define cómo se procesarán las nuevas denuncias ingresadas al sistema.
+            </div>
+          </div>
+
+          <div style="display:flex;gap:10px;margin-top:10px">
+            <button class="btn primary" onclick="showToast('✓ Configuración guardada exitosamente')">Guardar cambios</button>
+            <button class="btn" onclick="showToast('Cambios descartados')">Descartar</button>
+          </div>
         </div>
       </div>
+
     </main>
   </section>
 </div>
 
-<div id="toast" style="position:fixed;bottom:24px;right:24px;display:none;z-index:999;background:var(--brand);color:#fff;padding:14px 24px;border-radius:10px;font-weight:500"></div>
+<div id="toast" style="position:fixed;bottom:24px;right:24px;display:none;z-index:999;background:var(--brand);color:#fff;padding:14px 24px;border-radius:10px;font-weight:500;box-shadow:0 8px 24px rgba(0,0,0,.3)"></div>
 
-<div id="modal" class="modal" role="dialog" aria-modal="true" aria-hidden="true">
+<div id="modal" class="modal" role="dialog" aria-modal="true" aria-hidden="true" onclick="if(event.target===this) closeModal()">
   <div class="panel">
     <header>
       <h3 style="margin:0">Evidencia del reporte <span id="modal-id"></span></h3>
-      <button class="btn" onclick="closeModal()">Cerrar</button>
+      <button class="btn" onclick="closeModal()">✕ Cerrar</button>
     </header>
     <div class="content">
       <div class="media">
-        <div class="box">Imagen/Fotografía (placeholder)</div>
-        <div class="box">Video/Clip (placeholder)</div>
+        <div class="box" style="min-height:280px">
+          <div style="text-align:center;color:var(--sub)">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="opacity:.3">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+              <circle cx="8.5" cy="8.5" r="1.5"></circle>
+              <polyline points="21 15 16 10 5 21"></polyline>
+            </svg>
+            <div style="margin-top:10px">Imagen/Fotografía</div>
+            <div style="font-size:12px;margin-top:4px">(placeholder)</div>
+          </div>
+        </div>
+        <div class="box" style="min-height:280px">
+          <div style="text-align:center;color:var(--sub)">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="opacity:.3">
+              <polygon points="23 7 16 12 23 17 23 7"></polygon>
+              <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
+            </svg>
+            <div style="margin-top:10px">Video/Clip</div>
+            <div style="font-size:12px;margin-top:4px">(placeholder)</div>
+          </div>
+        </div>
       </div>
-      <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+      <div style="margin-top:16px;padding:14px;background:rgba(255,255,255,.04);border-radius:10px;border:1px solid rgba(255,255,255,.08)">
+        <div style="font-weight:500;margin-bottom:8px">Detalles adicionales</div>
+        <div style="display:grid;gap:6px;font-size:14px">
+          <div><span class="muted">Fecha y hora:</span> 25 Ago 2025, 14:32</div>
+          <div><span class="muted">Coordenadas GPS:</span> -33.4489, -70.6693</div>
+          <div><span class="muted">Dispositivo:</span> iPhone 13 Pro</div>
+        </div>
+      </div>
+      <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">
         <select class="btn" id="assignee">
           <option>Asignar revisor…</option>
           <option>J. Acevedo</option>
           <option>J. Huircaleo</option>
           <option>M. Henríquez</option>
+          <option>R. González</option>
         </select>
-        <button class="btn" onclick="showToast('Asignado')">Asignar</button>
+        <button class="btn primary" onclick="showToast('✓ Revisor asignado correctamente')">Asignar</button>
+        <button class="btn" onclick="showToast('Descargando evidencia...')">⬇ Descargar evidencia</button>
       </div>
     </div>
   </div>
@@ -406,12 +605,30 @@
   const $$ = (sel, ctx=document) => Array.from(ctx.querySelectorAll(sel));
 
   function switchTab(name){
+    // Ocultar todas las pestañas
     ['tablero','reportes','mapa','config'].forEach(t=>{
-      $('#tab-'+t).style.display = (t===name)? 'block' : 'none';
+      const tab = $('#tab-'+t);
+      if(tab) tab.style.display = 'none';
     });
+    
+    // Mostrar la pestaña seleccionada
+    const selectedTab = $('#tab-'+name);
+    if(selectedTab) selectedTab.style.display = 'block';
+    
+    // Actualizar nav activo
     $$('.nav a').forEach(a=>a.classList.remove('active'));
-    const link = Array.from($$('.nav a')).find(a=>a.textContent.toLowerCase().includes(name));
-    if(link) link.classList.add('active');
+    const links = $$('.nav a');
+    links.forEach(a=>{
+      if(a.textContent.trim().toLowerCase().includes(name.toLowerCase())){
+        a.classList.add('active');
+      }
+    });
+
+    // Mostrar/ocultar filtros del sidebar solo para Tablero
+    const filtersSidebar = $('#filters-sidebar');
+    if(filtersSidebar){
+      filtersSidebar.style.display = (name === 'tablero') ? 'block' : 'none';
+    }
   }
 
   function statusBadge(el, status){
@@ -423,7 +640,7 @@
     const toast = document.getElementById('toast');
     toast.textContent = msg;
     toast.style.display = 'block';
-    setTimeout(()=>toast.style.display='none',2200);
+    setTimeout(()=>toast.style.display='none',3000);
   }
 
   function setStatus(btn, status){
@@ -431,17 +648,20 @@
     tr.dataset.status = status;
     statusBadge(tr.querySelector('.status'), status);
     updateKPIs();
-    showToast('Reporte ' + (status==='validada'?'validado':status==='rechazado'?'rechazado':'pendiente') + ' exitosamente');
+    showToast('✓ Reporte ' + (status==='validada'?'validado':status==='rechazada'?'rechazado':'marcado como pendiente'));
   }
 
   function openModal(id){
     $('#modal-id').textContent = id;
     $('#modal').style.display = 'flex';
     $('#modal').setAttribute('aria-hidden','false');
+    document.body.style.overflow = 'hidden';
   }
+  
   function closeModal(){
     $('#modal').style.display = 'none';
     $('#modal').setAttribute('aria-hidden','true');
+    document.body.style.overflow = '';
   }
 
   function visibleByCategory(tr){
@@ -485,22 +705,33 @@
     $('#toDate').value = '';
     $$('.cat-filter').forEach(c=>c.checked=true);
     applyFilters();
-    showToast('Filtros restablecidos');
+    showToast('✓ Filtros restablecidos');
   }
 
   function newReport(){
-    showToast('Este es un prototipo. Aquí iría el flujo para crear una nueva denuncia.');
+    showToast('📝 Abriendo formulario para nueva denuncia...');
   }
 
   function bulk(status){
     const rows = $$('#tbl tbody tr').filter(r=>r.style.display !== 'none');
-    rows.forEach(r=>{ r.dataset.status = status; statusBadge(r.querySelector('.status'), status); });
+    if(rows.length === 0){
+      showToast('⚠ No hay denuncias visibles para procesar');
+      return;
+    }
+    rows.forEach(r=>{ 
+      r.dataset.status = status; 
+      statusBadge(r.querySelector('.status'), status); 
+    });
     updateKPIs();
-    showToast('Operación masiva (' + (status==='validada'?'validar':'rechazar') + ') realizada');
+    showToast(`✓ ${rows.length} denuncias ${status==='validada'?'validadas':status==='rechazada'?'rechazadas':'marcadas como pendientes'}`);
   }
 
   function exportCSV(){
     const rows = $$('#tbl tbody tr').filter(r=>r.style.display !== 'none');
+    if(rows.length === 0){
+      showToast('⚠ No hay datos para exportar');
+      return;
+    }
     const header = ['ID','Fecha','Categoria','Ubicacion','Estado','Denunciante'];
     const body = rows.map(r=>[
       r.dataset.id,
@@ -514,9 +745,15 @@
     const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
-    a.href = url; a.download = 'reportes.csv'; a.click();
+    a.href = url; 
+    a.download = `reportes_${new Date().toISOString().split('T')[0]}.csv`; 
+    a.click();
     URL.revokeObjectURL(url);
-    showToast('Archivo CSV exportado');
+    showToast('📥 Archivo CSV exportado exitosamente');
+  }
+
+  function exportPDF(){
+    showToast('📄 Generando PDF... (función en desarrollo)');
   }
 
   function updateKPIs(){
@@ -533,10 +770,20 @@
 
   function toggleTheme() {
     document.body.classList.toggle('light');
-    showToast(document.body.classList.contains('light') ? 'Modo claro activado' : 'Modo oscuro activado');
+    showToast(document.body.classList.contains('light') ? '☀️ Modo claro activado' : '🌙 Modo oscuro activado');
   }
 
+  // Event listeners
   $$('.cat-filter').forEach(c=>c.addEventListener('change', applyFilters));
+  
+  // Cerrar modal con tecla ESC
+  document.addEventListener('keydown', (e)=>{
+    if(e.key === 'Escape' && $('#modal').style.display === 'flex'){
+      closeModal();
+    }
+  });
+
+  // Inicialización
   applyFilters();
 </script>
 </body>
