@@ -65,14 +65,14 @@ public class Denuncia {
     @Column(name = "motivo_rechazo", length = 500)
     private String motivoRechazo;
 
-    //@OneToMany(mappedBy = "denuncia", cascade = CascadeType.ALL, orphanRemoval = true)
-    //private List<Evidencia> evidencias = new ArrayList<>();
+    @OneToMany(mappedBy = "denuncia", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Evidencia> evidencias = new ArrayList<>();
 
-    //@OneToMany(mappedBy = "denuncia", cascade = CascadeType.ALL, orphanRemoval = true)
-    //private List<ComentarioInterno> comentariosInternos = new ArrayList<>();
+    @OneToMany(mappedBy = "denuncia", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ComentarioInterno> comentariosInternos = new ArrayList<>();
 
-    //@OneToMany(mappedBy = "denuncia", cascade = CascadeType.ALL, orphanRemoval = true)
-    //private List<HistorialAccion> historial = new ArrayList<>();
+    @OneToMany(mappedBy = "denuncia", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<HistorialAccion> historial = new ArrayList<>();
 
     @PrePersist
     protected void onCreate() {
