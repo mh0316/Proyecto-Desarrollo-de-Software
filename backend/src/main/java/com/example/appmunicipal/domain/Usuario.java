@@ -1,5 +1,6 @@
 package com.example.appmunicipal.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDateTime;
@@ -50,7 +51,8 @@ public class Usuario {
     private LocalDateTime ultimaConexion;
 
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
-   private List<Denuncia> denuncias = new ArrayList<>();
+    @JsonIgnore  // ← IMPORTANTE: Evita serializar las denuncias
+    private List<Denuncia> denuncias = new ArrayList<>();
 
     @PrePersist
     protected void onCreate() {

@@ -1,5 +1,6 @@
 package com.example.appmunicipal.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.util.ArrayList;
@@ -21,6 +22,7 @@ public class Rol {
     private String descripcion;
 
     @OneToMany(mappedBy = "rol")
+    @JsonIgnore  // ← IMPORTANTE: Evita serializar la lista de usuarios
     private List<Usuario> usuarios = new ArrayList<>();
 
     // Constantes para nombres de roles
