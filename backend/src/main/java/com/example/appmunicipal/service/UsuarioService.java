@@ -8,6 +8,7 @@ import com.example.appmunicipal.DTO.RegistroRequest;
 import com.example.appmunicipal.DTO.UsuarioResponse;
 import com.example.appmunicipal.repository.RolRepository;
 import com.example.appmunicipal.repository.UsuarioRepository;
+import com.example.appmunicipal.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -16,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Random;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,11 +26,12 @@ public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
     private final RolRepository rolRepository;
+    private final JwtUtil jwtUtil;
     private final Random random = new Random();
 
     /**
      * Login universal (móvil y web) con email y password
-     * Retorna solo: token, email, username, nombre
+     * Retorna JWT token y datos básicos del usuario
      */
     @Transactional
     public LoginResponse login(LoginRequest request) {
@@ -65,10 +66,16 @@ public class UsuarioService {
             usuario.setUltimaConexion(LocalDateTime.now());
             usuarioRepository.save(usuario);
 
-            // Generar token de sesión
-            String token = generarTokenSesion(usuario.getId());
+            // Generar token JWT
+            String token = jwtUtil.generarToken(
+                    usuario.getId(),
+                    usuario.getEmail(),
+                    usuario.getUsername(),
+                    usuario.getNombre(),
+                    usuario.getRol().getNombre()
+            );
 
-            log.info("✅ Login exitoso para: {} (ID: {})", usuario.getEmail(), usuario.getId());
+            log.info("✅ Login exitoso para: {} (ID: {}) - JWT Token generado", usuario.getEmail(), usuario.getId());
 
             // Retornar solo los datos necesarios
             return new LoginResponse(
@@ -87,84 +94,84 @@ public class UsuarioService {
     }
 
     /**
-     * Generar token de sesión simple basado en UUID
-     * Formato: userId-uuid-timestamp
-     */
-    private String generarTokenSesion(Long usuarioId) {
-        String uuid = UUID.randomUUID().toString();
-        String timestamp = String.valueOf(System.currentTimeMillis());
-        return usuarioId + "-" + uuid + "-" + timestamp;
-    }
-
-    /**
-     * Validar token de sesión
-     */
-    public boolean validarToken(String token) {
-        if (token == null || token.trim().isEmpty()) {
-            return false;
-        }
-
-        try {
-            String[] partes = token.split("-");
-            if (partes.length < 3) {
-                return false;
-            }
-
-            Long usuarioId = Long.parseLong(partes[0]);
-
-            // Verificar que el usuario exista y esté activo
-            return usuarioRepository.findById(usuarioId)
-                    .map(Usuario::getActivo)
-                    .orElse(false);
-
-        } catch (Exception e) {
-            log.error("Error al validar token: {}", e.getMessage());
-            return false;
-        }
-    }
-
-    /**
-     * Obtener ID de usuario desde el token
-     */
-    public Long obtenerUsuarioIdDesdeToken(String token) {
-        try {
-            String[] partes = token.split("-");
-            return Long.parseLong(partes[0]);
-        } catch (Exception e) {
-            throw new RuntimeException("Token inválido");
-        }
-    }
-
-    /**
      * Registrar un nuevo usuario
+     *
+     * REGLAS:
+     * - RUT es OBLIGATORIO
+     * - Email es OBLIGATORIO
+     * - Nombre y Apellido son OBLIGATORIOS
+     * - Password es OBLIGATORIO
+     * - Username es OPCIONAL (se genera automáticamente)
+     * - Telefono es OPCIONAL
+     * - Siempre se registra como ACTIVO
+     * - Siempre se asigna rol CIUDADANO
      */
     @Transactional
     public UsuarioResponse registrarUsuario(RegistroRequest request) {
-        log.info("📝 Registrando nuevo usuario: {}", request.getEmail());
+        log.info("📝 Iniciando registro de usuario: {}", request.getEmail());
 
-        // Validar que el email sea requerido
+        // ========================================
+        // VALIDACIONES DE CAMPOS OBLIGATORIOS
+        // ========================================
+
+        // 1. Validar Email
         if (request.getEmail() == null || request.getEmail().trim().isEmpty()) {
-            throw new RuntimeException("El email es requerido");
+            throw new RuntimeException("El email es obligatorio");
         }
 
-        // Generar username si no viene en el request
-        String username = request.getUsername();
-        if (username == null || username.trim().isEmpty()) {
-            username = generarUsername(request.getNombre(), request.getApellido());
-            log.info("Username generado automáticamente: {}", username);
-        } else {
-            // Validar que el username no exista
-            if (usuarioRepository.existsByUsername(username)) {
-                throw new RuntimeException("El username ya está en uso: " + username);
-            }
+        // 2. Validar Password
+        if (request.getPassword() == null || request.getPassword().trim().isEmpty()) {
+            throw new RuntimeException("La contraseña es obligatoria");
         }
+
+        // 3. Validar Nombre
+        if (request.getNombre() == null || request.getNombre().trim().isEmpty()) {
+            throw new RuntimeException("El nombre es obligatorio");
+        }
+
+        // 4. Validar Apellido
+        if (request.getApellido() == null || request.getApellido().trim().isEmpty()) {
+            throw new RuntimeException("El apellido es obligatorio");
+        }
+
+        // 5. Validar RUT (OBLIGATORIO) ✅
+        if (request.getRut() == null || request.getRut().trim().isEmpty()) {
+            throw new RuntimeException("El RUT es obligatorio");
+        }
+
+        // ========================================
+        // VALIDAR QUE NO EXISTAN DUPLICADOS
+        // ========================================
 
         // Validar que el email no exista
         if (usuarioRepository.existsByEmail(request.getEmail())) {
             throw new RuntimeException("Ya existe una cuenta con este email: " + request.getEmail());
         }
 
-        // Crear nuevo usuario
+        // Validar que el RUT no exista (opcional pero recomendado)
+        if (usuarioRepository.existsByRut(request.getRut())) {
+            throw new RuntimeException("Ya existe una cuenta con este RUT: " + request.getRut());
+        }
+
+        // ========================================
+        // GENERAR USERNAME SI NO VIENE
+        // ========================================
+
+        String username = request.getUsername();
+        if (username == null || username.trim().isEmpty()) {
+            username = generarUsername(request.getNombre(), request.getApellido());
+            log.info("✨ Username generado automáticamente: {}", username);
+        } else {
+            // Validar que el username no exista si lo proporciona el usuario
+            if (usuarioRepository.existsByUsername(username)) {
+                throw new RuntimeException("El username ya está en uso: " + username);
+            }
+        }
+
+        // ========================================
+        // CREAR NUEVO USUARIO
+        // ========================================
+
         Usuario usuario = new Usuario();
         usuario.setUsername(username);
         usuario.setPassword(request.getPassword());
@@ -173,30 +180,41 @@ public class UsuarioService {
         usuario.setEmail(request.getEmail());
         usuario.setTelefono(request.getTelefono());
         usuario.setRut(request.getRut());
+
+        // ✅ SIEMPRE SE REGISTRA COMO ACTIVO
         usuario.setActivo(true);
+        log.info("✅ Usuario será registrado como ACTIVO");
 
-        // Asignar rol
-        Rol rol;
-        if (request.getRolId() != null) {
-            rol = rolRepository.findById(request.getRolId())
-                    .orElseThrow(() -> new RuntimeException("Rol no encontrado con ID: " + request.getRolId()));
-        } else {
-            // Rol por defecto: CIUDADANO
-            rol = rolRepository.findByNombre("CIUDADANO")
-                    .orElseThrow(() -> new RuntimeException("Rol CIUDADANO no encontrado en la base de datos"));
-        }
-        usuario.setRol(rol);
+        // ========================================
+        // ASIGNAR ROL CIUDADANO (SIEMPRE)
+        // ========================================
 
-        // Guardar usuario
+        Rol rolCiudadano = rolRepository.findByNombre(Rol.CIUDADANO)
+                .orElseThrow(() -> new RuntimeException("Error crítico: Rol CIUDADANO no encontrado en la base de datos"));
+
+        usuario.setRol(rolCiudadano);
+        log.info("✅ Rol asignado: CIUDADANO (ID: {})", rolCiudadano.getId());
+
+        // ========================================
+        // GUARDAR USUARIO
+        // ========================================
+
         Usuario usuarioGuardado = usuarioRepository.save(usuario);
-        log.info("✅ Usuario registrado exitosamente: ID={}, username={}",
-                usuarioGuardado.getId(), usuarioGuardado.getUsername());
+
+        log.info("✅ Usuario registrado exitosamente:");
+        log.info("   - ID: {}", usuarioGuardado.getId());
+        log.info("   - Username: {}", usuarioGuardado.getUsername());
+        log.info("   - Email: {}", usuarioGuardado.getEmail());
+        log.info("   - RUT: {}", usuarioGuardado.getRut());
+        log.info("   - Rol: {}", usuarioGuardado.getRol().getNombre());
+        log.info("   - Activo: {}", usuarioGuardado.getActivo());
 
         return new UsuarioResponse(usuarioGuardado);
     }
 
     /**
      * Generar username automático con formato: [inicial_nombre][inicial_apellido][numero_aleatorio]
+     * Ejemplo: Juan Pérez -> jp12345
      */
     private String generarUsername(String nombre, String apellido) {
         if (nombre == null || nombre.trim().isEmpty()) {
@@ -206,6 +224,7 @@ public class UsuarioService {
             throw new RuntimeException("El apellido es requerido para generar el username");
         }
 
+        // Obtener iniciales en minúsculas
         String inicialNombre = nombre.trim().substring(0, 1).toLowerCase();
         String inicialApellido = apellido.trim().substring(0, 1).toLowerCase();
         String baseUsername = inicialNombre + inicialApellido;
@@ -214,29 +233,80 @@ public class UsuarioService {
         int intentos = 0;
         int maxIntentos = 10;
 
+        // Intentar generar username único
         while (intentos < maxIntentos) {
-            int numeroDigitos = random.nextInt(3) + 3;
+            int numeroDigitos = random.nextInt(3) + 3; // 3, 4 o 5 dígitos
             int numeroAleatorio = generarNumeroAleatorio(numeroDigitos);
             username = baseUsername + numeroAleatorio;
 
             if (!usuarioRepository.existsByUsername(username)) {
-                log.info("Username único generado: {} (intento {})", username, intentos + 1);
+                log.info("✨ Username único generado: {} (intento {})", username, intentos + 1);
                 return username;
             }
 
             intentos++;
+            log.warn("⚠️  Username {} ya existe, reintentando... ({}/{})", username, intentos, maxIntentos);
         }
 
+        // Fallback: usar timestamp si no se logró en 10 intentos
         username = baseUsername + System.currentTimeMillis() % 1000000;
-        log.warn("Usando timestamp para username: {}", username);
+        log.warn("⚠️  No se pudo generar username único en {} intentos, usando timestamp: {}", maxIntentos, username);
 
         return username;
     }
 
+    /**
+     * Generar número aleatorio con cantidad específica de dígitos
+     */
     private int generarNumeroAleatorio(int digitos) {
-        int min = (int) Math.pow(10, digitos - 1);
-        int max = (int) Math.pow(10, digitos) - 1;
+        int min = (int) Math.pow(10, digitos - 1); // 100, 1000, 10000
+        int max = (int) Math.pow(10, digitos) - 1;  // 999, 9999, 99999
         return random.nextInt(max - min + 1) + min;
+    }
+
+    /**
+     * Validar token JWT
+     */
+    public boolean validarToken(String token) {
+        if (token == null || token.trim().isEmpty()) {
+            return false;
+        }
+
+        try {
+            boolean valido = jwtUtil.validarToken(token);
+
+            if (valido) {
+                // Verificar que el usuario aún exista y esté activo
+                Long usuarioId = jwtUtil.extraerUsuarioId(token);
+                return usuarioRepository.findById(usuarioId)
+                        .map(Usuario::getActivo)
+                        .orElse(false);
+            }
+
+            return false;
+
+        } catch (Exception e) {
+            log.error("Error al validar token: {}", e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Obtener ID de usuario desde el token JWT
+     */
+    public Long obtenerUsuarioIdDesdeToken(String token) {
+        try {
+            return jwtUtil.extraerUsuarioId(token);
+        } catch (Exception e) {
+            throw new RuntimeException("Token JWT inválido: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Obtener información completa del token JWT
+     */
+    public java.util.Map<String, Object> obtenerInfoToken(String token) {
+        return jwtUtil.obtenerInfoToken(token);
     }
 
     @Transactional(readOnly = true)

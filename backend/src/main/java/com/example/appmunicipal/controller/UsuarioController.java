@@ -25,13 +25,7 @@ public class UsuarioController {
      * Login universal (móvil y web) con email y password
      * POST /api/usuarios/login
      *
-     * Retorna:
-     * - success: true/false
-     * - message: mensaje descriptivo
-     * - token: token de sesión (si success = true)
-     * - email: email del usuario
-     * - username: username del usuario
-     * - nombre: nombre del usuario
+     * Retorna JWT Token en la respuesta
      */
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
@@ -40,7 +34,7 @@ public class UsuarioController {
         LoginResponse response = usuarioService.login(request);
 
         if (response.isSuccess()) {
-            log.info("✅ Login exitoso - Token generado para: {}", request.getEmail());
+            log.info("✅ Login exitoso - JWT Token generado para: {}", request.getEmail());
             return ResponseEntity.ok(response);
         } else {
             log.warn("❌ Login fallido para: {} - Razón: {}", request.getEmail(), response.getMessage());
@@ -49,30 +43,70 @@ public class UsuarioController {
     }
 
     /**
-     * Validar token de sesión
+     * Validar token JWT
      * GET /api/usuarios/sesion/validar?token=xxxxx
      */
     @GetMapping("/sesion/validar")
     public ResponseEntity<?> validarSesion(@RequestParam String token) {
-        log.info("🔐 Validando token de sesión");
+        log.info("🔐 Validando token JWT");
 
         boolean valido = usuarioService.validarToken(token);
 
         Map<String, Object> response = new HashMap<>();
         response.put("valido", valido);
-        response.put("message", valido ? "Sesión válida" : "Sesión inválida o expirada");
+        response.put("message", valido ? "Token JWT válido" : "Token JWT inválido o expirado");
 
         if (valido) {
-            log.info("✅ Token válido");
+            log.info("✅ Token JWT válido");
         } else {
-            log.warn("❌ Token inválido o expirado");
+            log.warn("❌ Token JWT inválido o expirado");
         }
 
         return ResponseEntity.ok(response);
     }
 
     /**
-     * Obtener datos completos del usuario actual desde el token
+     * Obtener información del token JWT
+     * GET /api/usuarios/token/info
+     * Header: Authorization: Bearer {token}
+     */
+    @GetMapping("/token/info")
+    public ResponseEntity<?> obtenerInfoToken(
+            @RequestHeader(value = "Authorization", required = false) String authHeader) {
+
+        try {
+            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                Map<String, Object> error = new HashMap<>();
+                error.put("success", false);
+                error.put("message", "Token no proporcionado");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
+            }
+
+            String token = authHeader.substring(7); // Remover "Bearer "
+
+            Map<String, Object> info = usuarioService.obtenerInfoToken(token);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("tokenInfo", info);
+
+            log.info("✅ Información del token obtenida");
+
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            log.error("❌ Error al obtener info del token: {}", e.getMessage());
+
+            Map<String, Object> error = new HashMap<>();
+            error.put("success", false);
+            error.put("message", "Error al decodificar token: " + e.getMessage());
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+        }
+    }
+
+    /**
+     * Obtener perfil del usuario desde el token JWT
      * GET /api/usuarios/sesion/perfil
      * Header: Authorization: Bearer {token}
      */
@@ -93,7 +127,7 @@ public class UsuarioController {
             if (!usuarioService.validarToken(token)) {
                 Map<String, Object> error = new HashMap<>();
                 error.put("success", false);
-                error.put("message", "Token inválido o expirado");
+                error.put("message", "Token JWT inválido o expirado");
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
             }
 
@@ -185,32 +219,6 @@ public class UsuarioController {
     public ResponseEntity<?> buscarPorId(@PathVariable Long id) {
         try {
             UsuarioResponse usuario = usuarioService.buscarPorId(id);
-
-            Map<String, Object> response = new HashMap<>();
-            response.put("success", true);
-            response.put("usuario", usuario);
-
-            return ResponseEntity.ok(response);
-
-        } catch (RuntimeException e) {
-            log.error("❌ Error al buscar usuario: {}", e.getMessage());
-
-            Map<String, Object> error = new HashMap<>();
-            error.put("success", false);
-            error.put("message", e.getMessage());
-
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
-        }
-    }
-
-    /**
-     * Buscar usuario por email
-     * GET /api/usuarios/email/{email}
-     */
-    @GetMapping("/email/{email}")
-    public ResponseEntity<?> buscarPorEmail(@PathVariable String email) {
-        try {
-            UsuarioResponse usuario = usuarioService.buscarPorEmail(email);
 
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);

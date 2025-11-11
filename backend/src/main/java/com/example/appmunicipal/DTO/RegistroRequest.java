@@ -9,14 +9,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class RegistroRequest {
 
-    private String username;
-    private String password;
-    private String nombre;
-    private String apellido;
-    private String email;
-    private String telefono;
-    private String rut;
+    private String username;      // Opcional - se genera automáticamente si no viene
+    private String password;      // Obligatorio
+    private String nombre;        // Obligatorio
+    private String apellido;      // Obligatorio
+    private String email;         // Obligatorio
+    private String telefono;      // Opcional
+    private String rut;           // Obligatorio ✅
 
-    // Opcional: si quieres permitir seleccionar el rol al registrar
-    private Long rolId;
+    // rolId ya NO se usa, siempre será CIUDADANO
 }
