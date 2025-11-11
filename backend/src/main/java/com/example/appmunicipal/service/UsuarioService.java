@@ -9,6 +9,7 @@ import com.example.appmunicipal.DTO.UsuarioResponse;
 import com.example.appmunicipal.repository.RolRepository;
 import com.example.appmunicipal.repository.UsuarioRepository;
 import com.example.appmunicipal.util.JwtUtil;
+import com.example.appmunicipal.util.RutUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,7 @@ public class UsuarioService {
     private final UsuarioRepository usuarioRepository;
     private final RolRepository rolRepository;
     private final JwtUtil jwtUtil;
+    private final RutUtil rutUtil;
     private final Random random = new Random();
 
     /**
@@ -114,43 +116,56 @@ public class UsuarioService {
         // VALIDACIONES DE CAMPOS OBLIGATORIOS
         // ========================================
 
-        // 1. Validar Email
         if (request.getEmail() == null || request.getEmail().trim().isEmpty()) {
             throw new RuntimeException("El email es obligatorio");
         }
 
-        // 2. Validar Password
         if (request.getPassword() == null || request.getPassword().trim().isEmpty()) {
             throw new RuntimeException("La contraseña es obligatoria");
         }
 
-        // 3. Validar Nombre
         if (request.getNombre() == null || request.getNombre().trim().isEmpty()) {
             throw new RuntimeException("El nombre es obligatorio");
         }
 
-        // 4. Validar Apellido
         if (request.getApellido() == null || request.getApellido().trim().isEmpty()) {
             throw new RuntimeException("El apellido es obligatorio");
         }
 
-        // 5. Validar RUT (OBLIGATORIO) ✅
         if (request.getRut() == null || request.getRut().trim().isEmpty()) {
             throw new RuntimeException("El RUT es obligatorio");
         }
 
         // ========================================
+        // VALIDAR FORMATO Y DÍGITO VERIFICADOR DEL RUT
+        // ========================================
+
+        // Validar formato del RUT
+        if (!rutUtil.validarFormato(request.getRut())) {
+            throw new RuntimeException("El formato del RUT es inválido. Formato esperado: 12.345.678-9 o 12345678-9");
+        }
+
+        // Validar dígito verificador
+        if (!rutUtil.validarDigitoVerificador(request.getRut())) {
+            throw new RuntimeException("El RUT ingresado no es válido. Verifica el dígito verificador");
+        }
+
+        log.info("✅ RUT validado correctamente: {}", request.getRut());
+
+        // Normalizar RUT para almacenamiento (sin puntos: "12345678-9")
+        String rutNormalizado = rutUtil.normalizarRut(request.getRut());
+        log.info("📝 RUT normalizado para almacenamiento: {}", rutNormalizado);
+
+        // ========================================
         // VALIDAR QUE NO EXISTAN DUPLICADOS
         // ========================================
 
-        // Validar que el email no exista
         if (usuarioRepository.existsByEmail(request.getEmail())) {
             throw new RuntimeException("Ya existe una cuenta con este email: " + request.getEmail());
         }
 
-        // Validar que el RUT no exista (opcional pero recomendado)
-        if (usuarioRepository.existsByRut(request.getRut())) {
-            throw new RuntimeException("Ya existe una cuenta con este RUT: " + request.getRut());
+        if (usuarioRepository.existsByRut(rutNormalizado)) {
+            throw new RuntimeException("Ya existe una cuenta con este RUT: " + rutUtil.formatearRut(rutNormalizado));
         }
 
         // ========================================
@@ -162,7 +177,6 @@ public class UsuarioService {
             username = generarUsername(request.getNombre(), request.getApellido());
             log.info("✨ Username generado automáticamente: {}", username);
         } else {
-            // Validar que el username no exista si lo proporciona el usuario
             if (usuarioRepository.existsByUsername(username)) {
                 throw new RuntimeException("El username ya está en uso: " + username);
             }
@@ -179,21 +193,14 @@ public class UsuarioService {
         usuario.setApellido(request.getApellido());
         usuario.setEmail(request.getEmail());
         usuario.setTelefono(request.getTelefono());
-        usuario.setRut(request.getRut());
-
-        // ✅ SIEMPRE SE REGISTRA COMO ACTIVO
+        usuario.setRut(rutNormalizado);  // ✅ Guardar RUT normalizado
         usuario.setActivo(true);
-        log.info("✅ Usuario será registrado como ACTIVO");
 
-        // ========================================
-        // ASIGNAR ROL CIUDADANO (SIEMPRE)
-        // ========================================
-
+        // Asignar rol CIUDADANO
         Rol rolCiudadano = rolRepository.findByNombre(Rol.CIUDADANO)
                 .orElseThrow(() -> new RuntimeException("Error crítico: Rol CIUDADANO no encontrado en la base de datos"));
 
         usuario.setRol(rolCiudadano);
-        log.info("✅ Rol asignado: CIUDADANO (ID: {})", rolCiudadano.getId());
 
         // ========================================
         // GUARDAR USUARIO
