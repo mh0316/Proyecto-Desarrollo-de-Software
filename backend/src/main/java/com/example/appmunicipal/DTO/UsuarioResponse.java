@@ -17,12 +17,8 @@ public class UsuarioResponse {
     private String nombre;
     private String apellido;
     private String email;
-    private String telefono;
-    private String rut;
-    private RolSimpleDto rol;
-    private Boolean activo;
+    private String rol;
     private LocalDateTime fechaRegistro;
-    private LocalDateTime ultimaConexion;
 
     // Constructor desde entidad Usuario
     public UsuarioResponse(Usuario usuario) {
@@ -31,27 +27,7 @@ public class UsuarioResponse {
         this.nombre = usuario.getNombre();
         this.apellido = usuario.getApellido();
         this.email = usuario.getEmail();
-        this.telefono = usuario.getTelefono();
-        this.rut = usuario.getRut();
-        this.rol = new RolSimpleDto(usuario.getRol());
-        this.activo = usuario.getActivo();
+        this.rol = usuario.getRol().getNombre();
         this.fechaRegistro = usuario.getFechaRegistro();
-        this.ultimaConexion = usuario.getUltimaConexion();
-    }
-
-    // DTO interno para Rol (sin lista de usuarios)
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class RolSimpleDto {
-        private Long id;
-        private String nombre;
-        private String descripcion;
-
-        public RolSimpleDto(com.example.appmunicipal.domain.Rol rol) {
-            this.id = rol.getId();
-            this.nombre = rol.getNombre();
-            this.descripcion = rol.getDescripcion();
-        }
     }
 }

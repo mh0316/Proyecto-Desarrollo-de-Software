@@ -11,8 +11,6 @@ public class LoginResponse {
 
     private boolean success;
     private String message;
-    private String token;
-    private String email;
-    private String username;
-    private String nombre;
+    private String token;       // JWT Token para mantener sesión
+    private String email;       // Email para identificar al usuario
 }

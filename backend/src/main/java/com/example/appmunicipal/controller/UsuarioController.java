@@ -22,6 +22,37 @@ public class UsuarioController {
     private final UsuarioService usuarioService;
 
     /**
+     * Registrar un nuevo usuario
+     * POST /api/usuarios/registro
+     */
+    @PostMapping("/registro")
+    public ResponseEntity<?> registrarUsuario(@RequestBody RegistroRequest request) {
+        try {
+            log.info("📝 Solicitud de registro recibida: {}", request.getEmail());
+
+            UsuarioResponse usuario = usuarioService.registrarUsuario(request);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("message", "Usuario registrado exitosamente");
+            response.put("usuario", usuario);
+
+            log.info("✅ Usuario registrado: {} (ID: {})", usuario.getUsername(), usuario.getId());
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+
+        } catch (RuntimeException e) {
+            log.error("❌ Error al registrar usuario: {}", e.getMessage());
+
+            Map<String, Object> error = new HashMap<>();
+            error.put("success", false);
+            error.put("message", e.getMessage());
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+        }
+    }
+
+    /**
      * Login universal (móvil y web) con email y password
      * POST /api/usuarios/login
      *
@@ -153,42 +184,12 @@ public class UsuarioController {
         }
     }
 
-    /**
-     * Registrar un nuevo usuario
-     * POST /api/usuarios/registro
-     */
-    @PostMapping("/registro")
-    public ResponseEntity<?> registrarUsuario(@RequestBody RegistroRequest request) {
-        try {
-            log.info("📝 Solicitud de registro recibida: {}", request.getEmail());
-
-            UsuarioResponse usuario = usuarioService.registrarUsuario(request);
-
-            Map<String, Object> response = new HashMap<>();
-            response.put("success", true);
-            response.put("message", "Usuario registrado exitosamente");
-            response.put("usuario", usuario);
-
-            log.info("✅ Usuario registrado: {} (ID: {})", usuario.getUsername(), usuario.getId());
-
-            return ResponseEntity.status(HttpStatus.CREATED).body(response);
-
-        } catch (RuntimeException e) {
-            log.error("❌ Error al registrar usuario: {}", e.getMessage());
-
-            Map<String, Object> error = new HashMap<>();
-            error.put("success", false);
-            error.put("message", e.getMessage());
-
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
-        }
-    }
 
     /**
      * Listar todos los usuarios
-     * GET /api/usuarios
+     * GET /api/usuarios/listar
      */
-    @GetMapping
+    @GetMapping("/listar")
     public ResponseEntity<?> listarUsuarios() {
         try {
             List<UsuarioResponse> usuarios = usuarioService.listarUsuarios();

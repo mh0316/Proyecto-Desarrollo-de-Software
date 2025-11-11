@@ -13,7 +13,8 @@ import java.time.LocalDateTime;
 public class DenunciaResponse {
 
     private Long id;
-    private UsuarioSimpleDto usuario;
+    private String emailUsuario;        // Solo email del usuario (seguro)
+    private String nombreUsuario;       // Solo nombre (para mostrar)
     private CategoriaSimpleDto categoria;
     private String descripcion;
     private String patente;
@@ -25,25 +26,26 @@ public class DenunciaResponse {
     private String estado;
     private LocalDateTime fechaDenuncia;
     private LocalDateTime fechaValidacion;
-    private UsuarioSimpleDto revisor;
     private String motivoRechazo;
     private Integer cantidadEvidencias;
 
-    // Constructor desde entidad
+    // Constructor desde entidad Denuncia
     public DenunciaResponse(Denuncia denuncia) {
         this.id = denuncia.getId();
-        this.usuario = new UsuarioSimpleDto(
-                denuncia.getUsuario().getId(),
-                denuncia.getUsuario().getUsername(),
-                denuncia.getUsuario().getNombre(),
-                denuncia.getUsuario().getEmail()
-        );
+
+        // Solo email y nombre del usuario (seguro, sin exponer más datos)
+        this.emailUsuario = denuncia.getUsuario().getEmail();
+        this.nombreUsuario = denuncia.getUsuario().getNombre();
+
+        // Categoría
         this.categoria = new CategoriaSimpleDto(
                 denuncia.getCategoria().getId(),
                 denuncia.getCategoria().getNombre(),
                 denuncia.getCategoria().getCodigo(),
                 denuncia.getCategoria().getColorHex()
         );
+
+        // Datos de la denuncia
         this.descripcion = denuncia.getDescripcion();
         this.patente = denuncia.getPatente();
         this.latitud = denuncia.getLatitud();
@@ -54,31 +56,11 @@ public class DenunciaResponse {
         this.estado = denuncia.getEstado().name();
         this.fechaDenuncia = denuncia.getFechaDenuncia();
         this.fechaValidacion = denuncia.getFechaValidacion();
-
-        if (denuncia.getRevisor() != null) {
-            this.revisor = new UsuarioSimpleDto(
-                    denuncia.getRevisor().getId(),
-                    denuncia.getRevisor().getUsername(),
-                    denuncia.getRevisor().getNombre(),
-                    denuncia.getRevisor().getEmail()
-            );
-        }
-
         this.motivoRechazo = denuncia.getMotivoRechazo();
         this.cantidadEvidencias = denuncia.getEvidencias() != null ? denuncia.getEvidencias().size() : 0;
     }
 
-    // DTOs internos
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class UsuarioSimpleDto {
-        private Long id;
-        private String username;
-        private String nombre;
-        private String email;
-    }
-
+    // DTO interno para Categoría
     @Data
     @NoArgsConstructor
     @AllArgsConstructor

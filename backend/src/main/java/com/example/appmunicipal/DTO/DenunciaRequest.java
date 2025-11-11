@@ -7,8 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class
-DenunciaRequest {
+public class DenunciaRequest {
 
     // Usuario
     private String email;           // Email del usuario que crea la denuncia (obligatorio)
