@@ -14,4 +14,6 @@ public interface ComentarioInternoRepository extends JpaRepository<ComentarioInt
     List<ComentarioInterno> findByUsuarioId(Long usuarioId);
 
     List<ComentarioInterno> findByDenunciaIdOrderByFechaComentarioDesc(Long denunciaId);
+
+    Long countByDenunciaId(Long denunciaId);
 }

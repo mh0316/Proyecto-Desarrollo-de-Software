@@ -18,18 +18,12 @@ public class HistorialAccion {
     private Denuncia denuncia;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "usuario_id")
+    @JoinColumn(name = "usuario_id", nullable = false)
     private Usuario usuario;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 50)
     private TipoAccion tipoAccion;
-
-    @Column(length = 50)
-    private String estadoAnterior;
-
-    @Column(length = 50)
-    private String estadoNuevo;
 
     @Column(length = 500)
     private String descripcion;
@@ -37,23 +31,17 @@ public class HistorialAccion {
     @Column(name = "fecha_accion", nullable = false, updatable = false)
     private LocalDateTime fechaAccion;
 
-    @Column(length = 50)
-    private String ipAddress;
-
     @PrePersist
     protected void onCreate() {
         fechaAccion = LocalDateTime.now();
     }
 
     public enum TipoAccion {
-        CREAR_DENUNCIA,
-        ASIGNAR_REVISOR,
-        CAMBIAR_ESTADO,
-        VALIDAR,
-        RECHAZAR,
-        AGREGAR_COMENTARIO,
-        EDITAR_DENUNCIA,
-        ELIMINAR_DENUNCIA,
-        AGREGAR_EVIDENCIA
+        CREACION,           // Cuando se crea la denuncia
+        VALIDACION,         // Cuando un funcionario valida la denuncia
+        RECHAZO,            // Cuando un funcionario rechaza la denuncia
+        CAMBIO_ESTADO,      // Cuando se cambia el estado
+        COMENTARIO,         // Cuando se agrega un comentario interno
+        EVIDENCIA           // Cuando se agrega evidencia
     }
 }

@@ -27,7 +27,5 @@ public class Rol {
 
     // Constantes para nombres de roles
     public static final String CIUDADANO = "CIUDADANO";
-    public static final String ADMINISTRADOR = "ADMINISTRADOR";
-    public static final String REVISOR = "REVISOR";
-    public static final String SUPERVISOR = "SUPERVISOR";
+    public static final String FUNCIONARIO = "FUNCIONARIO"; 
 }
