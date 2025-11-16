@@ -1,0 +1,95 @@
+/* Fondo general estilo dashboard */
+.login-wrapper {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #0d1117; // similar al dashboard
+}
+
+/* Tarjeta con efecto glass */
+.login-card {
+  width: 380px;
+  padding: 35px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  h2 {
+    margin-bottom: 25px;
+    color: #e0e6ed;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+}
+
+/* Inputs */
+.input-group {
+  margin-bottom: 18px;
+
+  input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid #2c2f36;
+    background: #1b1f25;
+    color: #e5e7eb;
+    font-size: 0.95rem;
+
+    &::placeholder {
+      color: #7f8490;
+    }
+
+    &:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 6px rgba(59, 130, 246, 0.6);
+    }
+  }
+}
+
+/* Botón principal */
+.btn-login {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(90deg, #2563eb, #1d4ed8);
+  border: none;
+  border-radius: 12px;
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+
+  &:hover {
+    background: linear-gradient(90deg, #1e40af, #1d4ed8);
+    transform: translateY(-2px);
+  }
+}
+
+/* Error */
+.error {
+  color: #f87171;
+  margin-top: 12px;
+  font-size: 0.9rem;
+}
+
+/* Switch registro */
+.switch {
+  margin-top: 20px;
+  font-size: 0.9rem;
+  color: #9ca3af;
+
+  a {
+    color: #3b82f6;
+    font-weight: 600;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}

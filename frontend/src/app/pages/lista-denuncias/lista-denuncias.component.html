@@ -1,0 +1,32 @@
+<div *ngIf="cargando">Cargando denuncias...</div>
+
+<table *ngIf="!cargando && denuncias.length > 0" class="tabla-denuncias">
+  <thead>
+  <tr>
+    <th>ID</th>
+    <th>Descripción</th>
+    <th>Dirección</th>
+    <th>Comuna</th>
+    <th>Estado</th>
+    <th>Acciones</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr *ngFor="let d of denuncias">
+    <td>{{ d.id }}</td>
+    <td>{{ d.descripcion }}</td>
+    <td>{{ d.direccion }}</td>
+    <td>{{ d.comuna }}</td>
+    <td>{{ d.estado }}</td>
+    <td>
+      <button class="btn btn-validar" (click)="cambiarEstado(d.id, 'VALIDADA')">Validar</button>
+      <button class="btn btn-rechazar" (click)="cambiarEstado(d.id, 'RECHAZADA')">Rechazar</button>
+      <button class="btn btn-pendiente" (click)="cambiarEstado(d.id, 'PENDIENTE')">Pendiente</button>
+    </td>
+  </tr>
+  </tbody>
+</table>
+
+<div *ngIf="!cargando && denuncias.length === 0" class="sin-denuncias">
+  No hay denuncias registradas.
+</div>

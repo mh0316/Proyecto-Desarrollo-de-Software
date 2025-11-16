@@ -1,0 +1,113 @@
+/* Fondo general */
+:host {
+  display: block;
+  padding: 20px;
+  background: #0d1117;
+  min-height: 100vh;
+}
+
+/* Tabla */
+.tabla-denuncias {
+  width: 100%;
+  border-collapse: collapse;
+  background: #161b22;
+  color: #e5e7eb;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+
+  th {
+    background: #1f2937;
+    padding: 14px;
+    font-weight: 600;
+    text-align: left;
+    color: #9ca3af;
+    border-bottom: 1px solid #2c313a;
+  }
+
+  td {
+    padding: 14px;
+    border-bottom: 1px solid #2c313a;
+  }
+
+  tr:hover {
+    background: #1c212a;
+  }
+}
+
+/* Chips de estado */
+td:nth-child(5) {
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+td:nth-child(5)::before {
+  padding: 6px 12px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  display: inline-block;
+  margin-right: 5px;
+}
+
+td:nth-child(5):contains("VALIDADA") {
+  color: #10b981;
+}
+
+td:nth-child(5):contains("RECHAZADA") {
+  color: #ef4444;
+}
+
+td:nth-child(5):contains("PENDIENTE") {
+  color: #fbbf24;
+}
+
+/* Botones */
+button {
+  padding: 7px 14px;
+  font-size: 0.85rem;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  margin-right: 5px;
+  transition: 0.2s;
+  font-weight: 500;
+
+  &:hover {
+    transform: scale(1.05);
+  }
+
+  &.btn-validar {
+    background: #059669;
+    color: white;
+
+    &:hover {
+      background: #047857;
+    }
+  }
+
+  &.btn-rechazar {
+    background: #dc2626;
+
+    &:hover {
+      background: #b91c1c;
+    }
+  }
+
+  &.btn-pendiente {
+    background: #f59e0b;
+    color: black;
+
+    &:hover {
+      background: #d97706;
+    }
+  }
+}
+
+/* Mensajes */
+.sin-denuncias,
+div[ngIf] {
+  text-align: center;
+  color: #9ca3af;
+  font-size: 1.1rem;
+  margin-top: 30px;
+}

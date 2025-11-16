@@ -1,0 +1,48 @@
+<div class="registro-wrapper">
+  <div class="registro-card">
+    <h2>Registro de Usuario</h2>
+
+    <form (ngSubmit)="registrar()">
+
+      <div class="input-group">
+        <label>Nombre</label>
+        <input type="text" [(ngModel)]="nombre" name="nombre" required />
+      </div>
+
+      <div class="input-group">
+        <label>Apellido</label>
+        <input type="text" [(ngModel)]="apellido" name="apellido" required />
+      </div>
+
+      <div class="input-group">
+        <label>RUT</label>
+        <input type="text" [(ngModel)]="rut" name="rut" required />
+      </div>
+
+      <div class="input-group">
+        <label>Teléfono</label>
+        <input type="tel" [(ngModel)]="telefono" name="telefono" required />
+      </div>
+
+      <div class="input-group">
+        <label>Email</label>
+        <input type="email" [(ngModel)]="email" name="email" required />
+      </div>
+
+      <div class="input-group">
+        <label>Contraseña</label>
+        <input type="password" [(ngModel)]="password" name="password" required />
+      </div>
+
+      <button type="submit" class="btn-register">Registrarse</button>
+    </form>
+
+    <p *ngIf="mensaje" class="mensaje-exito">{{ mensaje }}</p>
+    <p *ngIf="error" class="mensaje-error">{{ error }}</p>
+
+    <p class="link">
+      ¿Ya tienes una cuenta?
+      <a routerLink="/login">Inicia sesión aquí</a>
+    </p>
+  </div>
+</div>
