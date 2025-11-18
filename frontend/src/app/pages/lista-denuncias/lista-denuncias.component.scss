@@ -4,6 +4,8 @@
   padding: 20px;
   background: #0d1117;
   min-height: 100vh;
+  margin: 0;
+  border: none;
 }
 
 /* Tabla */
@@ -15,6 +17,7 @@
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+  border: none;
 
   th {
     background: #1f2937;
@@ -23,11 +26,13 @@
     text-align: left;
     color: #9ca3af;
     border-bottom: 1px solid #2c313a;
+    border: none;
   }
 
   td {
     padding: 14px;
     border-bottom: 1px solid #2c313a;
+    border: none;
   }
 
   tr:hover {
@@ -39,6 +44,14 @@
 td:nth-child(5) {
   font-weight: 600;
   text-transform: capitalize;
+}
+
+:host ::ng-deep {
+  body {
+    margin: 0;
+    padding: 0;
+    background: #0d1117;
+  }
 }
 
 td:nth-child(5)::before {

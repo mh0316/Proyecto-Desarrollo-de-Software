@@ -2,7 +2,7 @@
   <div class="login-card">
     <h2>Iniciar Sesión</h2>
 
-    <form (ngSubmit)="login()">
+    <form (ngSubmit)="login()" #loginForm="ngForm">
       <div class="input-group">
         <input
           type="email"
@@ -10,6 +10,7 @@
           name="email"
           placeholder="Correo electrónico"
           required
+          [disabled]="loading"
         />
       </div>
 
@@ -20,10 +21,16 @@
           name="password"
           placeholder="Contraseña"
           required
+          [disabled]="loading"
         />
       </div>
 
-      <button type="submit" class="btn-login">Entrar</button>
+      <button
+        type="submit"
+        class="btn-login"
+        [disabled]="loading || !email || !password">
+        {{ loading ? 'Iniciando sesión...' : 'Entrar' }}
+      </button>
     </form>
 
     <p *ngIf="error" class="error">{{ error }}</p>

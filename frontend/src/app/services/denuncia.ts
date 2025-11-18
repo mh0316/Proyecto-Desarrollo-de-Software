@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class DenunciaService {
-  private apiUrl = 'http://localhost:8080/api/denuncias/mis-denuncias?email=jesus@correo.com';
+  private apiUrl = 'http://localhost:8080/api/funcionario/denuncias?email=funcionario%40municipalidad.cl';
 
   constructor(private http: HttpClient) {}
 
