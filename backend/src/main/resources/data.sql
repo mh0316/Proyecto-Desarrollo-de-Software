@@ -8,7 +8,7 @@
 -- =====================================================
 INSERT INTO roles (nombre, descripcion) VALUES
                                             ('CIUDADANO', 'Usuario ciudadano que puede registrar denuncias'),
-                                            ('ADMINISTRADOR', 'Administrador con acceso completo al sistema');
+                                            ('FUNCIONARIO', 'Funcionario municipal que puede revisar y gestionar denuncias');
 
 -- =====================================================
 -- 2. CATEGORÍAS
@@ -27,15 +27,19 @@ INSERT INTO categorias (nombre, descripcion, codigo, activa, color_hex) VALUES
 
 -- =====================================================
 -- 3. USUARIOS DE PRUEBA
--- NOTA: En producción estas contraseñas deben estar encriptadas con BCrypt
 -- =====================================================
 
--- Usuario Administrador (username: admin, password: admin123)
+-- Usuario Funcionario (username: funcionario, password: func123)
 INSERT INTO usuarios (username, password, nombre, apellido, email, telefono, rut, rol_id, activo, fecha_registro) VALUES
-    ('admin', '{noop}admin123', 'Administrador', 'Sistema', 'admin@municipalidad.cl', '912345678', '11111111-1',
-     (SELECT id FROM roles WHERE nombre = 'ADMINISTRADOR'), TRUE, CURRENT_TIMESTAMP);
+    ('funcionario', '{noop}func123', 'Pedro', 'Funcionario', 'funcionario@municipalidad.cl', '912345678', '11111111-1',
+     (SELECT id FROM roles WHERE nombre = 'FUNCIONARIO'), TRUE, CURRENT_TIMESTAMP);
 
--- Usuario Ciudadano (username: ciudadano1, password: user123)
+-- Usuario Ciudadano 1 (username: ciudadano1, password: user123)
 INSERT INTO usuarios (username, password, nombre, apellido, email, telefono, rut, rol_id, activo, fecha_registro) VALUES
     ('ciudadano1', '{noop}user123', 'Juan', 'Pérez', 'juan.perez@email.cl', '987654321', '22222222-2',
+     (SELECT id FROM roles WHERE nombre = 'CIUDADANO'), TRUE, CURRENT_TIMESTAMP);
+
+-- Usuario Ciudadano 2 (username: ciudadano2, password: user123)
+INSERT INTO usuarios (username, password, nombre, apellido, email, telefono, rut, rol_id, activo, fecha_registro) VALUES
+    ('ciudadano2', '{noop}user123', 'María', 'González', 'maria.gonzalez@email.cl', '945678912', '33333333-3',
      (SELECT id FROM roles WHERE nombre = 'CIUDADANO'), TRUE, CURRENT_TIMESTAMP);

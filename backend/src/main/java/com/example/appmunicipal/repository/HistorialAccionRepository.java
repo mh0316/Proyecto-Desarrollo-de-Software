@@ -20,4 +20,6 @@ public interface HistorialAccionRepository extends JpaRepository<HistorialAccion
 
     List<HistorialAccion> findByDenunciaIdOrderByFechaAccionDesc(Long denunciaId);
 
+    Long countByDenunciaId(Long denunciaId);
+
 }

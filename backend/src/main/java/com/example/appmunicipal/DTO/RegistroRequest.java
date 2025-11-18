@@ -15,7 +15,5 @@ public class RegistroRequest {
     private String apellido;      // Obligatorio
     private String email;         // Obligatorio
     private String telefono;      // Opcional
-    private String rut;           // Obligatorio ✅
-
-    // rolId ya NO se usa, siempre será CIUDADANO
+    private String rut;           // Obligatorio
 }

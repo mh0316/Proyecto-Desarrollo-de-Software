@@ -32,8 +32,7 @@ public class UsuarioService {
     private final Random random = new Random();
 
     /**
-     * Login universal (móvil y web) con email y password
-     * Retorna JWT token y datos básicos del usuario
+     * Login universal - Retorna solo token y email
      */
     @Transactional
     public LoginResponse login(LoginRequest request) {
@@ -42,11 +41,11 @@ public class UsuarioService {
         try {
             // Validar campos requeridos
             if (request.getEmail() == null || request.getEmail().trim().isEmpty()) {
-                return new LoginResponse(false, "El email es requerido", null, null, null, null);
+                return new LoginResponse(false, "El email es requerido", null, null);
             }
 
             if (request.getPassword() == null || request.getPassword().trim().isEmpty()) {
-                return new LoginResponse(false, "La contraseña es requerida", null, null, null, null);
+                return new LoginResponse(false, "La contraseña es requerida", null, null);
             }
 
             // Buscar usuario por email
@@ -55,13 +54,13 @@ public class UsuarioService {
 
             // Verificar que el usuario esté activo
             if (!usuario.getActivo()) {
-                return new LoginResponse(false, "Tu cuenta está inactiva. Contacta al administrador", null, null, null, null);
+                return new LoginResponse(false, "Tu cuenta está inactiva. Contacta al administrador", null, null);
             }
 
             // Verificar contraseña (sin encriptar)
             if (!request.getPassword().equals(usuario.getPassword())) {
                 log.warn("❌ Intento de login fallido - contraseña incorrecta para: {}", request.getEmail());
-                return new LoginResponse(false, "Contraseña incorrecta", null, null, null, null);
+                return new LoginResponse(false, "Contraseña incorrecta", null, null);
             }
 
             // Actualizar última conexión
@@ -77,45 +76,30 @@ public class UsuarioService {
                     usuario.getRol().getNombre()
             );
 
-            log.info("✅ Login exitoso para: {} (ID: {}) - JWT Token generado", usuario.getEmail(), usuario.getId());
+            log.info("✅ Login exitoso para: {} (ID: {})", usuario.getEmail(), usuario.getId());
 
-            // Retornar solo los datos necesarios
+            // Retornar SOLO token y email (seguro para mantener sesión)
             return new LoginResponse(
                     true,
                     "Login exitoso",
                     token,
-                    usuario.getEmail(),
-                    usuario.getUsername(),
-                    usuario.getNombre()
+                    usuario.getEmail()
             );
 
         } catch (RuntimeException e) {
             log.error("❌ Error en login: {}", e.getMessage());
-            return new LoginResponse(false, e.getMessage(), null, null, null, null);
+            return new LoginResponse(false, e.getMessage(), null, null);
         }
     }
 
     /**
      * Registrar un nuevo usuario
-     *
-     * REGLAS:
-     * - RUT es OBLIGATORIO
-     * - Email es OBLIGATORIO
-     * - Nombre y Apellido son OBLIGATORIOS
-     * - Password es OBLIGATORIO
-     * - Username es OPCIONAL (se genera automáticamente)
-     * - Telefono es OPCIONAL
-     * - Siempre se registra como ACTIVO
-     * - Siempre se asigna rol CIUDADANO
      */
     @Transactional
     public UsuarioResponse registrarUsuario(RegistroRequest request) {
         log.info("📝 Iniciando registro de usuario: {}", request.getEmail());
 
-        // ========================================
-        // VALIDACIONES DE CAMPOS OBLIGATORIOS
-        // ========================================
-
+        // Validaciones
         if (request.getEmail() == null || request.getEmail().trim().isEmpty()) {
             throw new RuntimeException("El email es obligatorio");
         }
@@ -136,30 +120,18 @@ public class UsuarioService {
             throw new RuntimeException("El RUT es obligatorio");
         }
 
-        // ========================================
-        // VALIDAR FORMATO Y DÍGITO VERIFICADOR DEL RUT
-        // ========================================
-
-        // Validar formato del RUT
+        // Validar formato y dígito verificador del RUT
         if (!rutUtil.validarFormato(request.getRut())) {
             throw new RuntimeException("El formato del RUT es inválido. Formato esperado: 12.345.678-9 o 12345678-9");
         }
 
-        // Validar dígito verificador
         if (!rutUtil.validarDigitoVerificador(request.getRut())) {
             throw new RuntimeException("El RUT ingresado no es válido. Verifica el dígito verificador");
         }
 
-        log.info("✅ RUT validado correctamente: {}", request.getRut());
-
-        // Normalizar RUT para almacenamiento (sin puntos: "12345678-9")
         String rutNormalizado = rutUtil.normalizarRut(request.getRut());
-        log.info("📝 RUT normalizado para almacenamiento: {}", rutNormalizado);
 
-        // ========================================
-        // VALIDAR QUE NO EXISTAN DUPLICADOS
-        // ========================================
-
+        // Validar duplicados
         if (usuarioRepository.existsByEmail(request.getEmail())) {
             throw new RuntimeException("Ya existe una cuenta con este email: " + request.getEmail());
         }
@@ -168,10 +140,7 @@ public class UsuarioService {
             throw new RuntimeException("Ya existe una cuenta con este RUT: " + rutUtil.formatearRut(rutNormalizado));
         }
 
-        // ========================================
-        // GENERAR USERNAME SI NO VIENE
-        // ========================================
-
+        // Generar username si no viene
         String username = request.getUsername();
         if (username == null || username.trim().isEmpty()) {
             username = generarUsername(request.getNombre(), request.getApellido());
@@ -182,10 +151,7 @@ public class UsuarioService {
             }
         }
 
-        // ========================================
-        // CREAR NUEVO USUARIO
-        // ========================================
-
+        // Crear usuario
         Usuario usuario = new Usuario();
         usuario.setUsername(username);
         usuario.setPassword(request.getPassword());
@@ -193,36 +159,26 @@ public class UsuarioService {
         usuario.setApellido(request.getApellido());
         usuario.setEmail(request.getEmail());
         usuario.setTelefono(request.getTelefono());
-        usuario.setRut(rutNormalizado);  // ✅ Guardar RUT normalizado
+        usuario.setRut(rutNormalizado);
         usuario.setActivo(true);
 
         // Asignar rol CIUDADANO
         Rol rolCiudadano = rolRepository.findByNombre(Rol.CIUDADANO)
-                .orElseThrow(() -> new RuntimeException("Error crítico: Rol CIUDADANO no encontrado en la base de datos"));
+                .orElseThrow(() -> new RuntimeException("Error crítico: Rol CIUDADANO no encontrado"));
 
         usuario.setRol(rolCiudadano);
 
-        // ========================================
-        // GUARDAR USUARIO
-        // ========================================
-
+        // Guardar
         Usuario usuarioGuardado = usuarioRepository.save(usuario);
 
         log.info("✅ Usuario registrado exitosamente:");
         log.info("   - ID: {}", usuarioGuardado.getId());
         log.info("   - Username: {}", usuarioGuardado.getUsername());
         log.info("   - Email: {}", usuarioGuardado.getEmail());
-        log.info("   - RUT: {}", usuarioGuardado.getRut());
-        log.info("   - Rol: {}", usuarioGuardado.getRol().getNombre());
-        log.info("   - Activo: {}", usuarioGuardado.getActivo());
 
         return new UsuarioResponse(usuarioGuardado);
     }
 
-    /**
-     * Generar username automático con formato: [inicial_nombre][inicial_apellido][numero_aleatorio]
-     * Ejemplo: Juan Pérez -> jp12345
-     */
     private String generarUsername(String nombre, String apellido) {
         if (nombre == null || nombre.trim().isEmpty()) {
             throw new RuntimeException("El nombre es requerido para generar el username");
@@ -231,7 +187,6 @@ public class UsuarioService {
             throw new RuntimeException("El apellido es requerido para generar el username");
         }
 
-        // Obtener iniciales en minúsculas
         String inicialNombre = nombre.trim().substring(0, 1).toLowerCase();
         String inicialApellido = apellido.trim().substring(0, 1).toLowerCase();
         String baseUsername = inicialNombre + inicialApellido;
@@ -240,9 +195,8 @@ public class UsuarioService {
         int intentos = 0;
         int maxIntentos = 10;
 
-        // Intentar generar username único
         while (intentos < maxIntentos) {
-            int numeroDigitos = random.nextInt(3) + 3; // 3, 4 o 5 dígitos
+            int numeroDigitos = random.nextInt(3) + 3;
             int numeroAleatorio = generarNumeroAleatorio(numeroDigitos);
             username = baseUsername + numeroAleatorio;
 
@@ -252,28 +206,22 @@ public class UsuarioService {
             }
 
             intentos++;
-            log.warn("⚠️  Username {} ya existe, reintentando... ({}/{})", username, intentos, maxIntentos);
         }
 
-        // Fallback: usar timestamp si no se logró en 10 intentos
         username = baseUsername + System.currentTimeMillis() % 1000000;
-        log.warn("⚠️  No se pudo generar username único en {} intentos, usando timestamp: {}", maxIntentos, username);
+        log.warn("⚠️ Usando timestamp para username: {}", username);
 
         return username;
     }
 
-    /**
-     * Generar número aleatorio con cantidad específica de dígitos
-     */
     private int generarNumeroAleatorio(int digitos) {
-        int min = (int) Math.pow(10, digitos - 1); // 100, 1000, 10000
-        int max = (int) Math.pow(10, digitos) - 1;  // 999, 9999, 99999
+        int min = (int) Math.pow(10, digitos - 1);
+        int max = (int) Math.pow(10, digitos) - 1;
         return random.nextInt(max - min + 1) + min;
     }
 
-    /**
-     * Validar token JWT
-     */
+    // Métodos auxiliares...
+
     public boolean validarToken(String token) {
         if (token == null || token.trim().isEmpty()) {
             return false;
@@ -283,7 +231,6 @@ public class UsuarioService {
             boolean valido = jwtUtil.validarToken(token);
 
             if (valido) {
-                // Verificar que el usuario aún exista y esté activo
                 Long usuarioId = jwtUtil.extraerUsuarioId(token);
                 return usuarioRepository.findById(usuarioId)
                         .map(Usuario::getActivo)
@@ -298,9 +245,6 @@ public class UsuarioService {
         }
     }
 
-    /**
-     * Obtener ID de usuario desde el token JWT
-     */
     public Long obtenerUsuarioIdDesdeToken(String token) {
         try {
             return jwtUtil.extraerUsuarioId(token);
@@ -309,9 +253,6 @@ public class UsuarioService {
         }
     }
 
-    /**
-     * Obtener información completa del token JWT
-     */
     public java.util.Map<String, Object> obtenerInfoToken(String token) {
         return jwtUtil.obtenerInfoToken(token);
     }

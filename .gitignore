@@ -16,3 +16,9 @@ target/
 # OS
 .DS_Store
 Thumbs.db
+
+.mvn/wrapper/maven-wrapper.jar
+.git
+.gitignore
+*.md
+node_modules/
