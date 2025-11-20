@@ -13,7 +13,7 @@ spring:
         dialect: org.hibernate.dialect.MySQL8Dialect
   sql:
     init:
-      mode: never  # Deshabilitar data.sql
+      mode: never  # Deshabilitar data.sql para prod
 
 server:
   port: 8080

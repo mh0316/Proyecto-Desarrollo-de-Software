@@ -16,8 +16,13 @@ public class CorsConfig {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
 
-        // Permitir desde el puerto externo de nginx
-        config.addAllowedOrigin("http://localhost:8090");
+        // Orígenes permitidos (desarrollo local y Docker)
+        config.setAllowedOrigins(Arrays.asList(
+                "http://localhost:4200",      // Angular desarrollo local
+                "http://localhost:8090",      // Docker frontend
+                "http://127.0.0.1:4200",
+                "http://127.0.0.1:8090"
+        ));
 
         config.addAllowedHeader("*");
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
