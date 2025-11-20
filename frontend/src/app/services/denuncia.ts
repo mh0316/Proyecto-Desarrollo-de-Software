@@ -1,20 +1,21 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DenunciaService {
-  private apiUrl = 'http://localhost:8080/api/funcionario/denuncias?email=funcionario%40municipalidad.cl';
+  private baseUrl = `${environment.apiUrl}/api/funcionario/denuncias`;
 
   constructor(private http: HttpClient) {}
 
   getAll(): Observable<any> {
-    return this.http.get<any>(this.apiUrl);
+    return this.http.get<any>(`${this.baseUrl}?email=funcionario%40municipalidad.cl`);
   }
 
   cambiarEstado(id: number, estado: string): Observable<any> {
-    return this.http.put<any>(`${this.apiUrl}/${id}/estado`, { estado });
+    return this.http.put<any>(`${this.baseUrl}/${id}/estado`, { estado });
   }
 }
