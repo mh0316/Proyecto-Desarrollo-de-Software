@@ -1,49 +1,22 @@
-# Etapa 1: Build
-FROM eclipse-temurin:21-jdk-alpine AS build
-
-WORKDIR /app
-
-# 1. Copiar primero los archivos esenciales
-COPY .mvn/ .mvn
-COPY mvnw ./
-COPY pom.xml ./
-
-# 2. Corregir permisos y formato del mvnw (CRÍTICO)
-RUN chmod +x mvnw
-# Instalar herramientas para corregir formato de archivos Windows
-RUN apk add --no-cache dos2unix
-RUN dos2unix mvnw
-RUN chmod +x mvnw
-
-# 3. Verificar que los archivos están presentes
-RUN ls -la
-
-# 4. Descargar dependencias (con timeout extendido)
-RUN ./mvnw dependency:go-offline -B -Dmaven.wagon.http.retryHandler.count=3
-
-# 5. Copiar código fuente
-COPY src ./src
-
-# 6. Compilar la aplicación
-RUN ./mvnw clean package -DskipTests
-
-# Etapa 2: Runtime
+# Etapa única: solo runtime (mucho más pequeño y rápido)
 FROM eclipse-temurin:21-jre-alpine
 
 WORKDIR /app
 
-# Crear usuario no-root para seguridad
+# Crear usuario no-root (seguridad)
 RUN addgroup -S spring && adduser -S spring -G spring
 USER spring:spring
 
-# Copiar JAR desde la etapa de build
-COPY --from=build /app/target/*.jar app.jar
+# Copiar SOLO el JAR ya generado por ti en local
+# Importante: el nombre debe coincidir exactamente con el que genera tu pom
+COPY --chown=spring:spring target/*.jar app.jar
 
-# Exponer puerto
+# Puerto
 EXPOSE 8080
 
-# Variables de entorno
-ENV JAVA_OPTS="-Xmx512m -Xms256m"
+# Variables de entorno (puedes sobrescribirlas en docker-compose)
+ENV JAVA_OPTS="-Xmx512m -Xms256m -XX:+UseG1GC"
 
-# Comando de inicio
-ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]
+
+# Arrancar la app
+ENTRYPOINT sh -c "java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar app.jar"
