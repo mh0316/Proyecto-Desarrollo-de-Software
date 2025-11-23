@@ -20,9 +20,9 @@ services:
       timeout: 20s
       retries: 10
 
-  # Backend Spring Boot
+  # Backend Spring Boot - CAMBIADO a build:
   backend:
-    image: 00jesus/appmunicipal-backend:latest
+    build: ./backend  # ← CAMBIADO de image a build
     container_name: appmunicipal-backend
     environment:
       - SPRING_PROFILES_ACTIVE=prod
@@ -37,12 +37,12 @@ services:
     networks:
       - app-network
 
-  # Frontend Angular
+  # Frontend Angular - CAMBIADO a build:
   frontend:
-    image: 00jesus/appmunicipal-frontend:latest
+    build: ./frontend  # ← CAMBIADO de image a build
     container_name: appmunicipal-frontend
     environment:
-      - API_URL=http://nginx:8091/api  # ← CON /api (correcto)
+      - API_URL=http://nginx:8091/api
     depends_on:
       - backend
     restart: unless-stopped
@@ -54,8 +54,8 @@ services:
     image: nginx:alpine
     container_name: appmunicipal-nginx
     ports:
-      - "8090:80"   # Puerto externo 8090 -> interno 80 (frontend)
-      - "8091:8080" # Puerto externo 8091 -> interno 8080 (backend)
+      - "8090:80"
+      - "8091:8080"
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
     depends_on:
