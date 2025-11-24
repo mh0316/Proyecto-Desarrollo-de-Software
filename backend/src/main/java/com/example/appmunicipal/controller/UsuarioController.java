@@ -53,6 +53,37 @@ public class UsuarioController {
     }
 
     /**
+     * Registrar un nuevo funcionario
+     * POST /api/usuarios/registro-funcionario
+     */
+    @PostMapping("/registro-funcionario")
+    public ResponseEntity<?> registrarFuncionario(@RequestBody RegistroRequest request) {
+        try {
+            log.info("📝 Solicitud de registro de funcionario recibida: {}", request.getEmail());
+
+            UsuarioResponse funcionario = usuarioService.registrarFuncionario(request);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("message", "Funcionario registrado exitosamente");
+            response.put("funcionario", funcionario);
+
+            log.info("✅ Funcionario registrado: {} (ID: {})", funcionario.getUsername(), funcionario.getId());
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+
+        } catch (RuntimeException e) {
+            log.error("❌ Error al registrar funcionario: {}", e.getMessage());
+
+            Map<String, Object> error = new HashMap<>();
+            error.put("success", false);
+            error.put("message", e.getMessage());
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+        }
+    }
+
+    /**
      * Login universal (móvil y web) con email y password
      * POST /api/usuarios/login
      *

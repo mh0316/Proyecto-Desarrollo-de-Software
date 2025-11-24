@@ -179,6 +179,93 @@ public class UsuarioService {
         return new UsuarioResponse(usuarioGuardado);
     }
 
+    /**
+     * Registrar un nuevo funcionario
+     */
+    @Transactional
+    public UsuarioResponse registrarFuncionario(RegistroRequest request) {
+        log.info("📝 Iniciando registro de funcionario: {}", request.getEmail());
+
+        // Validaciones (iguales al registro de usuario)
+        if (request.getEmail() == null || request.getEmail().trim().isEmpty()) {
+            throw new RuntimeException("El email es obligatorio");
+        }
+
+        if (request.getPassword() == null || request.getPassword().trim().isEmpty()) {
+            throw new RuntimeException("La contraseña es obligatoria");
+        }
+
+        if (request.getNombre() == null || request.getNombre().trim().isEmpty()) {
+            throw new RuntimeException("El nombre es obligatorio");
+        }
+
+        if (request.getApellido() == null || request.getApellido().trim().isEmpty()) {
+            throw new RuntimeException("El apellido es obligatorio");
+        }
+
+        if (request.getRut() == null || request.getRut().trim().isEmpty()) {
+            throw new RuntimeException("El RUT es obligatorio");
+        }
+
+        // Validar formato y dígito verificador del RUT
+        if (!rutUtil.validarFormato(request.getRut())) {
+            throw new RuntimeException("El formato del RUT es inválido. Formato esperado: 12.345.678-9 o 12345678-9");
+        }
+
+        if (!rutUtil.validarDigitoVerificador(request.getRut())) {
+            throw new RuntimeException("El RUT ingresado no es válido. Verifica el dígito verificador");
+        }
+
+        String rutNormalizado = rutUtil.normalizarRut(request.getRut());
+
+        // Validar duplicados
+        if (usuarioRepository.existsByEmail(request.getEmail())) {
+            throw new RuntimeException("Ya existe una cuenta con este email: " + request.getEmail());
+        }
+
+        if (usuarioRepository.existsByRut(rutNormalizado)) {
+            throw new RuntimeException("Ya existe una cuenta con este RUT: " + rutUtil.formatearRut(rutNormalizado));
+        }
+
+        // Generar username si no viene
+        String username = request.getUsername();
+        if (username == null || username.trim().isEmpty()) {
+            username = generarUsername(request.getNombre(), request.getApellido());
+            log.info("✨ Username generado automáticamente: {}", username);
+        } else {
+            if (usuarioRepository.existsByUsername(username)) {
+                throw new RuntimeException("El username ya está en uso: " + username);
+            }
+        }
+
+        // Crear funcionario
+        Usuario funcionario = new Usuario();
+        funcionario.setUsername(username);
+        funcionario.setPassword(request.getPassword());
+        funcionario.setNombre(request.getNombre());
+        funcionario.setApellido(request.getApellido());
+        funcionario.setEmail(request.getEmail());
+        funcionario.setTelefono(request.getTelefono());
+        funcionario.setRut(rutNormalizado);
+        funcionario.setActivo(true);
+
+        // Asignar rol FUNCIONARIO
+        Rol rolFuncionario = rolRepository.findByNombre(Rol.FUNCIONARIO)
+                .orElseThrow(() -> new RuntimeException("Error crítico: Rol FUNCIONARIO no encontrado"));
+
+        funcionario.setRol(rolFuncionario);
+
+        // Guardar
+        Usuario funcionarioGuardado = usuarioRepository.save(funcionario);
+
+        log.info("✅ Funcionario registrado exitosamente:");
+        log.info("   - ID: {}", funcionarioGuardado.getId());
+        log.info("   - Username: {}", funcionarioGuardado.getUsername());
+        log.info("   - Email: {}", funcionarioGuardado.getEmail());
+
+        return new UsuarioResponse(funcionarioGuardado);
+    }
+
     private String generarUsername(String nombre, String apellido) {
         if (nombre == null || nombre.trim().isEmpty()) {
             throw new RuntimeException("El nombre es requerido para generar el username");
