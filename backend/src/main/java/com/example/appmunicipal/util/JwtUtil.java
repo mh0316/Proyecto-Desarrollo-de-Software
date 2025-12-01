@@ -18,7 +18,7 @@ import java.util.function.Function;
 @Slf4j
 public class JwtUtil {
 
-    // Clave secreta para firmar el JWT (en producción debe estar en application.properties)
+    // Clave secreta para firmar el JWT (en producción debe estar en application.yml)
     private static final String SECRET_KEY = "municipal-app-secret-key-2024-super-secure-change-in-production-12345";
 
     // Tiempo de expiración del token: 24 horas (en milisegundos)

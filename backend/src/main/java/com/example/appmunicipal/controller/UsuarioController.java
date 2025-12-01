@@ -1,6 +1,7 @@
 package com.example.appmunicipal.controller;
 
 import com.example.appmunicipal.DTO.*;
+import com.example.appmunicipal.domain.Rol;
 import com.example.appmunicipal.service.UsuarioService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,22 +29,16 @@ public class UsuarioController {
     @PostMapping("/registro")
     public ResponseEntity<?> registrarUsuario(@RequestBody RegistroRequest request) {
         try {
-            log.info("📝 Solicitud de registro recibida: {}", request.getEmail());
-
-            UsuarioResponse usuario = usuarioService.registrarUsuario(request);
+            UsuarioResponse usuario = usuarioService.registrar(request, Rol.CIUDADANO);
 
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
             response.put("message", "Usuario registrado exitosamente");
             response.put("usuario", usuario);
 
-            log.info("✅ Usuario registrado: {} (ID: {})", usuario.getUsername(), usuario.getId());
-
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
 
         } catch (RuntimeException e) {
-            log.error("❌ Error al registrar usuario: {}", e.getMessage());
-
             Map<String, Object> error = new HashMap<>();
             error.put("success", false);
             error.put("message", e.getMessage());
@@ -59,22 +54,16 @@ public class UsuarioController {
     @PostMapping("/registro-funcionario")
     public ResponseEntity<?> registrarFuncionario(@RequestBody RegistroRequest request) {
         try {
-            log.info("📝 Solicitud de registro de funcionario recibida: {}", request.getEmail());
-
-            UsuarioResponse funcionario = usuarioService.registrarFuncionario(request);
+            UsuarioResponse funcionario = usuarioService.registrar(request, Rol.FUNCIONARIO);
 
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
             response.put("message", "Funcionario registrado exitosamente");
             response.put("funcionario", funcionario);
 
-            log.info("✅ Funcionario registrado: {} (ID: {})", funcionario.getUsername(), funcionario.getId());
-
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
 
         } catch (RuntimeException e) {
-            log.error("❌ Error al registrar funcionario: {}", e.getMessage());
-
             Map<String, Object> error = new HashMap<>();
             error.put("success", false);
             error.put("message", e.getMessage());
@@ -82,6 +71,7 @@ public class UsuarioController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
         }
     }
+
 
     /**
      * Login universal (móvil y web) con email y password
