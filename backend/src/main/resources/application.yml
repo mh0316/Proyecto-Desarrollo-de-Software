@@ -1,0 +1,50 @@
+spring:
+  application:
+    name: appmunicipal
+
+  datasource:
+    url: jdbc:h2:mem:municipal_db;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driverClassName: org.h2.Driver
+    username: sa
+    password:
+
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    defer-datasource-initialization: true
+
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+  sql:
+    init:
+      mode: always         # SIEMPRE cargar data.sql
+      continue-on-error: false
+
+logging:
+  level:
+    org.springframework.web: INFO
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    org.springframework.jdbc.datasource.init: DEBUG
+
+app:
+  cors:
+    allowed-origins: >
+      http://localhost:4200,
+      http://localhost:8090,
+      http://127.0.0.1:4200,
+      http://127.0.0.1:8090,
+      http://localhost:3000,
+      http://127.0.0.1:3000,
+      http://200.13.5.5:8090
+    allowed-methods: GET, POST, PUT, DELETE, OPTIONS
+    allowed-headers: "*"
+    allow-credentials: true

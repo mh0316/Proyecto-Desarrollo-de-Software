@@ -4,6 +4,7 @@ spring:
     username: ${SPRING_DATASOURCE_USERNAME}
     password: ${SPRING_DATASOURCE_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
+
   jpa:
     hibernate:
       ddl-auto: update
@@ -11,15 +12,23 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
+
   sql:
     init:
-      mode: never  # Deshabilitar data.sql para prod
-
-
+      mode: always              # SI queremos cargar data-prod.sql
+      data-locations: classpath:data-prod.sql
 
 server:
   port: 8080
 
 app:
   cors:
-    allowed-origins: http://localhost:4200,http://localhost:8090,http://127.0.0.1:4200,http://127.0.0.1:8090,http://localhost:3000,http://127.0.0.1:3000,http://nginx:8090,http://200.13.5.5:8090
+    allowed-origins: >
+      http://localhost:4200,
+      http://localhost:8090,
+      http://127.0.0.1:4200,
+      http://127.0.0.1:8090,
+      http://localhost:3000,
+      http://127.0.0.1:3000,
+      http://nginx:8090,
+      http://200.13.5.5:8090

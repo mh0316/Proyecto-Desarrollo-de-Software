@@ -64,36 +64,36 @@ INSERT INTO categorias (nombre, descripcion, codigo, activa, color_hex) VALUES
 
 -- Funcionarios (password: admin123)
 INSERT INTO usuarios (username, password, nombre, apellido, email, telefono, rut, rol_id, activo, fecha_registro) VALUES
-('funcionario', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Pedro', 'Funcionario', 'funcionario@municipalidad.cl', '912345678', '11111111-1',
+('funcionario', 'prueba123', 'Pedro', 'Funcionario', 'funcionario@municipalidad.cl', '912345678', '11111111-1',
  (SELECT id FROM roles WHERE nombre = 'FUNCIONARIO'), TRUE, NOW()),
-('admin', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Carlos', 'Administrador', 'carlos.admin@municipalidad.cl', '922334455', '10000000-0',
+('admin', 'prueba123', 'Carlos', 'Administrador', 'carlos.admin@municipalidad.cl', '922334455', '10000000-0',
  (SELECT id FROM roles WHERE nombre = 'FUNCIONARIO'), TRUE, NOW()),
-('supervisor', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Ana', 'Supervisor', 'ana.supervisor@municipalidad.cl', '933445566', '10111111-1',
+('supervisor', 'prueba123', 'Ana', 'Supervisor', 'ana.supervisor@municipalidad.cl', '933445566', '10111111-1',
  (SELECT id FROM roles WHERE nombre = 'FUNCIONARIO'), TRUE, NOW()),
-('inspector', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Luis', 'Inspector', 'luis.inspector@municipalidad.cl', '944556677', '10222222-2',
+('inspector', 'prueba123', 'Luis', 'Inspector', 'luis.inspector@municipalidad.cl', '944556677', '10222222-2',
  (SELECT id FROM roles WHERE nombre = 'FUNCIONARIO'), TRUE, NOW());
 
 -- Ciudadanos (password: admin123)
 INSERT INTO usuarios (username, password, nombre, apellido, email, telefono, rut, rol_id, activo, fecha_registro) VALUES
-('ciudadano1', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Juan', 'Pérez', 'juan.perez@email.cl', '987654321', '22222222-2',
+('ciudadano1', 'prueba123', 'Juan', 'Pérez', 'juan.perez@email.cl', '987654321', '22222222-2',
  (SELECT id FROM roles WHERE nombre = 'CIUDADANO'), TRUE, NOW()),
-('ciudadano2', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'María', 'González', 'maria.gonzalez@email.cl', '945678912', '33333333-3',
+('ciudadano2', 'prueba123', 'María', 'González', 'maria.gonzalez@email.cl', '945678912', '33333333-3',
  (SELECT id FROM roles WHERE nombre = 'CIUDADANO'), TRUE, NOW()),
-('ciudadano3', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Diego', 'Rodríguez', 'diego.rodriguez@email.cl', '956789123', '44444444-4',
+('ciudadano3', 'prueba123', 'Diego', 'Rodríguez', 'diego.rodriguez@email.cl', '956789123', '44444444-4',
  (SELECT id FROM roles WHERE nombre = 'CIUDADANO'), TRUE, NOW()),
-('ciudadano4', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Carla', 'Martínez', 'carla.martinez@email.cl', '967891234', '55555555-5',
+('ciudadano4', 'prueba123', 'Carla', 'Martínez', 'carla.martinez@email.cl', '967891234', '55555555-5',
  (SELECT id FROM roles WHERE nombre = 'CIUDADANO'), TRUE, NOW()),
-('ciudadano5', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Roberto', 'Silva', 'roberto.silva@email.cl', '978912345', '66666666-6',
+('ciudadano5', 'prueba123', 'Roberto', 'Silva', 'roberto.silva@email.cl', '978912345', '66666666-6',
  (SELECT id FROM roles WHERE nombre = 'CIUDADANO'), TRUE, NOW()),
-('ciudadano6', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Fernanda', 'López', 'fernanda.lopez@email.cl', '989123456', '77777777-7',
+('ciudadano6', 'prueba123', 'Fernanda', 'López', 'fernanda.lopez@email.cl', '989123456', '77777777-7',
  (SELECT id FROM roles WHERE nombre = 'CIUDADANO'), TRUE, NOW()),
-('ciudadano7', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Andrés', 'Muñoz', 'andres.munoz@email.cl', '991234567', '88888888-8',
+('ciudadano7', 'prueba123', 'Andrés', 'Muñoz', 'andres.munoz@email.cl', '991234567', '88888888-8',
  (SELECT id FROM roles WHERE nombre = 'CIUDADANO'), TRUE, NOW()),
-('ciudadano8', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Valentina', 'Herrera', 'valentina.herrera@email.cl', '992345678', '99999999-9',
+('ciudadano8', 'prueba123', 'Valentina', 'Herrera', 'valentina.herrera@email.cl', '992345678', '99999999-9',
  (SELECT id FROM roles WHERE nombre = 'CIUDADANO'), TRUE, NOW()),
-('ciudadano9', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Sebastián', 'Torres', 'sebastian.torres@email.cl', '993456789', '10333333-3',
+('ciudadano9', 'prueba123', 'Sebastián', 'Torres', 'sebastian.torres@email.cl', '993456789', '10333333-3',
  (SELECT id FROM roles WHERE nombre = 'CIUDADANO'), TRUE, NOW()),
-('ciudadano10', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Camila', 'Flores', 'camila.flores@email.cl', '994567890', '10444444-4',
+('ciudadano10', 'prueba123', 'Camila', 'Flores', 'camila.flores@email.cl', '994567890', '10444444-4',
  (SELECT id FROM roles WHERE nombre = 'CIUDADANO'), TRUE, NOW());
 
 -- =====================================================
