@@ -7,7 +7,7 @@ import { environment } from '../../environments/environment';
   providedIn: 'root'
 })
 export class DenunciaService {
-  private baseUrl = `${environment.apiUrl}/api/funcionario/denuncias`;
+  private baseUrl = `${environment.apiUrl}/api/denuncias`;
 
   constructor(private http: HttpClient) {}
 

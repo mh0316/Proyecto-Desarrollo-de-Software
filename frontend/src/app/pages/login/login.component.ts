@@ -20,7 +20,7 @@ export class LoginComponent {
   constructor(
     private authService: AuthService,
     private router: Router
-  ) {}
+  ) { }
 
   login() {
     this.error = '';
@@ -42,12 +42,36 @@ export class LoginComponent {
       next: (res: any) => {
         this.loading = false;
 
-        if (res.token) {
-          // Usar el nuevo método del auth service
-          this.authService.handleLoginSuccess(res.token, res.user);
-        } else if (res.success && res.token) {
-          // Por si la respuesta tiene estructura { success: true, token: '...' }
-          this.authService.handleLoginSuccess(res.token, res.user);
+        const token = res.token || (res.success && res.token ? res.token : null);
+
+        if (token) {
+          // Decodificar el token para verificar el rol
+          const decodedToken = this.authService.decodeToken(token);
+
+          if (decodedToken) {
+            const rol = decodedToken.rol;
+            const email = decodedToken.email || decodedToken.sub;
+            const usuarioId = decodedToken.usuarioId;
+
+            console.log('Datos del token:', { rol, email, usuarioId });
+
+            // Verificar si es FUNCIONARIO
+            if (rol !== 'FUNCIONARIO') {
+              this.error = '⚠️ Página exclusiva para funcionarios';
+              this.authService.logout(); // Limpiar cualquier dato previo
+              return;
+            }
+
+            // Guardar datos en localStorage
+            localStorage.setItem('userEmail', email);
+            localStorage.setItem('userId', usuarioId);
+            localStorage.setItem('userRole', rol);
+
+            // Proceder con el login exitoso
+            this.authService.handleLoginSuccess(token, res.user);
+          } else {
+            this.error = 'Error al procesar la autenticación';
+          }
         } else {
           this.error = 'Respuesta inválida del servidor - no se recibió token';
         }
