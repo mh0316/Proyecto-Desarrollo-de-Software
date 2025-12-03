@@ -3,11 +3,14 @@ package com.example.appmunicipal.service;
 import com.example.appmunicipal.domain.Categoria;
 import com.example.appmunicipal.domain.Denuncia;
 import com.example.appmunicipal.domain.Usuario;
+import com.example.appmunicipal.domain.Evidencia;
 import com.example.appmunicipal.DTO.DenunciaRequest;
 import com.example.appmunicipal.DTO.DenunciaResponse;
+import com.example.appmunicipal.DTO.EvidenciaResponse;
 import com.example.appmunicipal.repository.CategoriaRepository;
 import com.example.appmunicipal.repository.DenunciaRepository;
 import com.example.appmunicipal.repository.UsuarioRepository;
+import com.example.appmunicipal.repository.EvidenciaRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -27,6 +30,7 @@ public class DenunciaService {
     private final DenunciaRepository denunciaRepository;
     private final UsuarioRepository usuarioRepository;
     private final CategoriaRepository categoriaRepository;
+    private final EvidenciaRepository evidenciaRepository;
 
     /**
      * Crear una nueva denuncia
@@ -319,6 +323,30 @@ public class DenunciaService {
         Usuario usuario = usuarioRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado con email: " + email));
         return denunciaRepository.countByUsuarioId(usuario.getId());
+    }
+
+    /**
+     * Obtener todas las evidencias de una denuncia
+     *
+     * @param denunciaId ID de la denuncia
+     * @return Lista de EvidenciaResponse
+     */
+    @Transactional(readOnly = true)
+    public List<EvidenciaResponse> obtenerEvidenciasPorDenuncia(Long denunciaId) {
+        log.info("📋 Obteniendo evidencias para denuncia ID: {}", denunciaId);
+
+        // Verificar que la denuncia existe
+        if (!denunciaRepository.existsById(denunciaId)) {
+            throw new RuntimeException("Denuncia no encontrada con ID: " + denunciaId);
+        }
+
+        List<Evidencia> evidencias = evidenciaRepository.findByDenunciaId(denunciaId);
+
+        log.info("✅ {} evidencias encontradas", evidencias.size());
+
+        return evidencias.stream()
+                .map(EvidenciaResponse::new)
+                .collect(Collectors.toList());
     }
 
     /**

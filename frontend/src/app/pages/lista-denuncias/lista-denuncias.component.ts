@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { DenunciaService } from '../../services/denuncia';
 import { HttpClientModule } from '@angular/common/http';
 
@@ -15,7 +16,8 @@ export class ListaDenunciasComponent implements OnInit {
   cargando = true;
   error = '';
 
-  constructor(private denunciaService: DenunciaService) {}
+  constructor(private denunciaService: DenunciaService,
+    private router: Router) { }
 
   ngOnInit(): void {
     this.obtenerDenuncias();
@@ -47,6 +49,10 @@ export class ListaDenunciasComponent implements OnInit {
         this.denuncias = [];
       }
     });
+  }
+
+  verDetalle(id: number): void {
+    this.router.navigate(['/denuncias', id]);
   }
 
   cambiarEstado(id: number, estado: string): void {

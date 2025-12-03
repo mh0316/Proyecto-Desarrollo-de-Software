@@ -1,0 +1,75 @@
+<div class="denuncia-detalle-container">
+    <div class="header">
+        <button class="btn-volver" (click)="volver()">← Volver a Denuncias</button>
+        <h1>Detalle de Denuncia #{{ denunciaId }}</h1>
+    </div>
+
+    <div *ngIf="loading" class="loading">
+        <p>Cargando...</p>
+    </div>
+
+    <div *ngIf="error" class="error">
+        <p>{{ error }}</p>
+    </div>
+
+    <div *ngIf="!loading && denuncia" class="content">
+        <!-- Información de la denuncia -->
+        <div class="denuncia-info">
+            <h2>Información General</h2>
+            <div class="info-grid">
+                <div class="info-item">
+                    <label>Estado:</label>
+                    <span class="badge" [ngClass]="'badge-' + denuncia.estado.toLowerCase()">
+                        {{ denuncia.estado }}
+                    </span>
+                </div>
+                <div class="info-item">
+                    <label>Categoría:</label>
+                    <span class="categoria" [style.color]="denuncia.categoria.colorHex">
+                        {{ denuncia.categoria.nombre }}
+                    </span>
+                </div>
+                <div class="info-item">
+                    <label>Denunciante:</label>
+                    <span>{{ denuncia.nombreUsuario }} ({{ denuncia.emailUsuario }})</span>
+                </div>
+                <div class="info-item">
+                    <label>Fecha:</label>
+                    <span>{{ denuncia.fechaDenuncia | date: 'dd/MM/yyyy HH:mm' }}</span>
+                </div>
+                <div class="info-item" *ngIf="denuncia.patente">
+                    <label>Patente:</label>
+                    <span class="patente">{{ denuncia.patente }}</span>
+                </div>
+                <div class="info-item">
+                    <label>Ubicación:</label>
+                    <span>{{ denuncia.direccion }}, {{ denuncia.comuna }}</span>
+                </div>
+            </div>
+
+            <div class="descripcion">
+                <label>Descripción:</label>
+                <p>{{ denuncia.descripcion }}</p>
+            </div>
+        </div>
+
+        <!-- Evidencias -->
+        <div class="evidencias-section">
+            <h2>Evidencias ({{ evidencias.length }})</h2>
+
+            <div *ngIf="evidencias.length === 0" class="no-evidencias">
+                <p>No hay evidencias disponibles para esta denuncia.</p>
+            </div>
+
+            <div *ngIf="evidencias.length > 0" class="evidencias-grid">
+                <div *ngFor="let evidencia of evidencias" class="evidencia-card">
+                    <img [src]="getImageUrl(evidencia.url)" [alt]="evidencia.nombreArchivo" class="evidencia-imagen" />
+                    <div class="evidencia-info">
+                        <p class="evidencia-nombre">{{ evidencia.nombreArchivo }}</p>
+                        <p class="evidencia-fecha">{{ evidencia.fechaSubida | date: 'dd/MM/yyyy HH:mm' }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

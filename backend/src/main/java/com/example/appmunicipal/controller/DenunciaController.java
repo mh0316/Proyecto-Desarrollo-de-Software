@@ -27,7 +27,6 @@ public class DenunciaController {
     private final RoleValidator roleValidator;
     private final AdministracionDenunciaService adminService;
 
-
     /**
      * Crear una nueva denuncia
      * POST /api/denuncias
@@ -358,6 +357,35 @@ public class DenunciaController {
     }
 
     /**
+     * Obtener todas las evidencias de una denuncia
+     * GET /api/denuncias/{id}/evidencias
+     */
+    @GetMapping("/{id}/evidencias")
+    public ResponseEntity<?> obtenerEvidenciasDenuncia(@PathVariable Long id) {
+        try {
+            List<com.example.appmunicipal.DTO.EvidenciaResponse> evidencias = denunciaService
+                    .obtenerEvidenciasPorDenuncia(id);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("denunciaId", id);
+            response.put("count", evidencias.size());
+            response.put("evidencias", evidencias);
+
+            return ResponseEntity.ok(response);
+
+        } catch (RuntimeException e) {
+            log.error("❌ Error al obtener evidencias: {}", e.getMessage());
+
+            Map<String, Object> error = new HashMap<>();
+            error.put("success", false);
+            error.put("message", e.getMessage());
+
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+        }
+    }
+
+    /**
      * Obtener imagen de evidencia
      * GET /api/denuncias/evidencia/{filename}
      */
@@ -494,7 +522,6 @@ public class DenunciaController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
         }
     }
-
 
     /**
      * Cambiar estado de una denuncia

@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 @NoArgsConstructor
@@ -13,8 +15,8 @@ import java.time.LocalDateTime;
 public class DenunciaResponse {
 
     private Long id;
-    private String emailUsuario;        // Solo email del usuario (seguro)
-    private String nombreUsuario;       // Solo nombre (para mostrar)
+    private String emailUsuario; // Solo email del usuario (seguro)
+    private String nombreUsuario; // Solo nombre (para mostrar)
     private CategoriaSimpleDto categoria;
     private String descripcion;
     private String patente;
@@ -28,6 +30,7 @@ public class DenunciaResponse {
     private LocalDateTime fechaValidacion;
     private String motivoRechazo;
     private Integer cantidadEvidencias;
+    private List<String> evidenciasUrls;
 
     // Constructor desde entidad Denuncia
     public DenunciaResponse(Denuncia denuncia) {
@@ -42,8 +45,7 @@ public class DenunciaResponse {
                 denuncia.getCategoria().getId(),
                 denuncia.getCategoria().getNombre(),
                 denuncia.getCategoria().getCodigo(),
-                denuncia.getCategoria().getColorHex()
-        );
+                denuncia.getCategoria().getColorHex());
 
         // Datos de la denuncia
         this.descripcion = denuncia.getDescripcion();
@@ -58,6 +60,13 @@ public class DenunciaResponse {
         this.fechaValidacion = denuncia.getFechaValidacion();
         this.motivoRechazo = denuncia.getMotivoRechazo();
         this.cantidadEvidencias = denuncia.getEvidencias() != null ? denuncia.getEvidencias().size() : 0;
+
+        // Generar URLs de evidencias
+        this.evidenciasUrls = denuncia.getEvidencias() != null
+                ? denuncia.getEvidencias().stream()
+                        .map(evidencia -> "/api/denuncias/evidencia/" + evidencia.getNombreArchivo())
+                        .collect(Collectors.toList())
+                : List.of();
     }
 
     // DTO interno para Categoría
