@@ -386,6 +386,35 @@ public class DenunciaController {
     }
 
     /**
+     * Subir evidencia para una denuncia
+     * POST /api/denuncias/{id}/evidencias
+     */
+    @PostMapping("/{id}/evidencias")
+    public ResponseEntity<?> subirEvidencia(
+            @PathVariable Long id,
+            @RequestParam("archivo") org.springframework.web.multipart.MultipartFile archivo) {
+        try {
+            com.example.appmunicipal.DTO.EvidenciaResponse evidencia = denunciaService.subirEvidencia(id, archivo);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("message", "Evidencia subida correctamente");
+            response.put("evidencia", evidencia);
+
+            return ResponseEntity.ok(response);
+
+        } catch (RuntimeException e) {
+            log.error("❌ Error al subir evidencia: {}", e.getMessage());
+
+            Map<String, Object> error = new HashMap<>();
+            error.put("success", false);
+            error.put("message", e.getMessage());
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+        }
+    }
+
+    /**
      * Obtener imagen de evidencia
      * GET /api/denuncias/evidencia/{filename}
      */

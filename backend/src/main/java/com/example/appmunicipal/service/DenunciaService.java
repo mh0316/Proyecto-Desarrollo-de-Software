@@ -368,5 +368,76 @@ public class DenunciaService {
         } catch (Exception e) {
             throw new RuntimeException("Error al cargar evidencia: " + filename, e);
         }
+
+    }
+
+    /**
+     * Subir evidencia para una denuncia
+     *
+     * @param denunciaId ID de la denuncia
+     * @param archivo    Archivo de evidencia (foto/video)
+     * @return EvidenciaResponse
+     */
+    @Transactional
+    public EvidenciaResponse subirEvidencia(Long denunciaId, org.springframework.web.multipart.MultipartFile archivo) {
+        log.info("📤 Subiendo evidencia para denuncia ID: {}", denunciaId);
+
+        Denuncia denuncia = denunciaRepository.findById(denunciaId)
+                .orElseThrow(() -> new RuntimeException("Denuncia no encontrada con ID: " + denunciaId));
+
+        try {
+            // 1. Validar archivo
+            if (archivo.isEmpty()) {
+                throw new RuntimeException("El archivo está vacío");
+            }
+
+            // 2. Generar nombre único
+            String extension = obtenerExtension(archivo.getOriginalFilename());
+            String nombreArchivo = "evidencia-" + System.currentTimeMillis() + extension;
+
+            // 3. Guardar archivo en disco (src/main/resources/static/uploads)
+            // NOTA: En producción, usar una ruta externa configurada
+            java.nio.file.Path uploadDir = java.nio.file.Paths.get("backend/src/main/resources/static/uploads");
+            if (!java.nio.file.Files.exists(uploadDir)) {
+                java.nio.file.Files.createDirectories(uploadDir);
+            }
+
+            java.nio.file.Path filePath = uploadDir.resolve(nombreArchivo);
+            java.nio.file.Files.copy(archivo.getInputStream(), filePath,
+                    java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+
+            // 4. Crear entidad Evidencia
+            Evidencia evidencia = new Evidencia();
+            evidencia.setDenuncia(denuncia);
+            evidencia.setNombreArchivo(nombreArchivo);
+            evidencia.setRutaArchivo("/uploads/" + nombreArchivo); // Ruta relativa para acceso web
+            evidencia.setMimeType(archivo.getContentType());
+            evidencia.setTamanoBytes(archivo.getSize());
+
+            // Determinar tipo
+            String mimeType = archivo.getContentType();
+            if (mimeType != null && mimeType.startsWith("video")) {
+                evidencia.setTipo(Evidencia.TipoEvidencia.VIDEO);
+            } else {
+                evidencia.setTipo(Evidencia.TipoEvidencia.FOTO);
+            }
+
+            // 5. Guardar en BD
+            Evidencia evidenciaGuardada = evidenciaRepository.save(evidencia);
+
+            log.info("✅ Evidencia guardada: {}", nombreArchivo);
+
+            return new EvidenciaResponse(evidenciaGuardada);
+
+        } catch (IOException e) {
+            throw new RuntimeException("Error al guardar el archivo: " + e.getMessage(), e);
+        }
+    }
+
+    private String obtenerExtension(String filename) {
+        if (filename == null || !filename.contains(".")) {
+            return ".jpg"; // Default
+        }
+        return filename.substring(filename.lastIndexOf("."));
     }
 }
