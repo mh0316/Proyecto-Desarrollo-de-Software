@@ -60,7 +60,7 @@ public class SecurityConfig {
                                                 // ============================================
                                                 // ENDPOINTS PROTEGIDOS
                                                 // ============================================
-                                                // 🔒 COMENTADO: Descomentar cuando quieras activar la seguridad
+                                                // Descomentar cuando quieras activar la seguridad
                                                 // .requestMatchers("/api/denuncias/**").hasAnyRole("USUARIO",
                                                 // "FUNCIONARIO",
                                                 // "ADMIN")
@@ -97,11 +97,18 @@ public class SecurityConfig {
                 CorsConfiguration configuration = new CorsConfiguration();
 
                 // Orígenes permitidos (frontend)
-                // Orígenes permitidos (frontend) - Bien permisivo
                 configuration.setAllowedOriginPatterns(Arrays.asList(
-                                "*", // Permitir todo
                                 "http://localhost:4200",
-                                "http://200.13.4.228:4200"));
+                                "http://localhost:8090",
+                                "http://127.0.0.1:4200",
+                                "http://127.0.0.1:8090",
+                                "http://localhost:3000",
+                                "http://127.0.0.1:3000",
+                                "http://200.13.5.5:8090",
+                                "http://200.13.4.228:4200",
+                                "http://200.13.4.228:8090",
+                                "http://200.13.4.228:80",
+                                "http://200.13.4.228:3000"));
 
                 // Métodos HTTP permitidos
                 configuration.setAllowedMethods(Arrays.asList(
