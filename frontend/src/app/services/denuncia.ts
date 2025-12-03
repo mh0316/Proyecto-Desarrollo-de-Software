@@ -12,7 +12,7 @@ export class DenunciaService {
   constructor(private http: HttpClient) {}
 
   getAll(): Observable<any> {
-    return this.http.get<any>(`${this.baseUrl}?email=funcionario%40municipalidad.cl`);
+    return this.http.get<any>(`${this.baseUrl}`);
   }
 
   cambiarEstado(id: number, estado: string): Observable<any> {

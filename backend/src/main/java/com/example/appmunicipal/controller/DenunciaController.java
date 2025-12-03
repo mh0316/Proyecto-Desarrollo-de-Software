@@ -1,13 +1,17 @@
 package com.example.appmunicipal.controller;
 
-import com.example.appmunicipal.DTO.DenunciaRequest;
-import com.example.appmunicipal.DTO.DenunciaResponse;
+import com.example.appmunicipal.DTO.*;
+import com.example.appmunicipal.security.RoleValidator;
+import com.example.appmunicipal.service.AdministracionDenunciaService;
 import com.example.appmunicipal.service.DenunciaService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.core.io.Resource;
+import org.springframework.http.MediaType;
+import org.springframework.http.HttpHeaders;
 
 import java.util.HashMap;
 import java.util.List;
@@ -17,10 +21,12 @@ import java.util.Map;
 @RequestMapping("/api/denuncias")
 @RequiredArgsConstructor
 @Slf4j
-@CrossOrigin(origins = "*")
 public class DenunciaController {
 
     private final DenunciaService denunciaService;
+    private final RoleValidator roleValidator;
+    private final AdministracionDenunciaService adminService;
+
 
     /**
      * Crear una nueva denuncia
@@ -83,16 +89,43 @@ public class DenunciaController {
     /**
      * Listar todas las denuncias
      * GET /api/denuncias
+     * 
+     * 🔒 SEGURIDAD: Por ahora solo imprime el rol, pero está preparado para
+     * verificar FUNCIONARIO
      */
     @GetMapping
-    public ResponseEntity<?> listarDenuncias() {
+    public ResponseEntity<?> listarDenuncias(
+            @RequestHeader(value = "Authorization", required = false) String authHeader) {
         try {
+            // 🔍 Extraer y mostrar el rol del token
+            String rol = roleValidator.obtenerRolDesdeToken(authHeader);
+            String email = roleValidator.obtenerEmailDesdeToken(authHeader);
+            Long usuarioId = roleValidator.obtenerUsuarioIdDesdeToken(authHeader);
+
+            log.info("Solicitud de listar denuncias");
+            log.info("Rol del usuario: {}", rol != null ? rol : "SIN TOKEN");
+
+            // 🔒 VERIFICACIÓN DE ROL (COMENTADA - ACTIVAR CUANDO SEA NECESARIO)
+            ResponseEntity<?> errorResponse = roleValidator.verificarRolFuncionario(authHeader);
+            if (errorResponse != null) {
+                return errorResponse;
+            }
+
             List<DenunciaResponse> denuncias = denunciaService.listarTodasLasDenuncias();
 
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
             response.put("count", denuncias.size());
             response.put("denuncias", denuncias);
+
+            // Agregar información del usuario que hizo la consulta (para debugging)
+            if (rol != null) {
+                Map<String, Object> usuarioInfo = new HashMap<>();
+                usuarioInfo.put("rol", rol);
+                usuarioInfo.put("email", email);
+                usuarioInfo.put("usuarioId", usuarioId);
+                response.put("consultadoPor", usuarioInfo);
+            }
 
             return ResponseEntity.ok(response);
 
@@ -252,10 +285,27 @@ public class DenunciaController {
     /**
      * Obtener estadísticas de denuncias
      * GET /api/denuncias/estadisticas
+     * 
+     * 🔒 SEGURIDAD: Por ahora solo imprime el rol, pero está preparado para
+     * verificar FUNCIONARIO
      */
     @GetMapping("/estadisticas")
-    public ResponseEntity<?> obtenerEstadisticas() {
+    public ResponseEntity<?> obtenerEstadisticas(
+            @RequestHeader(value = "Authorization", required = false) String authHeader) {
         try {
+            // 🔍 Extraer y mostrar el rol del token
+            String rol = roleValidator.obtenerRolDesdeToken(authHeader);
+
+            log.info("📊 Solicitud de estadísticas");
+            log.info("🔑 Rol del usuario: {}", rol != null ? rol : "SIN TOKEN");
+
+            // 🔒 VERIFICACIÓN DE ROL (COMENTADA - ACTIVAR CUANDO SEA NECESARIO)
+            // ResponseEntity<?> errorResponse =
+            // roleValidator.verificarRolFuncionario(authHeader);
+            // if (errorResponse != null) {
+            // return errorResponse;
+            // }
+
             Map<String, Object> estadisticas = new HashMap<>();
             estadisticas.put("total", denunciaService.listarTodasLasDenuncias().size());
             estadisticas.put("pendientes", denunciaService.contarDenunciasPorEstado("PENDIENTE"));
@@ -306,4 +356,178 @@ public class DenunciaController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
         }
     }
+
+    /**
+     * Obtener imagen de evidencia
+     * GET /api/denuncias/evidencia/{filename}
+     */
+    @GetMapping("/evidencia/{filename:.+}")
+    public ResponseEntity<Resource> obtenerEvidencia(@PathVariable String filename) {
+        try {
+            Resource file = denunciaService.obtenerEvidencia(filename);
+
+            String contentType = "image/jpeg";
+            if (filename.toLowerCase().endsWith(".png")) {
+                contentType = "image/png";
+            }
+
+            return ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType(contentType))
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + file.getFilename() + "\"")
+                    .body(file);
+        } catch (RuntimeException e) {
+            log.error("❌ Error al obtener evidencia: {}", e.getMessage());
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    /**
+     * Obtener comentarios internos de una denuncia
+     * GET /api/denuncias/{id}/comentarios
+     */
+    @GetMapping("/{id}/comentarios")
+    public ResponseEntity<?> obtenerComentarios(@PathVariable Long id) {
+        try {
+            List<ComentarioInternoResponse> comentarios = adminService.obtenerComentariosInternos(id);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("count", comentarios.size());
+            response.put("comentarios", comentarios);
+
+            return ResponseEntity.ok(response);
+
+        } catch (RuntimeException e) {
+            log.error("❌ Error al obtener comentarios: {}", e.getMessage());
+
+            Map<String, Object> error = new HashMap<>();
+            error.put("success", false);
+            error.put("message", e.getMessage());
+
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+        }
+    }
+
+    /**
+     * Obtener historial de acciones
+     * GET /api/denuncias/{id}/historial
+     */
+    @GetMapping("/{id}/historial")
+    public ResponseEntity<?> obtenerHistorial(@PathVariable Long id) {
+        try {
+            List<HistorialAccionResponse> historial = adminService.obtenerHistorialAcciones(id);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("count", historial.size());
+            response.put("historial", historial);
+
+            return ResponseEntity.ok(response);
+
+        } catch (RuntimeException e) {
+            log.error("❌ Error al obtener historial: {}", e.getMessage());
+
+            Map<String, Object> error = new HashMap<>();
+            error.put("success", false);
+            error.put("message", e.getMessage());
+
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+        }
+    }
+
+    /**
+     * Listar denuncias que YO he revisado
+     * GET /api/denuncias/mis-revisadas?email=funcionario@municipalidad.cl
+     */
+    @GetMapping("/mis-revisadas")
+    public ResponseEntity<?> listarDenunciasRevisadas(@RequestParam String email) {
+        try {
+            List<DenunciaResponse> denuncias = adminService.listarDenunciasRevisadas(email);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("email", email);
+            response.put("count", denuncias.size());
+            response.put("denuncias", denuncias);
+
+            return ResponseEntity.ok(response);
+
+        } catch (RuntimeException e) {
+            log.error("❌ Error al obtener denuncias revisadas: {}", e.getMessage());
+
+            Map<String, Object> error = new HashMap<>();
+            error.put("success", false);
+            error.put("message", e.getMessage());
+
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+        }
+    }
+
+    /**
+     * Agregar comentario interno
+     * POST /api/funcionario/denuncias/{id}/comentarios
+     */
+    @PostMapping("/{id}/comentarios")
+    public ResponseEntity<?> agregarComentario(
+            @PathVariable Long id,
+            @RequestBody ComentarioInternoRequest request) {
+
+        try {
+            log.info("💬 Agregando comentario interno a denuncia ID: {}", id);
+
+            ComentarioInternoResponse comentario = adminService.agregarComentarioInterno(id, request);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("message", "Comentario agregado exitosamente");
+            response.put("comentario", comentario);
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+
+        } catch (RuntimeException e) {
+            log.error("❌ Error al agregar comentario: {}", e.getMessage());
+
+            Map<String, Object> error = new HashMap<>();
+            error.put("success", false);
+            error.put("message", e.getMessage());
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+        }
+    }
+
+
+    /**
+     * Cambiar estado de una denuncia
+     * PUT /api/denuncias/{id}/estado
+     */
+    @PutMapping("/{id}/estado")
+    public ResponseEntity<?> cambiarEstado(
+            @PathVariable Long id,
+            @RequestBody CambiarEstadoDenunciaRequest request,
+            @RequestHeader(value = "Authorization", required = false) String authHeader) {
+
+        try {
+            log.info("🔄 Cambiando estado de denuncia ID: {}", id);
+
+            String emailRevisor = roleValidator.obtenerEmailDesdeToken(authHeader);
+            DenunciaResponse denuncia = adminService.cambiarEstadoDenuncia(id, request, emailRevisor);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("message", "Estado actualizado exitosamente");
+            response.put("denuncia", denuncia);
+
+            return ResponseEntity.ok(response);
+
+        } catch (RuntimeException e) {
+            log.error("❌ Error al cambiar estado: {}", e.getMessage());
+
+            Map<String, Object> error = new HashMap<>();
+            error.put("success", false);
+            error.put("message", e.getMessage());
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+        }
+    }
+
 }

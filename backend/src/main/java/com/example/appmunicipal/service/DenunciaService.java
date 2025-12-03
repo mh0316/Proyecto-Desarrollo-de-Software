@@ -15,6 +15,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ClassPathResource;
+import java.io.IOException;
 
 @Service
 @RequiredArgsConstructor
@@ -231,7 +234,8 @@ public class DenunciaService {
                     .collect(Collectors.toList());
 
         } catch (IllegalArgumentException e) {
-            throw new RuntimeException("Estado inválido: " + estado + ". Estados válidos: PENDIENTE, EN_REVISION, VALIDADA, RECHAZADA, CERRADA");
+            throw new RuntimeException("Estado inválido: " + estado
+                    + ". Estados válidos: PENDIENTE, EN_REVISION, VALIDADA, RECHAZADA, CERRADA");
         }
     }
 
@@ -315,5 +319,26 @@ public class DenunciaService {
         Usuario usuario = usuarioRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado con email: " + email));
         return denunciaRepository.countByUsuarioId(usuario.getId());
+    }
+
+    /**
+     * Obtener recurso de evidencia (imagen)
+     *
+     * @param filename Nombre del archivo
+     * @return Resource del archivo
+     */
+    public Resource obtenerEvidencia(String filename) {
+        try {
+            // Intentar cargar desde el classpath (static/uploads)
+            Resource resource = new ClassPathResource("static/uploads/" + filename);
+
+            if (resource.exists() && resource.isReadable()) {
+                return resource;
+            } else {
+                throw new RuntimeException("No se pudo leer el archivo: " + filename);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Error al cargar evidencia: " + filename, e);
+        }
     }
 }

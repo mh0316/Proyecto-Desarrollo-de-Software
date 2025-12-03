@@ -106,20 +106,16 @@ public class AdministracionDenunciaService {
      * Cambiar estado de una denuncia
      */
     @Transactional
-    public DenunciaResponse cambiarEstadoDenuncia(Long denunciaId, CambiarEstadoDenunciaRequest request) {
-        log.info("🔄 Cambiando estado de denuncia ID: {} por {}", denunciaId, request.getEmailRevisor());
+    public DenunciaResponse cambiarEstadoDenuncia(Long denunciaId, CambiarEstadoDenunciaRequest request, String emailFuncionario) {
+        log.info("🔄 Cambiando estado de denuncia ID: {} por {}", denunciaId, emailFuncionario);
 
-        // Validaciones
-        if (request.getEmailRevisor() == null || request.getEmailRevisor().trim().isEmpty()) {
-            throw new RuntimeException("El email del funcionario es obligatorio");
-        }
 
-        if (request.getNuevoEstado() == null || request.getNuevoEstado().trim().isEmpty()) {
+        if (request.getEstado() == null || request.getEstado().trim().isEmpty()) {
             throw new RuntimeException("El nuevo estado es obligatorio");
         }
 
         // Obtener funcionario
-        Usuario funcionario = usuarioRepository.findByEmail(request.getEmailRevisor())
+        Usuario funcionario = usuarioRepository.findByEmail(emailFuncionario)
                 .orElseThrow(() -> new RuntimeException("Funcionario no encontrado"));
 
         // Verificar rol
@@ -134,9 +130,9 @@ public class AdministracionDenunciaService {
         // Convertir string a enum
         Denuncia.EstadoDenuncia nuevoEstado;
         try {
-            nuevoEstado = Denuncia.EstadoDenuncia.valueOf(request.getNuevoEstado().toUpperCase());
+            nuevoEstado = Denuncia.EstadoDenuncia.valueOf(request.getEstado().toUpperCase());
         } catch (IllegalArgumentException e) {
-            throw new RuntimeException("Estado inválido: " + request.getNuevoEstado() +
+            throw new RuntimeException("Estado inválido: " + request.getEstado() +
                     ". Estados válidos: PENDIENTE, EN_REVISION, VALIDADA, RECHAZADA, CERRADA");
         }
 

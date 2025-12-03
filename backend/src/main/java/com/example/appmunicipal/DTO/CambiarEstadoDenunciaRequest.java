@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CambiarEstadoDenunciaRequest {
 
-    private String emailRevisor;        // Email del revisor
-    private String nuevoEstado;         // PENDIENTE, EN_REVISION, VALIDADA, RECHAZADA, CERRADA
+    private String estado;         // PENDIENTE, EN_REVISION, VALIDADA, RECHAZADA, CERRADA
     private String comentario;          // Opcional
 }

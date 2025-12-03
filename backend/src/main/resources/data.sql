@@ -9,16 +9,16 @@ INSERT INTO roles (nombre, descripcion) VALUES
 -- 2. CATEGORÍAS
 -- =====================================================
 INSERT INTO categorias (nombre, descripcion, codigo, activa, color_hex) VALUES
-                                                                            ('Estacionamiento Indebido', 'Vehículos estacionados en lugares prohibidos', 'EST-001', TRUE, '#FF5733'),
                                                                             ('Exceso de Velocidad', 'Vehículos circulando a velocidad excesiva', 'VEL-001', TRUE, '#C70039'),
-                                                                            ('Ruido Excesivo', 'Contaminación acústica vehicular', 'RUI-001', TRUE, '#900C3F'),
-                                                                            ('Semáforo en Rojo', 'Paso de semáforo en luz roja', 'SEM-001', TRUE, '#FF0000'),
-                                                                            ('Doble Fila', 'Estacionamiento en doble fila', 'EST-002', TRUE, '#FFC300'),
-                                                                            ('Zona Peatonal', 'Circulación indebida en zona peatonal', 'ZON-001', TRUE, '#DAF7A6'),
-                                                                            ('Sin Patente', 'Vehículo sin patente visible', 'VEH-001', TRUE, '#581845'),
-                                                                            ('Basura en Vía Pública', 'Arrojo de basura desde vehículos', 'AMB-001', TRUE, '#6C757D'),
-                                                                            ('Bloqueo de Rampa', 'Vehículo bloqueando rampa de accesibilidad', 'ACC-001', TRUE, '#0D6EFD'),
-                                                                            ('Conducción Temeraria', 'Maniobras peligrosas en vía pública', 'CON-001', TRUE, '#DC3545');
+                                                                            ('Basura en Vía Pública', 'Arrojo de basura desde vehículos a la vía pública', 'AMB-001', TRUE, '#6C757D'),
+                                                                            ('Estacionamiento Prohibido', 'Vehículos estacionados en lugares no habilitados', 'EST-001', TRUE, '#FF5733'),
+                                                                            ('Vehículo Mal Estacionado', 'Vehículos mal ubicados que dificultan el tránsito', 'EST-002', TRUE, '#FFC300'),
+                                                                            ('No Respetar Señal de PARE', 'Vehículo que no detiene su marcha ante señal reglamentaria de PARE', 'TRA-001', TRUE, '#FF0000'),
+                                                                            ('No Respetar Luz Roja', 'Paso de semáforo en luz roja', 'SEM-001', TRUE, '#900C3F'),
+                                                                            ('Conducir en Contravía', 'Vehículo circulando en sentido contrario', 'CON-001', TRUE, '#0D6EFD'),
+                                                                            ('Obstrucción de Vía Pública', 'Vehículo obstruyendo tránsito o accesos públicos', 'OBS-001', TRUE, '#581845'),
+                                                                            ('Vehículo Abandonado', 'Vehículo dejado sin custodia en la vía pública', 'VEH-001', TRUE, '#DAF7A6'),
+                                                                            ('Otro', 'Infracción no clasificada en categorías anteriores', 'OTR-001', TRUE, '#6F42C1');
 
 -- =====================================================
 -- 3. USUARIOS DE PRUEBA
@@ -55,45 +55,75 @@ INSERT INTO usuarios (username, password, nombre, apellido, email, telefono, rut
 -- =====================================================
 
 -- PENDIENTES
-INSERT INTO denuncias (usuario_id, categoria_id, descripcion, patente, latitud, longitud, direccion, sector, comuna, estado, fecha_denuncia) VALUES
-                                                                                                                                                 ((SELECT id FROM usuarios WHERE username = 'ciudadano1'),
-                                                                                                                                                  (SELECT id FROM categorias WHERE codigo = 'EST-001'),
-                                                                                                                                                  'Vehículo estacionado frente a entrada de garaje por más de 2 horas',
-                                                                                                                                                  'ABCD12', -33.4489, -70.6693, 'Av. Providencia 1234', 'Centro', 'Providencia', 'PENDIENTE',
-                                                                                                                                                  DATEADD('HOUR', -2, CURRENT_TIMESTAMP)),
+INSERT INTO denuncias (
+    usuario_id, categoria_id, descripcion, patente,
+    latitud, longitud, direccion, sector, comuna,
+    estado, fecha_denuncia
+) VALUES
+      (
+          (SELECT id FROM usuarios WHERE username = 'ciudadano1'),
+          (SELECT id FROM categorias WHERE codigo = 'EST-001'),
+          'Vehículo estacionado frente a entrada de garaje por más de 2 horas',
+          'ABCD12', -33.4489, -70.6693, 'Av. Providencia 1234', 'Centro', 'Providencia',
+          'PENDIENTE', DATEADD('HOUR', -2, CURRENT_TIMESTAMP)
+      ),
+      (
+          (SELECT id FROM usuarios WHERE username = 'ciudadano2'),
+          (SELECT id FROM categorias WHERE codigo = 'VEL-001'),
+          'Auto circulando a alta velocidad en zona escolar durante horario de salida',
+          'EFGH34', -33.4372, -70.6506, 'Calle Los Leones 890', 'Barrio Norte', 'Providencia',
+          'PENDIENTE', DATEADD('HOUR', -1, CURRENT_TIMESTAMP)
+      );
 
-                                                                                                                                                 ((SELECT id FROM usuarios WHERE username = 'ciudadano2'),
-                                                                                                                                                  (SELECT id FROM categorias WHERE codigo = 'VEL-001'),
-                                                                                                                                                  'Auto circulando a alta velocidad en zona escolar durante horario de salida',
-                                                                                                                                                  'EFGH34', -33.4372, -70.6506, 'Calle Los Leones 890', 'Barrio Norte', 'Providencia', 'PENDIENTE',
-                                                                                                                                                  DATEADD('HOUR', -1, CURRENT_TIMESTAMP));
 
 -- EN_REVISION
-INSERT INTO denuncias (usuario_id, categoria_id, descripcion, patente, latitud, longitud, direccion, sector, comuna, estado, fecha_denuncia) VALUES
-    ((SELECT id FROM usuarios WHERE username = 'ciudadano3'),
-     (SELECT id FROM categorias WHERE codigo = 'EST-002'),
-     'Camioneta en doble fila obstaculizando el tránsito en hora punta',
-     'IJKL56', -33.4258, -70.6066, 'Av. Apoquindo 3456', 'Las Condes', 'Las Condes', 'EN_REVISION',
-     DATEADD('MINUTE', -30, CURRENT_TIMESTAMP));
+INSERT INTO denuncias (
+    usuario_id, categoria_id, descripcion, patente,
+    latitud, longitud, direccion, sector, comuna,
+    estado, fecha_denuncia
+) VALUES
+    (
+        (SELECT id FROM usuarios WHERE username = 'ciudadano3'),
+        (SELECT id FROM categorias WHERE codigo = 'EST-002'),
+        'Camioneta en doble fila obstaculizando el tránsito en hora punta',
+        'IJKL56', -33.4258, -70.6066, 'Av. Apoquindo 3456', 'Las Condes', 'Las Condes',
+        'EN_REVISION', DATEADD('MINUTE', -30, CURRENT_TIMESTAMP)
+    );
+
 
 -- VALIDADA
-INSERT INTO denuncias (usuario_id, categoria_id, descripcion, patente, latitud, longitud, direccion, sector, comuna, estado, fecha_denuncia, fecha_validacion, revisor_id) VALUES
-    ((SELECT id FROM usuarios WHERE username = 'ciudadano4'),
-     (SELECT id FROM categorias WHERE codigo = 'ACC-001'),
-     'Vehículo bloqueando completamente rampa de acceso para sillas de ruedas',
-     'MNOP78', -33.4419, -70.6542, 'Manuel Montt 567', 'Centro', 'Providencia', 'VALIDADA',
-     DATEADD('HOUR', -26, CURRENT_TIMESTAMP), DATEADD('HOUR', -20, CURRENT_TIMESTAMP),
-     (SELECT id FROM usuarios WHERE username = 'funcionario'));
+INSERT INTO denuncias (
+    usuario_id, categoria_id, descripcion, patente,
+    latitud, longitud, direccion, sector, comuna,
+    estado, fecha_denuncia, fecha_validacion, revisor_id
+) VALUES
+    (
+        (SELECT id FROM usuarios WHERE username = 'ciudadano4'),
+        (SELECT id FROM categorias WHERE codigo = 'OBS-001'),
+        'Vehículo bloqueando completamente rampa de acceso para sillas de ruedas',
+        'MNOP78', -33.4419, -70.6542, 'Manuel Montt 567', 'Centro', 'Providencia',
+        'VALIDADA', DATEADD('HOUR', -26, CURRENT_TIMESTAMP), DATEADD('HOUR', -20, CURRENT_TIMESTAMP),
+        (SELECT id FROM usuarios WHERE username = 'funcionario')
+    );
+
 
 -- RECHAZADA
-INSERT INTO denuncias (usuario_id, categoria_id, descripcion, patente, latitud, longitud, direccion, sector, comuna, estado, fecha_denuncia, fecha_validacion, revisor_id, motivo_rechazo) VALUES
-    ((SELECT id FROM usuarios WHERE username = 'ciudadano3'),
-     (SELECT id FROM categorias WHERE codigo = 'VEL-001'),
-     'Auto que creo iba rápido',
-     'WXYZ56', -33.4600, -70.6800, 'Calle Sin Nombre', 'Norte', 'Santiago', 'RECHAZADA',
-     DATEADD('DAY', -4, CURRENT_TIMESTAMP), DATEADD('DAY', -3, CURRENT_TIMESTAMP),
-     (SELECT id FROM usuarios WHERE username = 'funcionario'),
-     'Descripción muy vaga, sin evidencia suficiente de exceso de velocidad.');
+INSERT INTO denuncias (
+    usuario_id, categoria_id, descripcion, patente,
+    latitud, longitud, direccion, sector, comuna,
+    estado, fecha_denuncia, fecha_validacion, revisor_id, motivo_rechazo
+) VALUES
+    (
+        (SELECT id FROM usuarios WHERE username = 'ciudadano3'),
+        (SELECT id FROM categorias WHERE codigo = 'VEL-001'),
+        'Auto que creo iba rápido',
+        'WXYZ56', -33.4600, -70.6800, 'Calle Sin Nombre', 'Norte', 'Santiago',
+        'RECHAZADA',
+        DATEADD('DAY', -4, CURRENT_TIMESTAMP),
+        DATEADD('DAY', -3, CURRENT_TIMESTAMP),
+        (SELECT id FROM usuarios WHERE username = 'funcionario'),
+        'Descripción muy vaga, sin evidencia suficiente de exceso de velocidad.'
+    );
 
 -- =====================================================
 -- 5. COMENTARIOS INTERNOS (MÍNIMOS)
