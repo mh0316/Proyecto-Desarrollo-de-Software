@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 
@@ -9,10 +9,19 @@ import { environment } from '../../environments/environment';
 export class DenunciaService {
   private baseUrl = `${environment.apiUrl}/api/denuncias`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   getAll(): Observable<any> {
-    return this.http.get<any>(`${this.baseUrl}`);
+    // Agregar headers para prevenir caching
+    const headers = new HttpHeaders({
+      'Cache-Control': 'no-cache, no-store, must-revalidate',
+      'Pragma': 'no-cache',
+      'Expires': '0'
+    });
+
+    // Agregar timestamp para cache-busting
+    const timestamp = new Date().getTime();
+    return this.http.get<any>(`${this.baseUrl}?_t=${timestamp}`, { headers });
   }
 
   cambiarEstado(id: number, estado: string): Observable<any> {
