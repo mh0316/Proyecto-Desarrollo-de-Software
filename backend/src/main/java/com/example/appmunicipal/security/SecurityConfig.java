@@ -127,7 +127,10 @@ public class SecurityConfig {
                 // Headers expuestos (que el frontend puede leer)
                 configuration.setExposedHeaders(Arrays.asList(
                                 "Authorization",
-                                "Content-Type"));
+                                "Content-Type",
+                                "Cache-Control",
+                                "Pragma",
+                                "Expires"));
 
                 // Permitir credenciales (cookies, authorization headers)
                 configuration.setAllowCredentials(true);

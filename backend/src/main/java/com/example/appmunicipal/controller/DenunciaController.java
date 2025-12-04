@@ -93,23 +93,9 @@ public class DenunciaController {
      * verificar FUNCIONARIO
      */
     @GetMapping
-    public ResponseEntity<?> listarDenuncias(
-            @RequestHeader(value = "Authorization", required = false) String authHeader) {
+    public ResponseEntity<?> listarDenuncias() {
         try {
-            // 🔍 Extraer y mostrar el rol del token
-            String rol = roleValidator.obtenerRolDesdeToken(authHeader);
-            String email = roleValidator.obtenerEmailDesdeToken(authHeader);
-            Long usuarioId = roleValidator.obtenerUsuarioIdDesdeToken(authHeader);
-
             log.info("Solicitud de listar denuncias");
-            log.info("Rol del usuario: {}", rol != null ? rol : "SIN TOKEN");
-
-            // 🔒 VERIFICACIÓN DE ROL (COMENTADA - ACTIVAR CUANDO SEA NECESARIO)
-            ResponseEntity<?> errorResponse = roleValidator.verificarRolFuncionario(authHeader);
-            if (errorResponse != null) {
-                return errorResponse;
-            }
-
             List<DenunciaResponse> denuncias = denunciaService.listarTodasLasDenuncias();
 
             Map<String, Object> response = new HashMap<>();
@@ -117,16 +103,11 @@ public class DenunciaController {
             response.put("count", denuncias.size());
             response.put("denuncias", denuncias);
 
-            // Agregar información del usuario que hizo la consulta (para debugging)
-            if (rol != null) {
-                Map<String, Object> usuarioInfo = new HashMap<>();
-                usuarioInfo.put("rol", rol);
-                usuarioInfo.put("email", email);
-                usuarioInfo.put("usuarioId", usuarioId);
-                response.put("consultadoPor", usuarioInfo);
-            }
-
-            return ResponseEntity.ok(response);
+            return ResponseEntity.ok()
+                    .header("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0")
+                    .header("Pragma", "no-cache")
+                    .header("Expires", "0")
+                    .body(response);
 
         } catch (Exception e) {
             log.error("❌ Error al listar denuncias: {}", e.getMessage());
