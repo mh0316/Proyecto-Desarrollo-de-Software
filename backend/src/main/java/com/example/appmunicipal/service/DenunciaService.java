@@ -31,6 +31,7 @@ public class DenunciaService {
     private final UsuarioRepository usuarioRepository;
     private final CategoriaRepository categoriaRepository;
     private final EvidenciaRepository evidenciaRepository;
+    private final com.example.appmunicipal.repository.NotificacionRepository notificacionRepository;
 
     /**
      * Crear una nueva denuncia
@@ -444,5 +445,49 @@ public class DenunciaService {
             return ".jpg"; // Default
         }
         return filename.substring(filename.lastIndexOf("."));
+    }
+
+    /**
+     * Eliminar una denuncia y sus evidencias asociadas
+     *
+     * @param id ID de la denuncia a eliminar
+     */
+    @Transactional
+    public void eliminarDenuncia(Long id) {
+        log.info("🗑️ Eliminando denuncia ID: {}", id);
+
+        Denuncia denuncia = denunciaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Denuncia no encontrada con ID: " + id));
+
+        // 1. Eliminar archivos de evidencia del disco
+        List<Evidencia> evidencias = evidenciaRepository.findByDenunciaId(id);
+        String uploadPath = System.getenv("UPLOAD_PATH") != null
+                ? System.getenv("UPLOAD_PATH")
+                : "backend/src/main/resources/static/uploads";
+
+        for (Evidencia evidencia : evidencias) {
+            try {
+                java.nio.file.Path filePath = java.nio.file.Paths.get(uploadPath, evidencia.getNombreArchivo());
+                if (java.nio.file.Files.exists(filePath)) {
+                    java.nio.file.Files.delete(filePath);
+                    log.info("📁 Archivo eliminado: {}", evidencia.getNombreArchivo());
+                }
+            } catch (IOException e) {
+                log.warn("⚠️ No se pudo eliminar el archivo: {} - {}", evidencia.getNombreArchivo(), e.getMessage());
+            }
+        }
+
+        // 2. Eliminar notificaciones asociadas
+        List<com.example.appmunicipal.domain.Notificacion> notificaciones = notificacionRepository.findByDenunciaId(id);
+        if (!notificaciones.isEmpty()) {
+            notificacionRepository.deleteAll(notificaciones);
+            log.info("🔔 {} notificaciones eliminadas", notificaciones.size());
+        }
+
+        // 3. Eliminar denuncia (cascade eliminará evidencias, comentarios e historial
+        // de BD)
+        denunciaRepository.delete(denuncia);
+
+        log.info("✅ Denuncia {} eliminada correctamente", id);
     }
 }

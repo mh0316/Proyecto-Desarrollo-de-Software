@@ -439,6 +439,32 @@ public class DenunciaController {
     }
 
     /**
+     * Eliminar una denuncia
+     * DELETE /api/denuncias/{id}
+     */
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> eliminarDenuncia(@PathVariable Long id) {
+        try {
+            denunciaService.eliminarDenuncia(id);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("message", "Denuncia eliminada correctamente");
+
+            return ResponseEntity.ok(response);
+
+        } catch (RuntimeException e) {
+            log.error("❌ Error al eliminar denuncia: {}", e.getMessage());
+
+            Map<String, Object> error = new HashMap<>();
+            error.put("success", false);
+            error.put("message", e.getMessage());
+
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+        }
+    }
+
+    /**
      * Obtener comentarios internos de una denuncia
      * GET /api/denuncias/{id}/comentarios
      */

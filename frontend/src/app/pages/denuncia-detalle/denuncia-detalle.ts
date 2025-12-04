@@ -117,4 +117,38 @@ export class DenunciaDetalleComponent implements OnInit {
   getImageUrl(url: string): string {
     return `${this.apiUrl}${url}`;
   }
+
+  eliminarDenuncia() {
+    if (!this.denunciaId) return;
+
+    const confirmacion = confirm(
+      '¿Está seguro de que desea eliminar esta denuncia?\n\n' +
+      'Esta acción eliminará:\n' +
+      '- La denuncia completa\n' +
+      '- Todas las evidencias asociadas\n' +
+      '- Los archivos de evidencia del servidor\n\n' +
+      'Esta acción NO se puede deshacer.'
+    );
+
+    if (!confirmacion) return;
+
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+
+    this.http.delete<any>(`${this.apiUrl}/api/denuncias/${this.denunciaId}`, { headers })
+      .subscribe({
+        next: (response) => {
+          if (response.success) {
+            alert('Denuncia eliminada correctamente');
+            this.router.navigate(['/denuncias']);
+          }
+        },
+        error: (err) => {
+          console.error('Error al eliminar denuncia:', err);
+          alert('Error al eliminar la denuncia: ' + (err.error?.message || 'Error desconocido'));
+        }
+      });
+  }
 }

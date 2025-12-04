@@ -1,6 +1,9 @@
 <div class="denuncia-detalle-container">
     <div class="header">
-        <button class="btn-volver" (click)="volver()">← Volver a Denuncias</button>
+        <div class="header-buttons">
+            <button class="btn-volver" (click)="volver()">← Volver a Denuncias</button>
+            <button class="btn-eliminar" (click)="eliminarDenuncia()">🗑️ Eliminar Denuncia</button>
+        </div>
         <h1>Detalle de Denuncia #{{ denunciaId }}</h1>
     </div>
 
