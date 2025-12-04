@@ -395,9 +395,14 @@ public class DenunciaService {
             String extension = obtenerExtension(archivo.getOriginalFilename());
             String nombreArchivo = "evidencia-" + System.currentTimeMillis() + extension;
 
-            // 3. Guardar archivo en disco (src/main/resources/static/uploads)
-            // NOTA: En producción, usar una ruta externa configurada
-            java.nio.file.Path uploadDir = java.nio.file.Paths.get("backend/src/main/resources/static/uploads");
+            // 3. Guardar archivo en disco
+            // En desarrollo: backend/src/main/resources/static/uploads
+            // En producción (Docker): /app/uploads (volumen compartido)
+            String uploadPath = System.getenv("UPLOAD_PATH") != null
+                    ? System.getenv("UPLOAD_PATH")
+                    : "backend/src/main/resources/static/uploads";
+
+            java.nio.file.Path uploadDir = java.nio.file.Paths.get(uploadPath);
             if (!java.nio.file.Files.exists(uploadDir)) {
                 java.nio.file.Files.createDirectories(uploadDir);
             }

@@ -16,7 +16,6 @@ WORKDIR /app
 
 # Usuario no-root
 RUN addgroup -S spring && adduser -S spring -G spring
-USER spring:spring
 
 # Config
 ENV JAVA_OPTS="-Xmx512m -Xms256m -XX:+UseG1GC"
@@ -25,6 +24,9 @@ EXPOSE 8080
 
 # Copia el artefacto construido en la etapa anterior
 COPY --chown=spring:spring --from=build /app/app.jar app.jar
+
+# Cambiar a usuario spring
+USER spring:spring
 
 # Arranque
 ENTRYPOINT ["sh","-c","java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar app.jar"]
