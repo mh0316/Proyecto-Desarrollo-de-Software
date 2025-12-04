@@ -18,6 +18,12 @@ spring:
       mode: always              # SI queremos cargar data-prod.sql
       data-locations: classpath:data-prod.sql
 
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+      enabled: true
+
 server:
   port: 8080
 

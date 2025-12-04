@@ -206,6 +206,13 @@ h2 {
     display: block;
 }
 
+.evidencia-video {
+    width: 100%;
+    height: 200px;
+    display: block;
+    background: #000;
+}
+
 .evidencia-info {
     padding: 0.75rem;
     background: #f8f9fa;
@@ -217,6 +224,30 @@ h2 {
     color: #495057;
     margin: 0 0 0.25rem 0;
     word-break: break-word;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.evidencia-tipo-badge {
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+
+.evidencia-tipo-badge.tipo-video {
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.7;
+    }
 }
 
 .evidencia-fecha {

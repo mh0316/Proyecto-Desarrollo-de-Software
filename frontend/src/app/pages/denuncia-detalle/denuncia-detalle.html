@@ -66,9 +66,23 @@
 
             <div *ngIf="evidencias.length > 0" class="evidencias-grid">
                 <div *ngFor="let evidencia of evidencias" class="evidencia-card">
-                    <img [src]="getImageUrl(evidencia.url)" [alt]="evidencia.nombreArchivo" class="evidencia-imagen" />
+                    <!-- Mostrar imagen si es foto -->
+                    <img *ngIf="evidencia.tipo === 'FOTO'" [src]="getImageUrl(evidencia.url)"
+                        [alt]="evidencia.nombreArchivo" class="evidencia-imagen" />
+
+                    <!-- Mostrar video si es video -->
+                    <video *ngIf="evidencia.tipo === 'VIDEO'" [src]="getImageUrl(evidencia.url)" class="evidencia-video"
+                        controls preload="metadata">
+                        Tu navegador no soporta el elemento de video.
+                    </video>
+
                     <div class="evidencia-info">
-                        <p class="evidencia-nombre">{{ evidencia.nombreArchivo }}</p>
+                        <p class="evidencia-nombre">
+                            <span class="evidencia-tipo-badge" [class.tipo-video]="evidencia.tipo === 'VIDEO'">
+                                {{ evidencia.tipo === 'VIDEO' ? '🎥' : '📷' }}
+                            </span>
+                            {{ evidencia.nombreArchivo }}
+                        </p>
                         <p class="evidencia-fecha">{{ evidencia.fechaSubida | date: 'dd/MM/yyyy HH:mm' }}</p>
                     </div>
                 </div>

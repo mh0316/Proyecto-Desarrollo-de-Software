@@ -28,6 +28,12 @@ spring:
       mode: always         # SIEMPRE cargar data.sql
       continue-on-error: false
 
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+      enabled: true
+
 logging:
   level:
     org.springframework.web: INFO
