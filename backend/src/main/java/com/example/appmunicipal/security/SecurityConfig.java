@@ -122,7 +122,10 @@ public class SecurityConfig {
                                 "Accept",
                                 "Origin",
                                 "Access-Control-Request-Method",
-                                "Access-Control-Request-Headers"));
+                                "Access-Control-Request-Headers",
+                                "Cache-Control",
+                                "Pragma",
+                                "Expires"));
 
                 // Headers expuestos (que el frontend puede leer)
                 configuration.setExposedHeaders(Arrays.asList(

@@ -12,16 +12,10 @@ export class DenunciaService {
   constructor(private http: HttpClient) { }
 
   getAll(): Observable<any> {
-    // Agregar headers para prevenir caching
-    const headers = new HttpHeaders({
-      'Cache-Control': 'no-cache, no-store, must-revalidate',
-      'Pragma': 'no-cache',
-      'Expires': '0'
-    });
 
     // Agregar timestamp para cache-busting
     const timestamp = new Date().getTime();
-    return this.http.get<any>(`${this.baseUrl}?_t=${timestamp}`, { headers });
+    return this.http.get<any>(`${this.baseUrl}`);
   }
 
   cambiarEstado(id: number, estado: string): Observable<any> {
