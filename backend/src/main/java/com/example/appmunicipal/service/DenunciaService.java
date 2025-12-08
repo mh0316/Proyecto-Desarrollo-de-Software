@@ -605,7 +605,15 @@ public class DenunciaService {
         }
         stats.setDenunciasPorHorario(denunciasPorHorario);
 
-        // 6. Denuncias por Comuna
+        // 6. Denuncias por Categoría
+        List<Object[]> denunciasPorCategoriaDB = denunciaRepository.countDenunciasByCategoria();
+        Map<String, Long> denunciasPorCategoria = new HashMap<>();
+        for (Object[] row : denunciasPorCategoriaDB) {
+            denunciasPorCategoria.put((String) row[0], (Long) row[1]);
+        }
+        stats.setDenunciasPorCategoria(denunciasPorCategoria);
+
+        // 7. Denuncias por Comuna
         List<Object[]> denunciasPorComunaDB = denunciaRepository.countDenunciasByComuna();
         Map<String, Long> denunciasPorComuna = new HashMap<>();
         for (Object[] row : denunciasPorComunaDB) {
@@ -613,7 +621,7 @@ public class DenunciaService {
         }
         stats.setDenunciasPorComuna(denunciasPorComuna);
 
-        // 7. Denuncias por Sector (Temuco)
+        // 8. Denuncias por Sector (Temuco)
         List<Object[]> denunciasPorSectorDB = denunciaRepository.countDenunciasBySectorTemuco();
         Map<String, Long> denunciasPorSector = new HashMap<>();
         for (Object[] row : denunciasPorSectorDB) {
@@ -621,7 +629,7 @@ public class DenunciaService {
         }
         stats.setDenunciasPorSector(denunciasPorSector);
 
-        // 8. Top Usuarios
+        // 9. Top Usuarios
         // Limitamos a top 10 en la query
         List<Object[]> topUsuariosDB = denunciaRepository
                 .countDenunciasByUsuarioTop10(org.springframework.data.domain.PageRequest.of(0, 10));
@@ -630,6 +638,18 @@ public class DenunciaService {
             topUsuarios.put((String) row[0], (Long) row[1]);
         }
         stats.setTopUsuarios(topUsuarios);
+
+        // 10. Reincidencia por Patente (Top 20 patentes con más de 1 denuncia)
+        List<Object[]> reincidenciaPatentesDB = denunciaRepository
+                .countReincidenciaByPatente(org.springframework.data.domain.PageRequest.of(0, 20));
+        Map<String, Long> reincidenciaPatentes = new java.util.LinkedHashMap<>();
+        for (Object[] row : reincidenciaPatentesDB) {
+            reincidenciaPatentes.put((String) row[0], (Long) row[1]);
+        }
+        stats.setReincidenciaPatentes(reincidenciaPatentes);
+
+        long fin = System.currentTimeMillis();
+        log.info("✅ Estadísticas calculadas en {} ms", (fin - inicio));
 
         return stats;
     }

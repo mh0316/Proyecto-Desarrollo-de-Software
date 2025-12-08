@@ -73,7 +73,12 @@ public interface DenunciaRepository extends JpaRepository<Denuncia, Long> {
     @Query("SELECT FUNCTION('HOUR', d.fechaDenuncia), COUNT(d) FROM Denuncia d GROUP BY FUNCTION('HOUR', d.fechaDenuncia)")
     List<Object[]> countDenunciasByHora();
 
+    // Cantidad de denuncias por Categoría
+    @Query("SELECT c.nombre, COUNT(d) FROM Denuncia d JOIN d.categoria c GROUP BY c.id, c.nombre ORDER BY COUNT(d) DESC")
+    List<Object[]> countDenunciasByCategoria();
+
     // Cantidad de denuncias por Sector (Solo Temuco)
+
     @Query("SELECT UPPER(d.sector), COUNT(d) FROM Denuncia d " +
             "WHERE d.sector IS NOT NULL AND UPPER(d.comuna) LIKE '%TEMUCO%' " +
             "GROUP BY UPPER(d.sector)")
@@ -85,4 +90,13 @@ public interface DenunciaRepository extends JpaRepository<Denuncia, Long> {
             "GROUP BY u.id, u.nombre, u.apellido, u.email " +
             "ORDER BY COUNT(d) DESC")
     List<Object[]> countDenunciasByUsuarioTop10(Pageable pageable);
+
+    // Reincidencia por patente (solo patentes con más de 1 denuncia)
+    @Query("SELECT UPPER(TRIM(d.patente)), COUNT(d) " +
+            "FROM Denuncia d " +
+            "WHERE d.patente IS NOT NULL AND d.patente != '' " +
+            "GROUP BY UPPER(TRIM(d.patente)) " +
+            "HAVING COUNT(d) > 1 " +
+            "ORDER BY COUNT(d) DESC")
+    List<Object[]> countReincidenciaByPatente(Pageable pageable);
 }
