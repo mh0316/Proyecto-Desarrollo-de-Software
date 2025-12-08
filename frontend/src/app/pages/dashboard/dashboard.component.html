@@ -5,46 +5,77 @@
     </div>
 
     <div class="stats-grid">
-        <div class="stat-card">
+        <!-- Summary Cards -->
+        <div class="stat-card summary-card" (click)="navigateToDenuncias()">
             <div class="stat-icon">📋</div>
             <div class="stat-content">
-                <h3 class="stat-title">Denuncias</h3>
-                <p class="stat-description">Gestiona todas las denuncias del sistema</p>
-                <button class="btn-primary" (click)="navigateToDenuncias()">
-                    Ver Denuncias
-                </button>
+                <h3 class="stat-title">Gestionar</h3>
+                <p class="stat-description">Ver todas las denuncias</p>
             </div>
         </div>
 
-        <div class="stat-card">
+        <div class="stat-card summary-card">
             <div class="stat-icon">⏱️</div>
             <div class="stat-content">
-                <h3 class="stat-title">Pendientes</h3>
-                <p class="stat-description">Denuncias esperando validación</p>
+                <h3 class="stat-title">Tiempo Promedio</h3>
+                <p class="stat-value" *ngIf="stats">{{ stats.tiempoPromedioValidacion | number:'1.1-1' }} hrs</p>
+                <p class="stat-description">En validar una denuncia</p>
             </div>
         </div>
 
-        <div class="stat-card">
-            <div class="stat-icon">✅</div>
+        <div class="stat-card summary-card" (click)="navigateToGeoStats()">
+            <div class="stat-icon">🗺️</div>
             <div class="stat-content">
-                <h3 class="stat-title">Validadas</h3>
-                <p class="stat-description">Denuncias aprobadas</p>
+                <h3 class="stat-title">Geografía</h3>
+                <p class="stat-description">Ver estadísticas por zona</p>
             </div>
         </div>
 
-        <div class="stat-card">
-            <div class="stat-icon">❌</div>
+        <div class="stat-card summary-card" (click)="navigateToReportes()">
+            <div class="stat-icon">📊</div>
             <div class="stat-content">
-                <h3 class="stat-title">Rechazadas</h3>
-                <p class="stat-description">Denuncias rechazadas</p>
+                <h3 class="stat-title">Reportes</h3>
+                <p class="stat-description">Ranking de usuarios y patentes</p>
             </div>
         </div>
     </div>
 
-    <div class="info-section">
-        <div class="info-card">
-            <h2>🎯 Acceso Rápido</h2>
-            <p>Utiliza el menú lateral para navegar entre las diferentes secciones del sistema.</p>
+    <div class="charts-grid" *ngIf="!isLoadingTests">
+        <!-- Monthly Trends -->
+        <div class="chart-card">
+            <h3>📈 Tendencia Mensual</h3>
+            <div class="chart-container">
+                <canvas #chartMensual></canvas>
+            </div>
         </div>
+
+        <!-- Category Breakdown -->
+        <div class="chart-card">
+            <h3>🏷️ Por Categoría</h3>
+            <div class="chart-container">
+                <canvas #chartCategoria></canvas>
+            </div>
+        </div>
+
+        <!-- Validation vs Rejection -->
+        <div class="chart-card">
+            <h3>⚖️ Tasa de Validación</h3>
+            <div class="chart-container">
+                <canvas #chartTasa></canvas>
+            </div>
+        </div>
+
+        <!-- Time of Day -->
+        <div class="chart-card">
+            <h3>🕒 Horarios Frecuentes</h3>
+            <div class="chart-container">
+                <canvas #chartHorario></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="loading-state" *ngIf="isLoadingTests">
+        <div class="spinner"></div>
+        <p>Cargando estadísticas...</p>
     </div>
 </div>

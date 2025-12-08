@@ -186,4 +186,11 @@ export class DenunciaService {
   getEstadisticas(): Observable<any> {
     return this.http.get(`${this.baseUrl}/estadisticas`);
   }
+  /**
+   * Obtiene estadísticas avanzadas para el dashboard
+   * @returns Observable con las estadísticas avanzadas
+   */
+  getEstadisticasAvanzadas(): Observable<any> {
+    return this.http.get(`${this.baseUrl}/estadisticas-avanzadas`);
+  }
 }

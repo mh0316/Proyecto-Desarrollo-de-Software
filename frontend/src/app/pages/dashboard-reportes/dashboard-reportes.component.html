@@ -1,0 +1,74 @@
+<div class="dashboard-container">
+    <div class="header-section">
+        <button class="btn-back" (click)="goBack()">← Volver al Dashboard</button>
+        <h1 class="page-title">Reportes Detallados</h1>
+    </div>
+
+    <div class="reports-grid" *ngIf="!isLoading">
+
+        <!-- T4: Top Users Table -->
+        <div class="report-card">
+            <div class="report-header">
+                <h3>🏆 Top Usuarios Denunciantes</h3>
+                <p class="report-subtitle">Usuarios con mayor cantidad de denuncias realizadas.</p>
+            </div>
+            <div class="table-container">
+                <table class="data-table" *ngIf="topUsuariosList.length > 0; else noData">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Usuario</th>
+                            <th>Total Denuncias</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let item of topUsuariosList; let i = index">
+                            <td class="rank-col">{{ i + 1 }}</td>
+                            <td>{{ item.usuario }}</td>
+                            <td class="count-col">{{ item.cantidad }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- E10: Recidivism Table -->
+        <div class="report-card">
+            <div class="report-header">
+                <h3>🚗 Reincidencia por Patente</h3>
+                <p class="report-subtitle">Vehículos con más de una denuncia registrada.</p>
+            </div>
+            <div class="table-container">
+                <table class="data-table" *ngIf="reincidenciaList.length > 0; else noData">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Patente</th>
+                            <th>Reincidencias</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let item of reincidenciaList; let i = index">
+                            <td class="rank-col">{{ i + 1 }}</td>
+                            <td class="plate-col">
+                                <span class="badge-plate">{{ item.patente }}</span>
+                            </td>
+                            <td class="count-col reincidentor">{{ item.cantidad }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <ng-template #noData>
+        <div class="empty-state">
+            <p>No hay datos suficientes para mostrar.</p>
+        </div>
+    </ng-template>
+
+    <div class="loading-state" *ngIf="isLoading">
+        <div class="spinner"></div>
+        <p>Generando reportes...</p>
+    </div>
+</div>

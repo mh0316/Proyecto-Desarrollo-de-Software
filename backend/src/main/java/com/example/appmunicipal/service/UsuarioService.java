@@ -76,6 +76,7 @@ public class UsuarioService {
                     usuario.getEmail(),
                     usuario.getUsername(),
                     usuario.getNombre(),
+                    usuario.getApellido(),
                     usuario.getRol().getNombre());
 
             log.info("✅ Login exitoso para: {} (ID: {})", usuario.getEmail(), usuario.getId());

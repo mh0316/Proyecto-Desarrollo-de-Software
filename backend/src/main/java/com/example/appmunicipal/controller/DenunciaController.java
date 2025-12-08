@@ -638,4 +638,32 @@ public class DenunciaController {
         }
     }
 
+    /**
+     * Obtener estadísticas avanzadas
+     * GET /api/denuncias/estadisticas-avanzadas
+     */
+    @PreAuthorize("hasAnyRole('CIUDADANO', 'FUNCIONARIO')")
+    @GetMapping("/estadisticas-avanzadas")
+    public ResponseEntity<?> obtenerEstadisticasAvanzadas(
+            @RequestHeader(value = "Authorization", required = false) String authHeader) {
+        try {
+            log.info("📊 Solicitud de estadísticas avanzadas");
+
+            com.example.appmunicipal.DTO.DashboardStatsResponse stats = denunciaService.obtenerEstadisticasAvanzadas();
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("estadisticas", stats);
+
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            log.error("❌ Error al obtener estadísticas avanzadas: {}", e.getMessage());
+            Map<String, Object> error = new HashMap<>();
+            error.put("success", false);
+            error.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+        }
+    }
+
 }

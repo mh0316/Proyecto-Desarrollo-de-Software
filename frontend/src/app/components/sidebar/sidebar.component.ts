@@ -21,6 +21,16 @@ export class SidebarComponent {
             label: 'Denuncias',
             icon: '📋',
             route: '/denuncias'
+        },
+        {
+            label: 'Geografía',
+            icon: '🗺️',
+            route: '/dashboard/geo'
+        },
+        {
+            label: 'Reportes',
+            icon: '📈',
+            route: '/dashboard/reportes'
         }
     ];
 

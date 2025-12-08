@@ -4,6 +4,8 @@ import { DenunciaDetalleComponent } from './pages/denuncia-detalle/denuncia-deta
 import { LoginComponent } from './pages/login/login.component';
 import { RegisterComponent } from './pages/register/register.component';
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
+import { DashboardGeoComponent } from './pages/dashboard-geo/dashboard-geo.component';
+import { DashboardReportesComponent } from './pages/dashboard-reportes/dashboard-reportes.component';
 import { AuthGuard } from './services/auth.guard'; // 👈 Importar el Guard
 
 export const routes: Routes = [
@@ -18,6 +20,16 @@ export const routes: Routes = [
   {
     path: 'dashboard',
     component: DashboardComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'dashboard/geo',
+    component: DashboardGeoComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'dashboard/reportes',
+    component: DashboardReportesComponent,
     canActivate: [AuthGuard]
   },
   {

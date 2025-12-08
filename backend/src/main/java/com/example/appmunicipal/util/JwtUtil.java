@@ -34,12 +34,14 @@ public class JwtUtil {
      * @param rol       Rol del usuario
      * @return Token JWT firmado
      */
-    public String generarToken(Long usuarioId, String email, String username, String nombre, String rol) {
+    public String generarToken(Long usuarioId, String email, String username, String nombre, String apellido,
+            String rol) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("usuarioId", usuarioId);
         claims.put("email", email);
         claims.put("username", username);
         claims.put("nombre", nombre);
+        claims.put("apellido", apellido);
         claims.put("rol", rol);
 
         return crearToken(claims, email);

@@ -15,12 +15,17 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ClassPathResource;
 import java.io.IOException;
+import com.example.appmunicipal.DTO.DashboardStatsResponse;
+import java.util.Map;
+import java.util.LinkedHashMap;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.util.Locale;
 
 @Service
 @RequiredArgsConstructor
@@ -502,5 +507,123 @@ public class DenunciaService {
         denunciaRepository.delete(denuncia);
 
         log.info("✅ Denuncia {} eliminada correctamente", id);
+    }
+
+    /**
+     * Obtener estadísticas avanzadas para el dashboard
+     */
+    @Transactional(readOnly = true)
+    public DashboardStatsResponse obtenerEstadisticasAvanzadas() {
+        log.info("📊 Calculando estadísticas avanzadas");
+
+        List<Denuncia> todasLasDenuncias = denunciaRepository.findAll();
+
+        DashboardStatsResponse stats = new DashboardStatsResponse();
+
+        // 1. Tendencia mensual (últimos 6 meses o todo el año)
+        Map<String, Long> denunciasPorMes = todasLasDenuncias.stream()
+                .collect(Collectors.groupingBy(
+                        d -> d.getFechaDenuncia().format(DateTimeFormatter.ofPattern("yyyy-MM")),
+                        Collectors.counting()));
+        stats.setDenunciasPorMes(new LinkedHashMap<>(denunciasPorMes)); // Convertir a LinkedHashMap si se necesita
+                                                                        // orden específico después
+
+        // 2. Denuncias por categoría
+        Map<String, Long> denunciasPorCategoria = todasLasDenuncias.stream()
+                .collect(Collectors.groupingBy(
+                        d -> d.getCategoria().getNombre(),
+                        Collectors.counting()));
+        stats.setDenunciasPorCategoria(denunciasPorCategoria);
+
+        // 3. Tasa de validación vs rechazo
+        long totalCerradas = todasLasDenuncias.stream()
+                .filter(d -> d.getEstado() == Denuncia.EstadoDenuncia.VALIDADA ||
+                        d.getEstado() == Denuncia.EstadoDenuncia.RECHAZADA)
+                .count();
+
+        if (totalCerradas > 0) {
+            long validadas = todasLasDenuncias.stream()
+                    .filter(d -> d.getEstado() == Denuncia.EstadoDenuncia.VALIDADA)
+                    .count();
+            long rechazadas = todasLasDenuncias.stream()
+                    .filter(d -> d.getEstado() == Denuncia.EstadoDenuncia.RECHAZADA)
+                    .count();
+
+            stats.setTasaValidacion((double) validadas / totalCerradas * 100);
+            stats.setTasaRechazo((double) rechazadas / totalCerradas * 100);
+        } else {
+            stats.setTasaValidacion(0.0);
+            stats.setTasaRechazo(0.0);
+        }
+
+        // 4. Tiempo promedio de validación (en horas)
+        Double promedioHoras = todasLasDenuncias.stream()
+                .filter(d -> d.getFechaValidacion() != null)
+                .mapToLong(d -> ChronoUnit.HOURS.between(d.getFechaDenuncia(), d.getFechaValidacion()))
+                .average()
+                .orElse(0.0);
+        stats.setTiempoPromedioValidacion(promedioHoras);
+
+        // 5. Tendencias por horario (0-23 horas)
+        Map<Integer, Long> denunciasPorHorario = todasLasDenuncias.stream()
+                .collect(Collectors.groupingBy(
+                        d -> d.getFechaDenuncia().getHour(),
+                        Collectors.counting()));
+        stats.setDenunciasPorHorario(denunciasPorHorario);
+
+        // 6. E9: Denuncias por Comuna
+        Map<String, Long> denunciasPorComuna = todasLasDenuncias.stream()
+                .filter(d -> d.getComuna() != null)
+                .collect(Collectors.groupingBy(
+                        d -> d.getComuna().toUpperCase(),
+                        Collectors.counting()));
+        stats.setDenunciasPorComuna(denunciasPorComuna);
+
+        // 7. E8: Denuncias por Sector (Solo Temuco)
+        Map<String, Long> denunciasPorSector = todasLasDenuncias.stream()
+                .filter(d -> d.getComuna() != null && "TEMUCO".equalsIgnoreCase(d.getComuna().trim()))
+                .filter(d -> d.getSector() != null)
+                .collect(Collectors.groupingBy(
+                        d -> d.getSector().toUpperCase(),
+                        Collectors.counting()));
+        stats.setDenunciasPorSector(denunciasPorSector);
+
+        stats.setDenunciasPorSector(denunciasPorSector);
+
+        // 8. T4: Tabla por usuario denunciante
+        Map<String, Long> topUsuarios = todasLasDenuncias.stream()
+                .filter(d -> d.getUsuario() != null)
+                .collect(Collectors.groupingBy(
+                        d -> d.getUsuario().getNombre() + " " + d.getUsuario().getApellido() + " ("
+                                + d.getUsuario().getEmail() + ")",
+                        Collectors.counting()))
+                .entrySet().stream()
+                .sorted(Map.Entry.<String, Long>comparingByValue().reversed())
+                .limit(20) // Top 20
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (e1, e2) -> e1,
+                        LinkedHashMap::new));
+        stats.setTopUsuarios(topUsuarios);
+
+        // 9. E10: Reincidencia por patente
+        Map<String, Long> reincidenciaPatentes = todasLasDenuncias.stream()
+                .filter(d -> d.getPatente() != null && !d.getPatente().trim().isEmpty())
+                .collect(Collectors.groupingBy(
+                        d -> d.getPatente().toUpperCase().trim(),
+                        Collectors.counting()))
+                .entrySet().stream()
+                .filter(e -> e.getValue() > 1) // Solo si hay reincidencia (> 1)
+                .sorted(Map.Entry.<String, Long>comparingByValue().reversed())
+                .limit(20) // Top 20
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (e1, e2) -> e1,
+                        LinkedHashMap::new));
+        stats.setReincidenciaPatentes(reincidenciaPatentes);
+
+        return stats;
     }
 }

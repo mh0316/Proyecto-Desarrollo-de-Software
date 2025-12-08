@@ -6,6 +6,7 @@ services:
     container_name: appmunicipal-frontend
     ports:
       - "8090:80" # Exposed Frontend Port
+      - "80:80"
     restart: unless-stopped
     networks:
       - app-network
