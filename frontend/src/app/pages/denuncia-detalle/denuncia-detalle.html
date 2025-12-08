@@ -7,6 +7,19 @@
         <h1>Detalle de Denuncia #{{ denunciaId }}</h1>
     </div>
 
+    <!-- Action Buttons -->
+    <div *ngIf="!loading && denuncia" class="action-buttons">
+        <button class="btn-action btn-validar" (click)="cambiarEstado('VALIDADA')">
+            ✅ Validar
+        </button>
+        <button class="btn-action btn-pendiente" (click)="cambiarEstado('PENDIENTE')">
+            ⏱️ Marcar Pendiente
+        </button>
+        <button class="btn-action btn-rechazar" (click)="cambiarEstado('RECHAZADA')">
+            ❌ Rechazar
+        </button>
+    </div>
+
     <div *ngIf="loading" class="loading">
         <p>Cargando...</p>
     </div>
@@ -23,7 +36,7 @@
                 <div class="info-item">
                     <label>Estado:</label>
                     <span class="badge" [ngClass]="'badge-' + denuncia.estado.toLowerCase()">
-                        {{ denuncia.estado }}
+                        {{ getEstadoLabel(denuncia.estado) }}
                     </span>
                 </div>
                 <div class="info-item">
@@ -88,5 +101,74 @@
                 </div>
             </div>
         </div>
+
+        <!-- Comentarios Internos -->
+        <div class="comentarios-section">
+            <h2>Comentarios Internos ({{ comentariosInternos.length }})</h2>
+
+            <!-- Formulario para agregar comentario -->
+            <div class="comentario-form">
+                <h3>Agregar Comentario</h3>
+                <textarea [(ngModel)]="nuevoComentario" placeholder="Escribe un comentario interno..." rows="3"
+                    class="comentario-input"></textarea>
+                <button class="btn-agregar-comentario" (click)="agregarComentario()">
+                    💬 Agregar Comentario
+                </button>
+            </div>
+
+            <div *ngIf="comentariosInternos.length === 0" class="no-comentarios">
+                <p>No hay comentarios internos para esta denuncia.</p>
+            </div>
+
+            <div *ngIf="comentariosInternos.length > 0" class="comentarios-list">
+                <div *ngFor="let comentario of comentariosInternos" class="comentario-card">
+                    <div class="comentario-header">
+                        <span class="comentario-autor">👤 {{ comentario.nombreUsuario }} {{ comentario.apellidoUsuario
+                            }}</span>
+                        <div class="comentario-actions">
+                            <span class="comentario-fecha">{{ comentario.fechaComentario | date: 'dd/MM/yyyy HH:mm'
+                                }}</span>
+                            <button class="btn-delete-comentario" (click)="eliminarComentario(comentario.id)"
+                                title="Eliminar comentario">
+                                🗑️
+                            </button>
+                        </div>
+                    </div>
+                    <div class="comentario-body">
+                        <p>{{ comentario.comentario }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Historial de Acciones -->
+        <div class="historial-section">
+            <h2>Historial de Acciones ({{ historialAcciones.length }})</h2>
+
+            <div *ngIf="historialAcciones.length === 0" class="no-historial">
+                <p>No hay historial de acciones para esta denuncia.</p>
+            </div>
+
+            <div *ngIf="historialAcciones.length > 0" class="historial-timeline">
+                <div *ngFor="let accion of historialAcciones" class="historial-item">
+                    <div class="historial-marker"></div>
+                    <div class="historial-content">
+                        <div class="historial-header">
+                            <span class="historial-tipo">{{ getTipoAccionLabel(accion.tipoAccion) }}</span>
+                            <span class="historial-fecha">{{ accion.fechaAccion | date: 'dd/MM/yyyy HH:mm' }}</span>
+                        </div>
+                        <div class="historial-body">
+                            <p class="historial-usuario">👤 {{ accion.nombreUsuario }} {{ accion.apellidoUsuario }}</p>
+                            <p class="historial-descripcion" *ngIf="accion.descripcion">{{ accion.descripcion }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+
+    <!-- Modal Component -->
+    <app-modal [config]="modalService.modalConfig$ | async" (confirmed)="onModalConfirm($event)"
+        (cancelled)="onModalCancel()">
+    </app-modal>
 </div>

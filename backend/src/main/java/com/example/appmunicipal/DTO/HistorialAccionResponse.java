@@ -14,6 +14,7 @@ public class HistorialAccionResponse {
 
     private Long id;
     private String nombreUsuario;
+    private String apellidoUsuario;
     private String emailUsuario;
     private String tipoAccion;
     private String descripcion;
@@ -22,6 +23,7 @@ public class HistorialAccionResponse {
     public HistorialAccionResponse(HistorialAccion historial) {
         this.id = historial.getId();
         this.nombreUsuario = historial.getUsuario().getNombre();
+        this.apellidoUsuario = historial.getUsuario().getApellido();
         this.emailUsuario = historial.getUsuario().getEmail();
         this.tipoAccion = historial.getTipoAccion().name();
         this.descripcion = historial.getDescripcion();

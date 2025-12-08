@@ -14,6 +14,7 @@ public class ComentarioInternoResponse {
 
     private Long id;
     private String nombreUsuario;
+    private String apellidoUsuario;
     private String emailUsuario;
     private String comentario;
     private LocalDateTime fechaComentario;
@@ -21,6 +22,7 @@ public class ComentarioInternoResponse {
     public ComentarioInternoResponse(ComentarioInterno comentario) {
         this.id = comentario.getId();
         this.nombreUsuario = comentario.getUsuario().getNombre();
+        this.apellidoUsuario = comentario.getUsuario().getApellido();
         this.emailUsuario = comentario.getUsuario().getEmail();
         this.comentario = comentario.getComentario();
         this.fechaComentario = comentario.getFechaComentario();

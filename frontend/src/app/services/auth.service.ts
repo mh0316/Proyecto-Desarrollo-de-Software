@@ -35,7 +35,7 @@ export class AuthService {
       localStorage.setItem('userData', JSON.stringify(userData));
     }
     this.isAuthenticatedSubject.next(true);
-    this.router.navigate(['/denuncias']);
+    this.router.navigate(['/dashboard']);
   }
 
   logout(): void {

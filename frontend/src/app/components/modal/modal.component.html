@@ -1,0 +1,28 @@
+<div *ngIf="isVisible" class="modal-overlay" (click)="onBackdropClick($event)">
+    <div class="modal-box">
+        <div class="modal-header" [ngClass]="'modal-header-' + config?.type">
+            <h2>{{ config?.title }}</h2>
+        </div>
+
+        <div class="modal-body">
+            <p>{{ config?.message }}</p>
+
+            <!-- Input field for input type modals -->
+            <textarea *ngIf="config?.type === 'input'" [(ngModel)]="inputValue"
+                [placeholder]="config?.inputPlaceholder || 'Ingrese el texto...'" class="modal-input" rows="4"
+                autofocus>
+      </textarea>
+        </div>
+
+        <div class="modal-footer">
+            <button *ngIf="config?.type === 'confirm' || config?.type === 'input'" class="btn btn-cancel"
+                (click)="onCancel()">
+                {{ config?.cancelText || 'Cancelar' }}
+            </button>
+            <button class="btn btn-confirm" [ngClass]="'btn-' + config?.type"
+                [disabled]="config?.type === 'input' && !inputValue.trim()" (click)="onConfirm()">
+                {{ config?.confirmText || 'Aceptar' }}
+            </button>
+        </div>
+    </div>
+</div>

@@ -41,7 +41,8 @@ public class AdministracionDenunciaService {
 
         // Obtener funcionario
         Usuario funcionario = usuarioRepository.findByEmail(request.getEmailRevisor())
-                .orElseThrow(() -> new RuntimeException("Funcionario no encontrado con email: " + request.getEmailRevisor()));
+                .orElseThrow(() -> new RuntimeException(
+                        "Funcionario no encontrado con email: " + request.getEmailRevisor()));
 
         // Verificar que el usuario sea FUNCIONARIO
         if (!funcionario.getRol().getNombre().equals(Rol.FUNCIONARIO)) {
@@ -106,9 +107,9 @@ public class AdministracionDenunciaService {
      * Cambiar estado de una denuncia
      */
     @Transactional
-    public DenunciaResponse cambiarEstadoDenuncia(Long denunciaId, CambiarEstadoDenunciaRequest request, String emailFuncionario) {
+    public DenunciaResponse cambiarEstadoDenuncia(Long denunciaId, CambiarEstadoDenunciaRequest request,
+            String emailFuncionario) {
         log.info("🔄 Cambiando estado de denuncia ID: {} por {}", denunciaId, emailFuncionario);
-
 
         if (request.getEstado() == null || request.getEstado().trim().isEmpty()) {
             throw new RuntimeException("El nuevo estado es obligatorio");
@@ -214,6 +215,39 @@ public class AdministracionDenunciaService {
     }
 
     /**
+     * Eliminar comentario interno
+     */
+    @Transactional
+    public void eliminarComentarioInterno(Long comentarioId, String emailFuncionario) {
+        log.info("🗑️ Eliminando comentario interno ID: {} por {}", comentarioId, emailFuncionario);
+
+        // Obtener comentario
+        ComentarioInterno comentario = comentarioInternoRepository.findById(comentarioId)
+                .orElseThrow(() -> new RuntimeException("Comentario no encontrado con ID: " + comentarioId));
+
+        // Obtener funcionario
+        Usuario funcionario = usuarioRepository.findByEmail(emailFuncionario)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        // Verificar que es funcionario
+        if (!funcionario.getRol().getNombre().equals(Rol.FUNCIONARIO)) {
+            throw new RuntimeException("Solo usuarios con rol FUNCIONARIO pueden eliminar comentarios internos");
+        }
+
+        Denuncia denuncia = comentario.getDenuncia();
+
+        // Eliminar comentario
+        comentarioInternoRepository.delete(comentario);
+
+        log.info("✅ Comentario interno eliminado por {}", funcionario.getUsername());
+
+        // Registrar en historial
+        registrarAccion(denuncia, funcionario, HistorialAccion.TipoAccion.COMENTARIO,
+                "Comentario interno eliminado por funcionario " + funcionario.getNombre() + " "
+                        + funcionario.getApellido());
+    }
+
+    /**
      * Obtener comentarios internos de una denuncia
      */
     @Transactional(readOnly = true)
@@ -259,7 +293,7 @@ public class AdministracionDenunciaService {
      * Registrar acción en el historial
      */
     private void registrarAccion(Denuncia denuncia, Usuario usuario,
-                                 HistorialAccion.TipoAccion tipoAccion, String descripcion) {
+            HistorialAccion.TipoAccion tipoAccion, String descripcion) {
         HistorialAccion historial = new HistorialAccion();
         historial.setDenuncia(denuncia);
         historial.setUsuario(usuario);

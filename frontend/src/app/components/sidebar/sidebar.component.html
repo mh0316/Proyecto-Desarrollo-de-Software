@@ -1,0 +1,19 @@
+<aside class="sidebar">
+    <nav class="sidebar-nav">
+        <ul class="menu-list">
+            <li *ngFor="let item of menuItems" class="menu-item">
+                <a [routerLink]="item.route" routerLinkActive="active" class="menu-link">
+                    <span class="menu-icon">{{ item.icon }}</span>
+                    <span class="menu-label">{{ item.label }}</span>
+                </a>
+            </li>
+        </ul>
+
+        <div class="sidebar-footer">
+            <button class="btn-logout-sidebar" (click)="logout()">
+                <span class="menu-icon">🚪</span>
+                <span class="menu-label">Cerrar Sesión</span>
+            </button>
+        </div>
+    </nav>
+</aside>

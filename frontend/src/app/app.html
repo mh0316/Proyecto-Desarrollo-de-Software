@@ -1,1 +1,12 @@
-<router-outlet></router-outlet>
+<div class="app-container" [class.with-layout]="showLayout">
+    <app-header *ngIf="showLayout"></app-header>
+
+    <div class="main-wrapper" *ngIf="showLayout">
+        <app-sidebar></app-sidebar>
+        <main class="content">
+            <router-outlet></router-outlet>
+        </main>
+    </div>
+
+    <router-outlet *ngIf="!showLayout"></router-outlet>
+</div>

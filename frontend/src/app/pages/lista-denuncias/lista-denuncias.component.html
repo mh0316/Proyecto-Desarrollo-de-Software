@@ -1,33 +1,126 @@
-<div *ngIf="cargando">Cargando denuncias...</div>
+<div class="container">
+  <div class="header">
+    <h1>Gestión de Denuncias</h1>
+  </div>
 
-<table *ngIf="!cargando && denuncias.length > 0" class="tabla-denuncias">
-  <thead>
-    <tr>
-      <th>ID</th>
-      <th>Descripción</th>
-      <th>Dirección</th>
-      <th>Comuna</th>
-      <th>Estado</th>
-      <th>Acciones</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let d of denuncias">
-      <td>{{ d.id }}</td>
-      <td>{{ d.descripcion }}</td>
-      <td>{{ d.direccion }}</td>
-      <td>{{ d.comuna }}</td>
-      <td>{{ d.estado }}</td>
-      <td>
-        <button class="btn btn-detalle" (click)="verDetalle(d.id)">Ver Detalles</button>
-        <button class="btn btn-validar" (click)="cambiarEstado(d.id, 'VALIDADA')">Validar</button>
-        <button class="btn btn-rechazar" (click)="cambiarEstado(d.id, 'RECHAZADA')">Rechazar</button>
-        <button class="btn btn-pendiente" (click)="cambiarEstado(d.id, 'PENDIENTE')">Pendiente</button>
-      </td>
-    </tr>
-  </tbody>
-</table>
+  <!-- Sección de Filtros -->
+  <div class="filtros-container">
+    <form [formGroup]="filtrosForm">
+      <div class="filtros-row">
+        <div class="filtro-group">
+          <label>Estado</label>
+          <select formControlName="estado" class="form-control">
+            <option value="">Todos los estados</option>
+            <option *ngFor="let estado of estados" [value]="estado">{{ getEstadoLabel(estado) }}</option>
+          </select>
+        </div>
 
-<div *ngIf="!cargando && denuncias.length === 0" class="sin-denuncias">
-  No hay denuncias registradas.
+        <div class="filtro-group">
+          <label>Patente</label>
+          <input type="text" formControlName="patente" class="form-control" placeholder="Buscar por patente...">
+        </div>
+
+        <div class="filtro-group">
+          <label>Comuna</label>
+          <input type="text" formControlName="comuna" class="form-control" placeholder="Buscar por comuna...">
+        </div>
+
+        <div class="filtro-group">
+          <label>Ordenar por fecha</label>
+          <select formControlName="ordenFecha" class="form-control">
+            <option value="recientes">Más recientes primero</option>
+            <option value="antiguos">Más antiguos primero</option>
+          </select>
+        </div>
+
+        <div class="filtro-group">
+          <label>Tiene evidencias</label>
+          <select formControlName="tieneEvidencias" class="form-control">
+            <option value="">Todas</option>
+            <option value="si">Con evidencias</option>
+            <option value="no">Sin evidencias</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="filtros-buttons">
+        <button type="button" class="btn btn-primary" (click)="aplicarFiltros()">
+          Aplicar Filtros
+        </button>
+        <button type="button" class="btn btn-secondary" (click)="limpiarFiltros()">
+          Limpiar Filtros
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Mensaje de error -->
+  <div *ngIf="error" class="error-message">
+    {{ error }}
+  </div>
+
+  <!-- Indicador de carga -->
+  <div *ngIf="cargando" class="cargando">Cargando denuncias...</div>
+
+  <!-- Tabla de denuncias -->
+  <table *ngIf="!cargando && denuncias.length > 0" class="tabla-denuncias">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Descripción</th>
+        <th>Patente</th>
+        <th>Dirección</th>
+        <th>Comuna</th>
+        <th>Evidencias</th>
+        <th>Fecha de Creación</th>
+        <th>Estado</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let d of denuncias">
+        <td><strong>#{{ d.id }}</strong></td>
+        <td>{{ d.descripcion }}</td>
+        <td>{{ d.patente || 'N/A' }}</td>
+        <td>{{ d.direccion || 'No especificada' }}</td>
+        <td>{{ d.comuna || 'No especificada' }}</td>
+        <td>
+          <span class="evidencias-count" [class.has-evidencias]="d.cantidadEvidencias > 0">
+            📎 {{ d.cantidadEvidencias || 0 }}
+          </span>
+        </td>
+        <td>{{ d.fechaDenuncia ? (d.fechaDenuncia | date:'dd/MM/yyyy HH:mm') : 'N/A' }}</td>
+        <td>
+          <span class="badge-estado" [ngClass]="getEstadoClass(d.estado)">
+            {{ getEstadoLabel(d.estado) }}
+          </span>
+        </td>
+        <td>
+          <button class="btn btn-detalle" (click)="verDetalle(d.id)">Ver Más</button>
+          <button class="btn btn-validar" (click)="cambiarEstado(d.id, 'VALIDADA')"
+            [disabled]="isBotonDeshabilitado(d, 'VALIDADA')" [class.btn-disabled]="isBotonDeshabilitado(d, 'VALIDADA')">
+            Validar
+          </button>
+          <button class="btn btn-rechazar" (click)="cambiarEstado(d.id, 'RECHAZADA')"
+            [disabled]="isBotonDeshabilitado(d, 'RECHAZADA')"
+            [class.btn-disabled]="isBotonDeshabilitado(d, 'RECHAZADA')">
+            Rechazar
+          </button>
+          <button class="btn btn-pendiente" (click)="cambiarEstado(d.id, 'PENDIENTE')"
+            [disabled]="isBotonDeshabilitado(d, 'PENDIENTE')"
+            [class.btn-disabled]="isBotonDeshabilitado(d, 'PENDIENTE')">Pendiente</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Sin denuncias -->
+  <div *ngIf="!cargando && denuncias.length === 0" class="sin-denuncias">
+    <p>No se encontraron denuncias con los filtros aplicados.</p>
+  </div>
 </div>
+
+<!-- Modal Component -->
+<app-modal [config]="modalService.modalConfig$ | async" (confirmed)="onModalConfirm($event)"
+  (cancelled)="onModalCancel()">
+</app-modal>

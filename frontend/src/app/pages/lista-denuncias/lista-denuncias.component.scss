@@ -8,7 +8,162 @@
   border: none;
 }
 
-/* Tabla */
+:host ::ng-deep {
+  body {
+    margin: 0;
+    padding: 0;
+    background: #0d1117;
+  }
+}
+
+/* Header */
+.header {
+  margin-bottom: 24px;
+
+  h1 {
+    color: #ffffff;
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0 0 8px 0;
+  }
+}
+
+/* Contenedor de filtros */
+.filtros-container {
+  background: #161b22;
+  border: 1px solid #2c313a;
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 24px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.filtros-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.filtro-group {
+  display: flex;
+  flex-direction: column;
+
+  label {
+    color: #9ca3af;
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin-bottom: 6px;
+    letter-spacing: 0.025em;
+  }
+}
+
+.form-control {
+  background: #0d1117;
+  border: 1px solid #2c313a;
+  padding: 10px 12px;
+  border-radius: 8px;
+  color: #e5e7eb;
+  transition: all 0.2s ease;
+  font-size: 0.9rem;
+  outline: none;
+
+  &::placeholder {
+    color: #6b7280;
+  }
+
+  &:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+  }
+
+  &:hover {
+    border-color: #374151;
+  }
+}
+
+/* Botones de filtros */
+.filtros-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 16px;
+
+  button {
+    padding: 10px 20px;
+    font-size: 0.9rem;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s ease;
+
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+
+  .btn-primary {
+    background: #2563eb;
+    color: white;
+
+    &:hover {
+      background: #1d4ed8;
+    }
+  }
+
+  .btn-secondary {
+    background: #374151;
+    color: #e5e7eb;
+
+    &:hover {
+      background: #4b5563;
+    }
+  }
+}
+
+/* Mensajes de error */
+.error-message {
+  background: #7f1d1d;
+  color: #fecaca;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  border-left: 4px solid #dc2626;
+  font-size: 0.9rem;
+}
+
+/* Indicador de carga */
+.cargando {
+  text-align: center;
+  color: #9ca3af;
+  font-size: 1.1rem;
+  margin-top: 40px;
+  padding: 40px;
+}
+
+/* Disabled Button State */
+.btn-disabled {
+  background: #9ca3af !important;
+  color: #d1d5db !important;
+  opacity: 1 !important;
+  cursor: not-allowed !important;
+  pointer-events: none;
+  border-color: #9ca3af !important;
+
+  &:hover {
+    background: #9ca3af !important;
+    transform: none !important;
+    box-shadow: none !important;
+  }
+}
+
+/* Tabla de denuncias */
 .tabla-denuncias {
   width: 100%;
   border-collapse: collapse;
@@ -19,6 +174,10 @@
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
   border: none;
 
+  thead {
+    background: #1f2937;
+  }
+
   th {
     background: #1f2937;
     padding: 14px;
@@ -27,66 +186,99 @@
     color: #9ca3af;
     border-bottom: 1px solid #2c313a;
     border: none;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 0.05em;
   }
 
   td {
     padding: 14px;
     border-bottom: 1px solid #2c313a;
     border: none;
+    font-size: 0.9rem;
   }
 
-  tr:hover {
-    background: #1c212a;
-  }
-}
+  tbody tr {
+    transition: background-color 0.2s ease;
 
-/* Chips de estado */
-td:nth-child(5) {
-  font-weight: 600;
-  text-transform: capitalize;
-}
+    &:hover {
+      background: #1c212a;
+    }
 
-:host ::ng-deep {
-  body {
-    margin: 0;
-    padding: 0;
-    background: #0d1117;
+    &:last-child td {
+      border-bottom: none;
+    }
   }
 }
 
-td:nth-child(5)::before {
+/* Badge de estado */
+.badge-estado {
+  display: inline-block;
   padding: 6px 12px;
   border-radius: 12px;
   font-size: 0.8rem;
-  display: inline-block;
-  margin-right: 5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
 }
 
-td:nth-child(5):contains("VALIDADA") {
-  color: #10b981;
-}
-
-td:nth-child(5):contains("RECHAZADA") {
-  color: #ef4444;
-}
-
-td:nth-child(5):contains("PENDIENTE") {
+.estado-pendiente {
+  background: rgba(251, 191, 36, 0.15);
   color: #fbbf24;
+  border: 1px solid rgba(251, 191, 36, 0.3);
 }
 
-/* Botones */
+.estado-en-revision {
+  background: rgba(249, 115, 22, 0.15);
+  color: #f97316;
+  border: 1px solid rgba(249, 115, 22, 0.3);
+}
+
+.estado-validada {
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.estado-rechazada {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.estado-cerrada {
+  background: rgba(107, 114, 128, 0.15);
+  color: #6b7280;
+  border: 1px solid rgba(107, 114, 128, 0.3);
+}
+
+/* Botones de acción */
 button {
-  padding: 7px 14px;
+  padding: 8px 14px;
   font-size: 0.85rem;
-  border-radius: 10px;
+  border-radius: 8px;
   border: none;
   cursor: pointer;
-  margin-right: 5px;
-  transition: 0.2s;
+  margin-right: 6px;
+  transition: all 0.2s ease;
   font-weight: 500;
 
   &:hover {
     transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+
+  &.btn-detalle {
+    background: #3b82f6;
+    color: white;
+
+    &:hover {
+      background: #2563eb;
+    }
   }
 
   &.btn-validar {
@@ -100,6 +292,7 @@ button {
 
   &.btn-rechazar {
     background: #dc2626;
+    color: white;
 
     &:hover {
       background: #b91c1c;
@@ -108,28 +301,87 @@ button {
 
   &.btn-pendiente {
     background: #f59e0b;
-    color: black;
+    color: #0d1117;
 
     &:hover {
       background: #d97706;
     }
   }
-
-  &.btn-detalle {
-    background: #3b82f6;
-    color: white;
-
-    &:hover {
-      background: #2563eb;
-    }
-  }
 }
 
-/* Mensajes */
-.sin-denuncias,
-div[ngIf] {
+/* Mensaje sin denuncias */
+.sin-denuncias {
   text-align: center;
   color: #9ca3af;
   font-size: 1.1rem;
-  margin-top: 30px;
+  margin-top: 40px;
+  padding: 60px 20px;
+  background: #161b22;
+  border-radius: 12px;
+  border: 1px dashed #2c313a;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  :host {
+    padding: 12px;
+  }
+
+  .header h1 {
+    font-size: 1.5rem;
+  }
+
+  .filtros-row {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .filtros-buttons {
+    flex-direction: column;
+
+    button {
+      width: 100%;
+    }
+  }
+
+  .tabla-denuncias {
+    font-size: 0.85rem;
+
+    th,
+    td {
+      padding: 10px 8px;
+    }
+  }
+
+  button {
+    padding: 6px 10px;
+    font-size: 0.8rem;
+    margin-right: 4px;
+    margin-bottom: 4px;
+  }
+}
+
+@media (max-width: 480px) {
+  .tabla-denuncias {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+
+    &::-webkit-scrollbar {
+      height: 8px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: #0d1117;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: #374151;
+      border-radius: 4px;
+
+      &:hover {
+        background: #4b5563;
+      }
+    }
+  }
 }

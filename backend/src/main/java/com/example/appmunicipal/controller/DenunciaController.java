@@ -571,6 +571,39 @@ public class DenunciaController {
     }
 
     /**
+     * Eliminar comentario interno
+     * DELETE /api/denuncias/comentarios/{comentarioId}
+     */
+    @PreAuthorize("hasRole('FUNCIONARIO')")
+    @DeleteMapping("/comentarios/{comentarioId}")
+    public ResponseEntity<?> eliminarComentario(
+            @PathVariable Long comentarioId,
+            @RequestHeader(value = "Authorization", required = false) String authHeader) {
+
+        try {
+            log.info("🗑️ Eliminando comentario interno ID: {}", comentarioId);
+
+            String emailFuncionario = roleValidator.obtenerEmailDesdeToken(authHeader);
+            adminService.eliminarComentarioInterno(comentarioId, emailFuncionario);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("message", "Comentario eliminado exitosamente");
+
+            return ResponseEntity.ok(response);
+
+        } catch (RuntimeException e) {
+            log.error("❌ Error al eliminar comentario: {}", e.getMessage());
+
+            Map<String, Object> error = new HashMap<>();
+            error.put("success", false);
+            error.put("message", e.getMessage());
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+        }
+    }
+
+    /**
      * Cambiar estado de una denuncia
      * PUT /api/denuncias/{id}/estado
      */
