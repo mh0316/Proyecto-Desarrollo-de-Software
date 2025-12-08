@@ -112,11 +112,7 @@ public class DenunciaController {
                     "hasNext", paginatedData.get("hasNext"),
                     "hasPrevious", paginatedData.get("hasPrevious")));
 
-            return ResponseEntity.ok()
-                    .header("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0")
-                    .header("Pragma", "no-cache")
-                    .header("Expires", "0")
-                    .body(response);
+            return ResponseEntity.ok(response);
 
         } catch (Exception e) {
             log.error("❌ Error al listar denuncias: {}", e.getMessage());
