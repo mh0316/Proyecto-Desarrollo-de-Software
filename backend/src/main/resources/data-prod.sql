@@ -55,28 +55,29 @@ SELECT 'Otro', 'Infracción no clasificada en categorías anteriores', 'OTR-001'
     WHERE NOT EXISTS (SELECT 1 FROM categorias WHERE codigo = 'OTR-001');
 
 -- 3. USUARIOS DE PRUEBA
+-- Contraseña para todos los usuarios de prueba: "prueba123" (hasheada con BCrypt)
 INSERT INTO usuarios (username, password, nombre, apellido, email, telefono, rut, rol_id, activo, fecha_registro)
-SELECT 'funcionario', 'prueba123', 'Pedro', 'Funcionario', 'funcionario@municipalidad.cl', '912345678', '11111111-1',
+SELECT 'funcionario', '$2a$10$fOgptAKzW9DrJ46voLA8eeZiByJPAt6CUixSxef.e3pnz0v1eR8F6', 'Pedro', 'Funcionario', 'funcionario@municipalidad.cl', '912345678', '11111111-1',
        (SELECT id FROM roles WHERE nombre = 'FUNCIONARIO'), TRUE, CURRENT_TIMESTAMP
     WHERE NOT EXISTS (SELECT 1 FROM usuarios WHERE username = 'funcionario');
 
 INSERT INTO usuarios (username, password, nombre, apellido, email, telefono, rut, rol_id, activo, fecha_registro)
-SELECT 'ciudadano1', 'prueba123', 'Juan', 'Pérez', 'juan.perez@email.cl', '987654321', '22222222-2',
+SELECT 'ciudadano1', '$2a$10$fOgptAKzW9DrJ46voLA8eeZiByJPAt6CUixSxef.e3pnz0v1eR8F6', 'Juan', 'Pérez', 'juan.perez@email.cl', '987654321', '22222222-2',
        (SELECT id FROM roles WHERE nombre = 'CIUDADANO'), TRUE, CURRENT_TIMESTAMP
     WHERE NOT EXISTS (SELECT 1 FROM usuarios WHERE username = 'ciudadano1');
 
 INSERT INTO usuarios (username, password, nombre, apellido, email, telefono, rut, rol_id, activo, fecha_registro)
-SELECT 'ciudadano2', 'prueba123', 'María', 'González', 'maria.gonzalez@email.cl', '945678912', '33333333-3',
+SELECT 'ciudadano2', '$2a$10$fOgptAKzW9DrJ46voLA8eeZiByJPAt6CUixSxef.e3pnz0v1eR8F6', 'María', 'González', 'maria.gonzalez@email.cl', '945678912', '33333333-3',
        (SELECT id FROM roles WHERE nombre = 'CIUDADANO'), TRUE, CURRENT_TIMESTAMP
     WHERE NOT EXISTS (SELECT 1 FROM usuarios WHERE username = 'ciudadano2');
 
 INSERT INTO usuarios (username, password, nombre, apellido, email, telefono, rut, rol_id, activo, fecha_registro)
-SELECT 'ciudadano3', 'prueba123', 'Diego', 'Rodríguez', 'diego.rodriguez@email.cl', '956789123', '44444444-4',
+SELECT 'ciudadano3', '$2a$10$fOgptAKzW9DrJ46voLA8eeZiByJPAt6CUixSxef.e3pnz0v1eR8F6', 'Diego', 'Rodríguez', 'diego.rodriguez@email.cl', '956789123', '44444444-4',
        (SELECT id FROM roles WHERE nombre = 'CIUDADANO'), TRUE, CURRENT_TIMESTAMP
     WHERE NOT EXISTS (SELECT 1 FROM usuarios WHERE username = 'ciudadano3');
 
 INSERT INTO usuarios (username, password, nombre, apellido, email, telefono, rut, rol_id, activo, fecha_registro)
-SELECT 'ciudadano4', 'prueba123', 'Carla', 'Martínez', 'carla.martinez@email.cl', '967891234', '55555555-5',
+SELECT 'ciudadano4', '$2a$10$fOgptAKzW9DrJ46voLA8eeZiByJPAt6CUixSxef.e3pnz0v1eR8F6', 'Carla', 'Martínez', 'carla.martinez@email.cl', '967891234', '55555555-5',
        (SELECT id FROM roles WHERE nombre = 'CIUDADANO'), TRUE, CURRENT_TIMESTAMP
     WHERE NOT EXISTS (SELECT 1 FROM usuarios WHERE username = 'ciudadano4');
 

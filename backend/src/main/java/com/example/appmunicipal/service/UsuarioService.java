@@ -12,6 +12,7 @@ import com.example.appmunicipal.util.JwtUtil;
 import com.example.appmunicipal.util.RutUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,8 +31,7 @@ public class UsuarioService {
     private final JwtUtil jwtUtil;
     private final RutUtil rutUtil;
     // 🔒 PasswordEncoder para encriptar contraseñas
-    // private final PasswordEncoder passwordEncoder; // 👈 Descomentar cuando
-    // quieras activar encriptación
+    private final PasswordEncoder passwordEncoder;
     private final Random random = new Random();
 
     /**
@@ -60,19 +60,11 @@ public class UsuarioService {
                 return new LoginResponse(false, "Tu cuenta está inactiva. Contacta al administrador", null, null);
             }
 
-            // 🔒 Verificar contraseña
-            // OPCIÓN 1: Sin encriptar (DESARROLLO - ACTUAL)
-            if (!request.getPassword().equals(usuario.getPassword())) {
+            // 🔒 Verificar contraseña con BCrypt
+            if (!passwordEncoder.matches(request.getPassword(), usuario.getPassword())) {
                 log.warn("❌ Intento de login fallido - contraseña incorrecta para: {}", request.getEmail());
                 return new LoginResponse(false, "Contraseña incorrecta", null, null);
             }
-
-            // OPCIÓN 2: Con BCrypt (PRODUCCIÓN - DESCOMENTAR)
-            // if (!passwordEncoder.matches(request.getPassword(), usuario.getPassword())) {
-            // log.warn("❌ Intento de login fallido - contraseña incorrecta para: {}",
-            // request.getEmail());
-            // return new LoginResponse(false, "Contraseña incorrecta", null, null);
-            // }
 
             // Actualizar última conexión
             usuario.setUltimaConexion(LocalDateTime.now());
@@ -167,12 +159,8 @@ public class UsuarioService {
         Usuario usuario = new Usuario();
         usuario.setUsername(username);
 
-        // 🔒 Guardar contraseña
-        // OPCIÓN 1: Sin encriptar (DESARROLLO - ACTUAL)
-        usuario.setPassword(request.getPassword());
-
-        // OPCIÓN 2: Con BCrypt (PRODUCCIÓN - DESCOMENTAR)
-        // usuario.setPassword(passwordEncoder.encode(request.getPassword()));
+        // 🔒 Guardar contraseña hasheada con BCrypt
+        usuario.setPassword(passwordEncoder.encode(request.getPassword()));
 
         usuario.setNombre(request.getNombre());
         usuario.setApellido(request.getApellido());
