@@ -1,10 +1,52 @@
+/* Contenedor principal */
+.login-container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #0d1117;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+}
+
+/* Header del login - similar al header principal */
+.login-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.header-content {
+  padding: 1.5rem 2rem;
+  text-align: center;
+
+  h1 {
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    background: linear-gradient(to right, #ffffff, #e0e7ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .header-subtitle {
+    margin: 0.5rem 0 0 0;
+    font-size: 0.95rem;
+    opacity: 0.9;
+    font-weight: 400;
+  }
+}
+
 /* Fondo general estilo dashboard */
 .login-wrapper {
-  height: 100vh;
+  flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #0d1117; // similar al dashboard
+  padding: 2rem;
 }
 
 /* Tarjeta con efecto glass */
@@ -68,6 +110,12 @@
     background: linear-gradient(90deg, #1e40af, #1d4ed8);
     transform: translateY(-2px);
   }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
 }
 
 /* Error */
@@ -91,5 +139,30 @@
     &:hover {
       text-decoration: underline;
     }
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .header-content {
+    padding: 1rem;
+
+    h1 {
+      font-size: 1.5rem;
+    }
+
+    .header-subtitle {
+      font-size: 0.85rem;
+    }
+  }
+
+  .login-wrapper {
+    padding: 1rem;
+  }
+
+  .login-card {
+    width: 100%;
+    max-width: 380px;
+    padding: 25px;
   }
 }
