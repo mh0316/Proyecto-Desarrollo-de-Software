@@ -358,12 +358,25 @@ public class DenunciaService {
      */
     public Resource obtenerEvidencia(String filename) {
         try {
-            // Intentar cargar desde el classpath (static/uploads)
-            Resource resource = new ClassPathResource("static/uploads/" + filename);
+            // Determinar la ruta correcta del archivo
+            // En desarrollo: backend/src/main/resources/static/uploads
+            // En producción (Docker): /app/uploads
+            String uploadPath = System.getenv("UPLOAD_PATH") != null
+                    ? System.getenv("UPLOAD_PATH")
+                    : "backend/src/main/resources/static/uploads";
+
+            java.nio.file.Path filePath = java.nio.file.Paths.get(uploadPath).resolve(filename);
+            Resource resource = new org.springframework.core.io.FileSystemResource(filePath);
 
             if (resource.exists() && resource.isReadable()) {
                 return resource;
             } else {
+                // Fallback: intentar classpath por si acaso (para archivos antiguos/legacy)
+                Resource classpathResource = new ClassPathResource("static/uploads/" + filename);
+                if (classpathResource.exists() && classpathResource.isReadable()) {
+                    return classpathResource;
+                }
+
                 throw new RuntimeException("No se pudo leer el archivo: " + filename);
             }
         } catch (Exception e) {
