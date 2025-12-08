@@ -52,6 +52,8 @@ public class SecurityConfig {
                                                 .requestMatchers(
                                                                 "/api/usuarios/login",
                                                                 "/api/usuarios/registro",
+                                                                "/api/usuarios/registro-funcionario",
+                                                                "/api/denuncias", // POST crear denuncia (anónimo)
                                                                 "/h2-console/**",
                                                                 "/",
                                                                 "/error")
@@ -60,20 +62,10 @@ public class SecurityConfig {
                                                 // ============================================
                                                 // ENDPOINTS PROTEGIDOS
                                                 // ============================================
-                                                // Descomentar cuando quieras activar la seguridad
-                                                // .requestMatchers("/api/denuncias/**").hasAnyRole("USUARIO",
-                                                // "FUNCIONARIO",
-                                                // "ADMIN")
-                                                // .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                                                // .requestMatchers("/api/funcionario/**").hasAnyRole("FUNCIONARIO",
-                                                // "ADMIN")
-
-                                                // ============================================
-                                                // POR AHORA: PERMITIR TODO (DESARROLLO)
-                                                // ============================================
-                                                .anyRequest().permitAll() // 👈 Cambiar a .authenticated() cuando
-                                                                          // quieras activar seguridad
-                                )
+                                                // Todos los demás endpoints requieren autenticación
+                                                // Los roles específicos se controlan con @PreAuthorize en los
+                                                // controllers
+                                                .anyRequest().authenticated())
 
                                 // Configurar sesión como STATELESS (sin estado, usando JWT)
                                 .sessionManagement(session -> session

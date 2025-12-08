@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -120,6 +121,7 @@ public class UsuarioController {
      * GET /api/usuarios/token/info
      * Header: Authorization: Bearer {token}
      */
+    @PreAuthorize("hasAnyRole('CIUDADANO', 'FUNCIONARIO')")
     @GetMapping("/token/info")
     public ResponseEntity<?> obtenerInfoToken(
             @RequestHeader(value = "Authorization", required = false) String authHeader) {
@@ -160,6 +162,7 @@ public class UsuarioController {
      * GET /api/usuarios/sesion/perfil
      * Header: Authorization: Bearer {token}
      */
+    @PreAuthorize("hasAnyRole('CIUDADANO', 'FUNCIONARIO')")
     @GetMapping("/sesion/perfil")
     public ResponseEntity<?> obtenerPerfilDesdeToken(
             @RequestHeader(value = "Authorization", required = false) String authHeader) {
@@ -207,6 +210,7 @@ public class UsuarioController {
      * Listar todos los usuarios
      * GET /api/usuarios/listar
      */
+    @PreAuthorize("hasAnyRole('CIUDADANO', 'FUNCIONARIO')")
     @GetMapping("/listar")
     public ResponseEntity<?> listarUsuarios() {
         try {
@@ -234,6 +238,7 @@ public class UsuarioController {
      * Buscar usuario por ID
      * GET /api/usuarios/{id}
      */
+    @PreAuthorize("hasAnyRole('CIUDADANO', 'FUNCIONARIO')")
     @GetMapping("/{id}")
     public ResponseEntity<?> buscarPorId(@PathVariable Long id) {
         try {

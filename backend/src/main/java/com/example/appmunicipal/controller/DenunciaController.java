@@ -2,6 +2,7 @@ package com.example.appmunicipal.controller;
 
 import com.example.appmunicipal.DTO.*;
 import com.example.appmunicipal.security.RoleValidator;
+import org.springframework.security.access.prepost.PreAuthorize;
 import com.example.appmunicipal.service.AdministracionDenunciaService;
 import com.example.appmunicipal.service.DenunciaService;
 import lombok.RequiredArgsConstructor;
@@ -63,6 +64,7 @@ public class DenunciaController {
      * Obtener una denuncia por ID
      * GET /api/denuncias/{id}
      */
+    @PreAuthorize("hasAnyRole('CIUDADANO', 'FUNCIONARIO')")
     @GetMapping("/{id}")
     public ResponseEntity<?> obtenerDenuncia(@PathVariable Long id) {
         try {
@@ -88,10 +90,8 @@ public class DenunciaController {
     /**
      * Listar todas las denuncias
      * GET /api/denuncias
-     * 
-     * 🔒 SEGURIDAD: Por ahora solo imprime el rol, pero está preparado para
-     * verificar FUNCIONARIO
      */
+    @PreAuthorize("hasAnyRole('CIUDADANO', 'FUNCIONARIO')")
     @GetMapping
     public ResponseEntity<?> listarDenuncias() {
         try {
@@ -124,6 +124,7 @@ public class DenunciaController {
      * Listar denuncias de un usuario por email
      * GET /api/denuncias/mis-denuncias?email=usuario@email.com
      */
+    @PreAuthorize("hasAnyRole('CIUDADANO', 'FUNCIONARIO')")
     @GetMapping("/mis-denuncias")
     public ResponseEntity<?> listarMisDenuncias(@RequestParam String email) {
         try {
@@ -154,6 +155,7 @@ public class DenunciaController {
      * Listar denuncias por estado
      * GET /api/denuncias/estado/{estado}
      */
+    @PreAuthorize("hasAnyRole('CIUDADANO', 'FUNCIONARIO')")
     @GetMapping("/estado/{estado}")
     public ResponseEntity<?> listarPorEstado(@PathVariable String estado) {
         try {
@@ -182,6 +184,7 @@ public class DenunciaController {
      * Listar denuncias por categoría
      * GET /api/denuncias/categoria/{categoriaId}
      */
+    @PreAuthorize("hasAnyRole('CIUDADANO', 'FUNCIONARIO')")
     @GetMapping("/categoria/{categoriaId}")
     public ResponseEntity<?> listarPorCategoria(@PathVariable Long categoriaId) {
         try {
@@ -210,6 +213,7 @@ public class DenunciaController {
      * Listar denuncias por sector
      * GET /api/denuncias/sector/{sector}
      */
+    @PreAuthorize("hasAnyRole('CIUDADANO', 'FUNCIONARIO')")
     @GetMapping("/sector/{sector}")
     public ResponseEntity<?> listarPorSector(@PathVariable String sector) {
         try {
@@ -238,6 +242,7 @@ public class DenunciaController {
      * Listar denuncias de un usuario específico por ID
      * GET /api/denuncias/usuario/{usuarioId}
      */
+    @PreAuthorize("hasAnyRole('CIUDADANO', 'FUNCIONARIO')")
     @GetMapping("/usuario/{usuarioId}")
     public ResponseEntity<?> listarPorUsuario(@PathVariable Long usuarioId) {
         try {
@@ -265,10 +270,8 @@ public class DenunciaController {
     /**
      * Obtener estadísticas de denuncias
      * GET /api/denuncias/estadisticas
-     * 
-     * 🔒 SEGURIDAD: Por ahora solo imprime el rol, pero está preparado para
-     * verificar FUNCIONARIO
      */
+    @PreAuthorize("hasAnyRole('CIUDADANO', 'FUNCIONARIO')")
     @GetMapping("/estadisticas")
     public ResponseEntity<?> obtenerEstadisticas(
             @RequestHeader(value = "Authorization", required = false) String authHeader) {
@@ -314,6 +317,7 @@ public class DenunciaController {
      * Contar denuncias de un usuario por email
      * GET /api/denuncias/contar?email=usuario@email.com
      */
+    @PreAuthorize("hasAnyRole('CIUDADANO', 'FUNCIONARIO')")
     @GetMapping("/contar")
     public ResponseEntity<?> contarDenuncias(@RequestParam String email) {
         try {
@@ -341,6 +345,7 @@ public class DenunciaController {
      * Obtener todas las evidencias de una denuncia
      * GET /api/denuncias/{id}/evidencias
      */
+    @PreAuthorize("hasAnyRole('CIUDADANO', 'FUNCIONARIO')")
     @GetMapping("/{id}/evidencias")
     public ResponseEntity<?> obtenerEvidenciasDenuncia(@PathVariable Long id) {
         try {
@@ -370,6 +375,7 @@ public class DenunciaController {
      * Subir evidencia para una denuncia
      * POST /api/denuncias/{id}/evidencias
      */
+    @PreAuthorize("hasAnyRole('CIUDADANO', 'FUNCIONARIO')")
     @PostMapping("/{id}/evidencias")
     public ResponseEntity<?> subirEvidencia(
             @PathVariable Long id,
@@ -423,6 +429,7 @@ public class DenunciaController {
      * Eliminar una denuncia
      * DELETE /api/denuncias/{id}
      */
+    @PreAuthorize("hasAnyRole('CIUDADANO', 'FUNCIONARIO')")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> eliminarDenuncia(@PathVariable Long id) {
         try {
@@ -449,6 +456,7 @@ public class DenunciaController {
      * Obtener comentarios internos de una denuncia
      * GET /api/denuncias/{id}/comentarios
      */
+    @PreAuthorize("hasAnyRole('CIUDADANO', 'FUNCIONARIO')")
     @GetMapping("/{id}/comentarios")
     public ResponseEntity<?> obtenerComentarios(@PathVariable Long id) {
         try {
@@ -476,6 +484,7 @@ public class DenunciaController {
      * Obtener historial de acciones
      * GET /api/denuncias/{id}/historial
      */
+    @PreAuthorize("hasAnyRole('CIUDADANO', 'FUNCIONARIO')")
     @GetMapping("/{id}/historial")
     public ResponseEntity<?> obtenerHistorial(@PathVariable Long id) {
         try {
@@ -503,6 +512,7 @@ public class DenunciaController {
      * Listar denuncias que YO he revisado
      * GET /api/denuncias/mis-revisadas?email=funcionario@municipalidad.cl
      */
+    @PreAuthorize("hasAnyRole('CIUDADANO', 'FUNCIONARIO')")
     @GetMapping("/mis-revisadas")
     public ResponseEntity<?> listarDenunciasRevisadas(@RequestParam String email) {
         try {
@@ -529,8 +539,9 @@ public class DenunciaController {
 
     /**
      * Agregar comentario interno
-     * POST /api/funcionario/denuncias/{id}/comentarios
+     * POST /api/denuncias/{id}/comentarios
      */
+    @PreAuthorize("hasAnyRole('CIUDADANO', 'FUNCIONARIO')")
     @PostMapping("/{id}/comentarios")
     public ResponseEntity<?> agregarComentario(
             @PathVariable Long id,
@@ -563,6 +574,7 @@ public class DenunciaController {
      * Cambiar estado de una denuncia
      * PUT /api/denuncias/{id}/estado
      */
+    @PreAuthorize("hasAnyRole('CIUDADANO', 'FUNCIONARIO')")
     @PutMapping("/{id}/estado")
     public ResponseEntity<?> cambiarEstado(
             @PathVariable Long id,
