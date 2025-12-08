@@ -589,7 +589,20 @@ public class DenunciaService {
         }
         stats.setDenunciasPorEstado(denunciasPorEstado);
 
-        // 4. Tiempo promedio de validación (PENDIENTE: Este aun requiere lógica
+        // 4. Tasa de validación y rechazo (calculado desde denunciasPorEstado)
+        long validadas = denunciasPorEstado.getOrDefault("VALIDADA", 0L);
+        long rechazadas = denunciasPorEstado.getOrDefault("RECHAZADA", 0L);
+        long totalCerradas = validadas + rechazadas;
+
+        if (totalCerradas > 0) {
+            stats.setTasaValidacion((double) validadas / totalCerradas * 100);
+            stats.setTasaRechazo((double) rechazadas / totalCerradas * 100);
+        } else {
+            stats.setTasaValidacion(0.0);
+            stats.setTasaRechazo(0.0);
+        }
+
+        // 5. Tiempo promedio de validación (PENDIENTE: Este aun requiere lógica
         // compleja,
         // lo dejamos simplificado o en 0 para no saturar memoria si es complejo
         // calcular en SQL standard sin funciones ventana)
@@ -597,7 +610,7 @@ public class DenunciaService {
         // últimas 1000
         stats.setTiempoPromedioValidacion(0.0);
 
-        // 5. Tendencias por horario
+        // 6. Tendencias por horario
         List<Object[]> denunciasPorHorarioDB = denunciaRepository.countDenunciasByHora();
         Map<Integer, Long> denunciasPorHorario = new HashMap<>();
         for (Object[] row : denunciasPorHorarioDB) {
@@ -605,7 +618,7 @@ public class DenunciaService {
         }
         stats.setDenunciasPorHorario(denunciasPorHorario);
 
-        // 6. Denuncias por Categoría
+        // 7. Denuncias por Categoría
         List<Object[]> denunciasPorCategoriaDB = denunciaRepository.countDenunciasByCategoria();
         Map<String, Long> denunciasPorCategoria = new HashMap<>();
         for (Object[] row : denunciasPorCategoriaDB) {
@@ -613,7 +626,7 @@ public class DenunciaService {
         }
         stats.setDenunciasPorCategoria(denunciasPorCategoria);
 
-        // 7. Denuncias por Comuna
+        // 8. Denuncias por Comuna
         List<Object[]> denunciasPorComunaDB = denunciaRepository.countDenunciasByComuna();
         Map<String, Long> denunciasPorComuna = new HashMap<>();
         for (Object[] row : denunciasPorComunaDB) {
@@ -621,7 +634,7 @@ public class DenunciaService {
         }
         stats.setDenunciasPorComuna(denunciasPorComuna);
 
-        // 8. Denuncias por Sector (Temuco)
+        // 9. Denuncias por Sector (Temuco)
         List<Object[]> denunciasPorSectorDB = denunciaRepository.countDenunciasBySectorTemuco();
         Map<String, Long> denunciasPorSector = new HashMap<>();
         for (Object[] row : denunciasPorSectorDB) {
@@ -629,7 +642,7 @@ public class DenunciaService {
         }
         stats.setDenunciasPorSector(denunciasPorSector);
 
-        // 9. Top Usuarios
+        // 10. Top Usuarios
         // Limitamos a top 10 en la query
         List<Object[]> topUsuariosDB = denunciaRepository
                 .countDenunciasByUsuarioTop10(org.springframework.data.domain.PageRequest.of(0, 10));
@@ -639,7 +652,7 @@ public class DenunciaService {
         }
         stats.setTopUsuarios(topUsuarios);
 
-        // 10. Reincidencia por Patente (Top 20 patentes con más de 1 denuncia)
+        // 11. Reincidencia por Patente (Top 20 patentes con más de 1 denuncia)
         List<Object[]> reincidenciaPatentesDB = denunciaRepository
                 .countReincidenciaByPatente(org.springframework.data.domain.PageRequest.of(0, 20));
         Map<String, Long> reincidenciaPatentes = new java.util.LinkedHashMap<>();
