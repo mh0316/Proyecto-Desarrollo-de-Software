@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: appmunicipal-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: appmunicipal_db
+      MYSQL_USER: appuser
+      MYSQL_PASSWORD: apppassword
+    volumes:
+      - mysql_data:/var/lib/mysql
+    restart: unless-stopped
+    networks:
+      - app-network
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      timeout: 20s
+      retries: 10
+
+  backend:
+    build: .
+    container_name: appmunicipal-backend
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/appmunicipal_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: appuser
+      SPRING_DATASOURCE_PASSWORD: apppassword
+      JAVA_OPTS: "-Xmx512m -Xms256m"
+      UPLOAD_PATH: /app/uploads
+    volumes:
+      # Montar directamente la carpeta local de uploads (con placeholders)
+      - ./src/main/resources/static/uploads:/app/uploads
+    depends_on:
+      mysql:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - app-network
+
+  # ======================================================
+  # NGINX REVERSE PROXY (Backend Side)
+  # ======================================================
+  nginx:
+    image: nginx:alpine
+    container_name: appmunicipal-backend-nginx
+    ports:
+      - "8091:8080" # Exposed API Port
+    volumes:
+      - ./nginx/conf.d/default.conf:/etc/nginx/conf.d/default.conf:ro
+      # Compartir la misma carpeta de uploads para servir archivos estáticos
+      - ./src/main/resources/static/uploads:/app/uploads:ro
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  mysql_data:
+    driver: local
