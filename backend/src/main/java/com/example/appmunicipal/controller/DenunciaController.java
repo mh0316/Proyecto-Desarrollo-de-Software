@@ -121,46 +121,6 @@ public class DenunciaController {
     }
 
     /**
-     * Listar denuncias con paginación (NUEVO)
-     * GET /api/denuncias/paginadas?page=0&size=20&estado=PENDIENTE
-     */
-    @PreAuthorize("hasAnyRole('FUNCIONARIO')")
-    @GetMapping("/paginadas")
-    public ResponseEntity<?> listarDenunciasPaginadas(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size,
-            @RequestParam(required = false) String estado,
-            @RequestParam(required = false) Long categoriaId,
-            @RequestParam(required = false) String comuna,
-            @RequestParam(required = false) String patente) {
-        try {
-            log.info("📋 Solicitud de denuncias paginadas - página: {}, tamaño: {}", page, size);
-
-            com.example.appmunicipal.DTO.PageResponse<com.example.appmunicipal.DTO.DenunciaLightResponse> pageResponse = denunciaService
-                    .listarDenunciasPaginadas(page, size, estado, categoriaId, comuna, patente);
-
-            Map<String, Object> response = new HashMap<>();
-            response.put("success", true);
-            response.put("data", pageResponse);
-
-            return ResponseEntity.ok()
-                    .header("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0")
-                    .header("Pragma", "no-cache")
-                    .header("Expires", "0")
-                    .body(response);
-
-        } catch (Exception e) {
-            log.error("❌ Error al listar denuncias paginadas: {}", e.getMessage());
-
-            Map<String, Object> error = new HashMap<>();
-            error.put("success", false);
-            error.put("message", "Error al obtener denuncias: " + e.getMessage());
-
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
-        }
-    }
-
-    /**
      * Listar denuncias de un usuario por email
      * GET /api/denuncias/mis-denuncias?email=usuario@email.com
      */

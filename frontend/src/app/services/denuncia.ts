@@ -80,38 +80,6 @@ export class DenunciaService {
   }
 
   /**
-   * Obtiene denuncias con paginación (NUEVO)
-   * @param page Número de página (0-indexed)
-   * @param size Tamaño de página
-   * @param filtros Filtros opcionales
-   * @returns Observable con respuesta paginada
-   */
-  getAllPaginated(page: number = 0, size: number = 20, filtros?: FiltrosDenuncia): Observable<any> {
-    let params = new HttpParams()
-      .set('page', page.toString())
-      .set('size', size.toString());
-
-    // Agregar timestamp para cache-busting
-    const timestamp = new Date().getTime();
-    params = params.set('_t', timestamp.toString());
-
-    // Aplicar filtros si existen
-    if (filtros) {
-      if (filtros.estado) {
-        params = params.set('estado', filtros.estado);
-      }
-      if (filtros.patente) {
-        params = params.set('patente', filtros.patente);
-      }
-      if (filtros.comuna) {
-        params = params.set('comuna', filtros.comuna);
-      }
-    }
-
-    return this.http.get<any>(`${this.baseUrl}/paginadas`, { params });
-  }
-
-  /**
    * Obtiene denuncias del funcionario
    * @param email Email del funcionario
    * @returns Observable con las denuncias asignadas

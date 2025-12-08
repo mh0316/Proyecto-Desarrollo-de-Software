@@ -6,8 +6,6 @@ import com.example.appmunicipal.domain.Usuario;
 import com.example.appmunicipal.domain.Evidencia;
 import com.example.appmunicipal.DTO.DenunciaRequest;
 import com.example.appmunicipal.DTO.DenunciaResponse;
-import com.example.appmunicipal.DTO.DenunciaLightResponse;
-import com.example.appmunicipal.DTO.PageResponse;
 import com.example.appmunicipal.DTO.EvidenciaResponse;
 import com.example.appmunicipal.repository.CategoriaRepository;
 import com.example.appmunicipal.repository.DenunciaRepository;
@@ -15,10 +13,6 @@ import com.example.appmunicipal.repository.UsuarioRepository;
 import com.example.appmunicipal.repository.EvidenciaRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
@@ -31,6 +25,7 @@ import java.util.Map;
 import java.util.LinkedHashMap;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.Locale;
 
 @Service
 @RequiredArgsConstructor
@@ -180,161 +175,6 @@ public class DenunciaService {
         return denuncias.stream()
                 .map(DenunciaResponse::new)
                 .collect(Collectors.toList());
-    }
-
-    /**
-     * Listar denuncias con paginación (NUEVO)
-     * 
-     * @param page        Número de página (0-indexed)
-     * @param size        Tamaño de página
-     * @param estado      Filtro opcional por estado
-     * @param categoriaId Filtro opcional por categoría
-     * @param comuna      Filtro opcional por comuna
-     * @param patente     Filtro opcional por patente
-     * @return PageResponse con denuncias ligeras
-     */
-    @Transactional(readOnly = true)
-    public PageResponse<DenunciaLightResponse> listarDenunciasPaginadas(
-            int page,
-            int size,
-            String estado,
-            Long categoriaId,
-            String comuna,
-            String patente) {
-
-        log.info("📋 Listando denuncias paginadas - Página: {}, Tamaño: {}", page, size);
-
-        // Validar tamaño de página
-        if (size > 100) {
-            size = 100; // Máximo 100 por página
-            log.warn("⚠️ Tamaño de página ajustado a máximo permitido: 100");
-        }
-
-        // Crear Pageable con ordenamiento por fecha descendente
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "fechaDenuncia"));
-
-        Page<Denuncia> denunciasPage;
-
-        // Aplicar filtros combinados (AND logic)
-        // Si hay múltiples filtros, se aplican todos juntos
-        boolean tieneEstado = estado != null && !estado.trim().isEmpty();
-        boolean tieneCategoria = categoriaId != null;
-        boolean tieneComuna = comuna != null && !comuna.trim().isEmpty();
-        boolean tienePatente = patente != null && !patente.trim().isEmpty();
-
-        // Contar cuántos filtros hay activos
-        int filtrosActivos = 0;
-        if (tieneEstado)
-            filtrosActivos++;
-        if (tieneCategoria)
-            filtrosActivos++;
-        if (tieneComuna)
-            filtrosActivos++;
-        if (tienePatente)
-            filtrosActivos++;
-
-        if (filtrosActivos == 0) {
-            // Sin filtros, obtener todas
-            denunciasPage = denunciaRepository.findAllByOrderByFechaDenunciaDesc(pageable);
-        } else if (filtrosActivos == 1) {
-            // Un solo filtro, usar métodos específicos
-            if (tieneEstado) {
-                try {
-                    Denuncia.EstadoDenuncia estadoDenuncia = Denuncia.EstadoDenuncia.valueOf(estado.toUpperCase());
-                    denunciasPage = denunciaRepository.findByEstadoOrderByFechaDenunciaDesc(estadoDenuncia, pageable);
-                    log.info("🔍 Filtro aplicado: estado = {}", estado);
-                } catch (IllegalArgumentException e) {
-                    throw new RuntimeException("Estado inválido: " + estado);
-                }
-            } else if (tieneCategoria) {
-                denunciasPage = denunciaRepository.findByCategoriaIdOrderByFechaDenunciaDesc(categoriaId, pageable);
-                log.info("🔍 Filtro aplicado: categoriaId = {}", categoriaId);
-            } else if (tieneComuna) {
-                denunciasPage = denunciaRepository.findByComunaOrderByFechaDenunciaDesc(comuna, pageable);
-                log.info("🔍 Filtro aplicado: comuna = {}", comuna);
-            } else {
-                denunciasPage = denunciaRepository.findByPatenteContainingIgnoreCaseOrderByFechaDenunciaDesc(patente,
-                        pageable);
-                log.info("🔍 Filtro aplicado: patente = {}", patente);
-            }
-        } else {
-            // Múltiples filtros: obtener todas y filtrar en memoria
-            // Esto es necesario porque no tenemos métodos de repositorio para todas las
-            // combinaciones
-            log.info("🔍 Aplicando {} filtros combinados", filtrosActivos);
-
-            List<Denuncia> todasLasDenuncias = denunciaRepository.findAllByOrderByFechaDenunciaDesc();
-
-            // Aplicar filtros en secuencia (AND logic)
-            List<Denuncia> denunciasFiltradas = todasLasDenuncias.stream()
-                    .filter(d -> {
-                        boolean cumple = true;
-
-                        if (tieneEstado) {
-                            try {
-                                Denuncia.EstadoDenuncia estadoDenuncia = Denuncia.EstadoDenuncia
-                                        .valueOf(estado.toUpperCase());
-                                cumple = cumple && d.getEstado() == estadoDenuncia;
-                            } catch (IllegalArgumentException e) {
-                                return false;
-                            }
-                        }
-
-                        if (tieneCategoria) {
-                            cumple = cumple && d.getCategoria() != null && d.getCategoria().getId().equals(categoriaId);
-                        }
-
-                        if (tieneComuna) {
-                            cumple = cumple && d.getComuna() != null &&
-                                    d.getComuna().equalsIgnoreCase(comuna);
-                        }
-
-                        if (tienePatente) {
-                            cumple = cumple && d.getPatente() != null &&
-                                    d.getPatente().toLowerCase().contains(patente.toLowerCase());
-                        }
-
-                        return cumple;
-                    })
-                    .collect(Collectors.toList());
-
-            // Crear página manualmente
-            int start = (int) pageable.getOffset();
-            int end = Math.min((start + pageable.getPageSize()), denunciasFiltradas.size());
-
-            List<Denuncia> paginaActual = denunciasFiltradas.subList(start, end);
-            denunciasPage = new org.springframework.data.domain.PageImpl<>(
-                    paginaActual,
-                    pageable,
-                    denunciasFiltradas.size());
-
-            log.info("🔍 Filtros combinados aplicados: {} resultados totales", denunciasFiltradas.size());
-        }
-
-        // Convertir a DTOs ligeros
-        List<DenunciaLightResponse> denunciasLight = denunciasPage.getContent().stream()
-                .map(DenunciaLightResponse::new)
-                .collect(Collectors.toList());
-
-        // Crear respuesta paginada
-        PageResponse<DenunciaLightResponse> response = new PageResponse<>();
-        response.setContent(denunciasLight);
-        response.setTotalElements(denunciasPage.getTotalElements());
-        response.setTotalPages(denunciasPage.getTotalPages());
-        response.setCurrentPage(denunciasPage.getNumber());
-        response.setPageSize(denunciasPage.getSize());
-        response.setHasNext(denunciasPage.hasNext());
-        response.setHasPrevious(denunciasPage.hasPrevious());
-        response.setFirst(denunciasPage.isFirst());
-        response.setLast(denunciasPage.isLast());
-
-        log.info("✅ Página {}/{} cargada - {} denuncias de {} totales",
-                page + 1,
-                denunciasPage.getTotalPages(),
-                denunciasLight.size(),
-                denunciasPage.getTotalElements());
-
-        return response;
     }
 
     /**
@@ -674,109 +514,92 @@ public class DenunciaService {
      */
     @Transactional(readOnly = true)
     public DashboardStatsResponse obtenerEstadisticasAvanzadas() {
-        log.info("📊 Calculando estadísticas avanzadas (optimizado)");
-        long startTime = System.currentTimeMillis();
+        log.info("📊 Calculando estadísticas avanzadas");
 
-        // Cargar todas las denuncias UNA SOLA VEZ
         List<Denuncia> todasLasDenuncias = denunciaRepository.findAll();
-        log.info("📥 Cargadas {} denuncias en memoria", todasLasDenuncias.size());
 
         DashboardStatsResponse stats = new DashboardStatsResponse();
 
-        // Inicializar mapas
-        Map<String, Long> denunciasPorMes = new LinkedHashMap<>();
-        Map<String, Long> denunciasPorCategoria = new LinkedHashMap<>();
-        Map<Integer, Long> denunciasPorHorario = new LinkedHashMap<>();
-        Map<String, Long> denunciasPorComuna = new LinkedHashMap<>();
-        Map<String, Long> denunciasPorSector = new LinkedHashMap<>();
-        Map<String, Long> contadorUsuarios = new LinkedHashMap<>();
-        Map<String, Long> contadorPatentes = new LinkedHashMap<>();
+        // 1. Tendencia mensual (últimos 6 meses o todo el año)
+        Map<String, Long> denunciasPorMes = todasLasDenuncias.stream()
+                .collect(Collectors.groupingBy(
+                        d -> d.getFechaDenuncia().format(DateTimeFormatter.ofPattern("yyyy-MM")),
+                        Collectors.counting()));
+        stats.setDenunciasPorMes(new LinkedHashMap<>(denunciasPorMes)); // Convertir a LinkedHashMap si se necesita
+                                                                        // orden específico después
 
-        // Contadores para tasas
-        long totalValidadas = 0;
-        long totalRechazadas = 0;
-        long totalConFechaValidacion = 0;
-        long sumaHorasValidacion = 0;
-
-        // PROCESAMIENTO EN UN SOLO PASE
-        for (Denuncia d : todasLasDenuncias) {
-            // 1. Denuncias por mes
-            String mes = d.getFechaDenuncia().format(DateTimeFormatter.ofPattern("yyyy-MM"));
-            denunciasPorMes.merge(mes, 1L, Long::sum);
-
-            // 2. Denuncias por categoría
-            if (d.getCategoria() != null) {
-                denunciasPorCategoria.merge(d.getCategoria().getNombre(), 1L, Long::sum);
-            }
-
-            // 3. Tasas de validación/rechazo
-            if (d.getEstado() == Denuncia.EstadoDenuncia.VALIDADA) {
-                totalValidadas++;
-            } else if (d.getEstado() == Denuncia.EstadoDenuncia.RECHAZADA) {
-                totalRechazadas++;
-            }
-
-            // 4. Tiempo promedio de validación
-            if (d.getFechaValidacion() != null) {
-                totalConFechaValidacion++;
-                sumaHorasValidacion += ChronoUnit.HOURS.between(d.getFechaDenuncia(), d.getFechaValidacion());
-            }
-
-            // 5. Denuncias por horario
-            int hora = d.getFechaDenuncia().getHour();
-            denunciasPorHorario.merge(hora, 1L, Long::sum);
-
-            // 6. Denuncias por comuna
-            if (d.getComuna() != null) {
-                denunciasPorComuna.merge(d.getComuna().toUpperCase(), 1L, Long::sum);
-            }
-
-            // 7. Denuncias por sector (solo Temuco)
-            if (d.getComuna() != null && "TEMUCO".equalsIgnoreCase(d.getComuna().trim()) && d.getSector() != null) {
-                denunciasPorSector.merge(d.getSector().toUpperCase(), 1L, Long::sum);
-            }
-
-            // 8. Top usuarios
-            if (d.getUsuario() != null) {
-                String usuario = d.getUsuario().getNombre() + " " + d.getUsuario().getApellido() +
-                        " (" + d.getUsuario().getEmail() + ")";
-                contadorUsuarios.merge(usuario, 1L, Long::sum);
-            }
-
-            // 9. Reincidencia por patente
-            if (d.getPatente() != null && !d.getPatente().trim().isEmpty()) {
-                contadorPatentes.merge(d.getPatente().toUpperCase().trim(), 1L, Long::sum);
-            }
-        }
-
-        // Establecer resultados
-        stats.setDenunciasPorMes(denunciasPorMes);
+        // 2. Denuncias por categoría
+        Map<String, Long> denunciasPorCategoria = todasLasDenuncias.stream()
+                .collect(Collectors.groupingBy(
+                        d -> d.getCategoria().getNombre(),
+                        Collectors.counting()));
         stats.setDenunciasPorCategoria(denunciasPorCategoria);
-        stats.setDenunciasPorHorario(denunciasPorHorario);
-        stats.setDenunciasPorComuna(denunciasPorComuna);
-        stats.setDenunciasPorSector(denunciasPorSector);
 
-        // Calcular tasas
-        long totalCerradas = totalValidadas + totalRechazadas;
+        // 3. Tasa de validación vs rechazo
+        long totalCerradas = todasLasDenuncias.stream()
+                .filter(d -> d.getEstado() == Denuncia.EstadoDenuncia.VALIDADA ||
+                        d.getEstado() == Denuncia.EstadoDenuncia.RECHAZADA)
+                .count();
+
         if (totalCerradas > 0) {
-            stats.setTasaValidacion((double) totalValidadas / totalCerradas * 100);
-            stats.setTasaRechazo((double) totalRechazadas / totalCerradas * 100);
+            long validadas = todasLasDenuncias.stream()
+                    .filter(d -> d.getEstado() == Denuncia.EstadoDenuncia.VALIDADA)
+                    .count();
+            long rechazadas = todasLasDenuncias.stream()
+                    .filter(d -> d.getEstado() == Denuncia.EstadoDenuncia.RECHAZADA)
+                    .count();
+
+            stats.setTasaValidacion((double) validadas / totalCerradas * 100);
+            stats.setTasaRechazo((double) rechazadas / totalCerradas * 100);
         } else {
             stats.setTasaValidacion(0.0);
             stats.setTasaRechazo(0.0);
         }
 
-        // Tiempo promedio de validación
-        if (totalConFechaValidacion > 0) {
-            stats.setTiempoPromedioValidacion((double) sumaHorasValidacion / totalConFechaValidacion);
-        } else {
-            stats.setTiempoPromedioValidacion(0.0);
-        }
+        // 4. Tiempo promedio de validación (en horas)
+        Double promedioHoras = todasLasDenuncias.stream()
+                .filter(d -> d.getFechaValidacion() != null)
+                .mapToLong(d -> ChronoUnit.HOURS.between(d.getFechaDenuncia(), d.getFechaValidacion()))
+                .average()
+                .orElse(0.0);
+        stats.setTiempoPromedioValidacion(promedioHoras);
 
-        // Top 20 usuarios (ordenar y limitar)
-        Map<String, Long> topUsuarios = contadorUsuarios.entrySet().stream()
+        // 5. Tendencias por horario (0-23 horas)
+        Map<Integer, Long> denunciasPorHorario = todasLasDenuncias.stream()
+                .collect(Collectors.groupingBy(
+                        d -> d.getFechaDenuncia().getHour(),
+                        Collectors.counting()));
+        stats.setDenunciasPorHorario(denunciasPorHorario);
+
+        // 6. E9: Denuncias por Comuna
+        Map<String, Long> denunciasPorComuna = todasLasDenuncias.stream()
+                .filter(d -> d.getComuna() != null)
+                .collect(Collectors.groupingBy(
+                        d -> d.getComuna().toUpperCase(),
+                        Collectors.counting()));
+        stats.setDenunciasPorComuna(denunciasPorComuna);
+
+        // 7. E8: Denuncias por Sector (Solo Temuco)
+        Map<String, Long> denunciasPorSector = todasLasDenuncias.stream()
+                .filter(d -> d.getComuna() != null && "TEMUCO".equalsIgnoreCase(d.getComuna().trim()))
+                .filter(d -> d.getSector() != null)
+                .collect(Collectors.groupingBy(
+                        d -> d.getSector().toUpperCase(),
+                        Collectors.counting()));
+        stats.setDenunciasPorSector(denunciasPorSector);
+
+        stats.setDenunciasPorSector(denunciasPorSector);
+
+        // 8. T4: Tabla por usuario denunciante
+        Map<String, Long> topUsuarios = todasLasDenuncias.stream()
+                .filter(d -> d.getUsuario() != null)
+                .collect(Collectors.groupingBy(
+                        d -> d.getUsuario().getNombre() + " " + d.getUsuario().getApellido() + " ("
+                                + d.getUsuario().getEmail() + ")",
+                        Collectors.counting()))
+                .entrySet().stream()
                 .sorted(Map.Entry.<String, Long>comparingByValue().reversed())
-                .limit(20)
+                .limit(20) // Top 20
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
                         Map.Entry::getValue,
@@ -784,28 +607,22 @@ public class DenunciaService {
                         LinkedHashMap::new));
         stats.setTopUsuarios(topUsuarios);
 
-        // Reincidencia por patente (top 20, ordenadas por cantidad)
-        log.info("📊 Total de patentes únicas encontradas: {}", contadorPatentes.size());
-
-        // Log de las primeras 5 patentes para debug
-        contadorPatentes.entrySet().stream()
-                .limit(5)
-                .forEach(e -> log.info("  Patente: {} = {} denuncias", e.getKey(), e.getValue()));
-
-        Map<String, Long> reincidenciaPatentes = contadorPatentes.entrySet().stream()
+        // 9. E10: Reincidencia por patente
+        Map<String, Long> reincidenciaPatentes = todasLasDenuncias.stream()
+                .filter(d -> d.getPatente() != null && !d.getPatente().trim().isEmpty())
+                .collect(Collectors.groupingBy(
+                        d -> d.getPatente().toUpperCase().trim(),
+                        Collectors.counting()))
+                .entrySet().stream()
+                .filter(e -> e.getValue() > 1) // Solo si hay reincidencia (> 1)
                 .sorted(Map.Entry.<String, Long>comparingByValue().reversed())
-                .limit(20)
+                .limit(20) // Top 20
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
                         Map.Entry::getValue,
                         (e1, e2) -> e1,
                         LinkedHashMap::new));
-
-        log.info("📊 Reincidencias a mostrar: {}", reincidenciaPatentes.size());
         stats.setReincidenciaPatentes(reincidenciaPatentes);
-
-        long endTime = System.currentTimeMillis();
-        log.info("✅ Estadísticas calculadas en {} ms", (endTime - startTime));
 
         return stats;
     }

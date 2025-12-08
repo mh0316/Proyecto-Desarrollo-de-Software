@@ -17,20 +17,12 @@
 
         <div class="filtro-group">
           <label>Patente</label>
-          <input type="text" formControlName="patente" class="form-control" placeholder="Buscar por patente..."
-            list="patentes-list" autocomplete="off">
-          <datalist id="patentes-list">
-            <option *ngFor="let patente of patentesDisponibles" [value]="patente">
-          </datalist>
+          <input type="text" formControlName="patente" class="form-control" placeholder="Buscar por patente...">
         </div>
 
         <div class="filtro-group">
           <label>Comuna</label>
-          <input type="text" formControlName="comuna" class="form-control" placeholder="Buscar por comuna..."
-            list="comunas-list" autocomplete="off">
-          <datalist id="comunas-list">
-            <option *ngFor="let comuna of comunasDisponibles" [value]="comuna">
-          </datalist>
+          <input type="text" formControlName="comuna" class="form-control" placeholder="Buscar por comuna...">
         </div>
 
         <div class="filtro-group">
@@ -121,51 +113,6 @@
       </tr>
     </tbody>
   </table>
-
-  <!-- Controles de Paginación -->
-  <div *ngIf="!cargando && totalElements > 0" class="paginacion-container">
-    <!-- Información de resultados -->
-    <div class="paginacion-info">
-      Mostrando {{ rangoInicio }} - {{ rangoFin }} de {{ totalElements }} denuncias
-    </div>
-
-    <!-- Selector de tamaño de página -->
-    <div class="paginacion-size">
-      <label>Mostrar:</label>
-      <select [(ngModel)]="pageSize" (change)="cambiarTamanoPagina(pageSize)" class="form-control">
-        <option *ngFor="let size of pageSizeOptions" [value]="size">{{ size }}</option>
-      </select>
-      <span>por página</span>
-    </div>
-
-    <!-- Controles de navegación -->
-    <div class="paginacion-controles">
-      <button class="btn-paginacion" (click)="irPrimeraPagina()" [disabled]="currentPage === 0" title="Primera página">
-        ⏮
-      </button>
-
-      <button class="btn-paginacion" (click)="cambiarPagina(currentPage - 1)" [disabled]="currentPage === 0"
-        title="Anterior">
-        ◀
-      </button>
-
-      <!-- Números de página -->
-      <button *ngFor="let pagina of paginasParaMostrar" class="btn-paginacion btn-numero"
-        [class.active]="pagina === currentPage" (click)="cambiarPagina(pagina)">
-        {{ pagina + 1 }}
-      </button>
-
-      <button class="btn-paginacion" (click)="cambiarPagina(currentPage + 1)" [disabled]="currentPage >= totalPages - 1"
-        title="Siguiente">
-        ▶
-      </button>
-
-      <button class="btn-paginacion" (click)="irUltimaPagina()" [disabled]="currentPage >= totalPages - 1"
-        title="Última página">
-        ⏭
-      </button>
-    </div>
-  </div>
 
   <!-- Sin denuncias -->
   <div *ngIf="!cargando && denuncias.length === 0" class="sin-denuncias">

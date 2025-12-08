@@ -2,8 +2,6 @@ package com.example.appmunicipal.repository;
 
 import com.example.appmunicipal.domain.Denuncia;
 import com.example.appmunicipal.domain.Denuncia.EstadoDenuncia;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,29 +12,6 @@ import java.util.List;
 
 @Repository
 public interface DenunciaRepository extends JpaRepository<Denuncia, Long> {
-
-    // ========================================
-    // MÉTODOS PAGINADOS (NUEVOS)
-    // ========================================
-
-    // Paginación básica ordenada por fecha
-    Page<Denuncia> findAllByOrderByFechaDenunciaDesc(Pageable pageable);
-
-    // Paginación con filtro por estado
-    Page<Denuncia> findByEstadoOrderByFechaDenunciaDesc(EstadoDenuncia estado, Pageable pageable);
-
-    // Paginación con filtro por categoría
-    Page<Denuncia> findByCategoriaIdOrderByFechaDenunciaDesc(Long categoriaId, Pageable pageable);
-
-    // Paginación con filtro por comuna
-    Page<Denuncia> findByComunaOrderByFechaDenunciaDesc(String comuna, Pageable pageable);
-
-    // Paginación con filtro por patente
-    Page<Denuncia> findByPatenteContainingIgnoreCaseOrderByFechaDenunciaDesc(String patente, Pageable pageable);
-
-    // ========================================
-    // MÉTODOS EXISTENTES (SIN PAGINACIÓN)
-    // ========================================
 
     // Búsquedas básicas
     List<Denuncia> findByUsuarioId(Long usuarioId);
