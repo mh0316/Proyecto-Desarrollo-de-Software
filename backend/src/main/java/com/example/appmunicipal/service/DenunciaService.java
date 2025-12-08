@@ -602,13 +602,23 @@ public class DenunciaService {
             stats.setTasaRechazo(0.0);
         }
 
-        // 5. Tiempo promedio de validación (PENDIENTE: Este aun requiere lógica
-        // compleja,
-        // lo dejamos simplificado o en 0 para no saturar memoria si es complejo
-        // calcular en SQL standard sin funciones ventana)
-        // Por ahora, para evitar OOM, lo dejamos en 0.0 o calculamos solo con las
-        // últimas 1000
-        stats.setTiempoPromedioValidacion(0.0);
+        // 5. Tiempo promedio de validación (en horas)
+        // Obtenemos las fechas y calculamos en Java para evitar funciones SQL complejas
+        List<Object[]> fechasValidacion = denunciaRepository.findFechasParaPromedioValidacion();
+
+        if (!fechasValidacion.isEmpty()) {
+            long totalHoras = 0;
+            for (Object[] fechas : fechasValidacion) {
+                LocalDateTime fechaDenuncia = (LocalDateTime) fechas[0];
+                LocalDateTime fechaValidacion = (LocalDateTime) fechas[1];
+                long horas = java.time.temporal.ChronoUnit.HOURS.between(fechaDenuncia, fechaValidacion);
+                totalHoras += horas;
+            }
+            double promedioHoras = (double) totalHoras / fechasValidacion.size();
+            stats.setTiempoPromedioValidacion(promedioHoras);
+        } else {
+            stats.setTiempoPromedioValidacion(0.0);
+        }
 
         // 6. Tendencias por horario
         List<Object[]> denunciasPorHorarioDB = denunciaRepository.countDenunciasByHora();

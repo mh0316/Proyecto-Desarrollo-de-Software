@@ -77,6 +77,11 @@ public interface DenunciaRepository extends JpaRepository<Denuncia, Long> {
     @Query("SELECT c.nombre, COUNT(d) FROM Denuncia d JOIN d.categoria c GROUP BY c.id, c.nombre ORDER BY COUNT(d) DESC")
     List<Object[]> countDenunciasByCategoria();
 
+    // Tiempo promedio de validación (en horas)
+    // Solo para denuncias que tienen fechaValidacion
+    @Query("SELECT d.fechaDenuncia, d.fechaValidacion FROM Denuncia d WHERE d.fechaValidacion IS NOT NULL")
+    List<Object[]> findFechasParaPromedioValidacion();
+
     // Cantidad de denuncias por Sector (Solo Temuco)
 
     @Query("SELECT UPPER(d.sector), COUNT(d) FROM Denuncia d " +
