@@ -375,7 +375,6 @@ public class DenunciaController {
      * Subir evidencia para una denuncia
      * POST /api/denuncias/{id}/evidencias
      */
-    @PreAuthorize("hasAnyRole('CIUDADANO', 'FUNCIONARIO')")
     @PostMapping("/{id}/evidencias")
     public ResponseEntity<?> subirEvidencia(
             @PathVariable Long id,
