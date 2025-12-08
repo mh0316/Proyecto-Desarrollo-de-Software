@@ -56,6 +56,8 @@ public class SecurityConfig {
                                                                 "/api/denuncias", // POST crear denuncia (anónimo)
                                                                 "/api/denuncias/evidencia/**", // GET imagenes
                                                                                                // evidencias (público)
+                                                                "/api/denuncias/*/evidencias", // POST subir evidencia
+                                                                                               // (anónimo)
                                                                 "/h2-console/**",
                                                                 "/",
                                                                 "/error")

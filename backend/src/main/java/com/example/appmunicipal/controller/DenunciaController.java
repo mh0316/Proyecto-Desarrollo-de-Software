@@ -91,7 +91,7 @@ public class DenunciaController {
      * Listar todas las denuncias
      * GET /api/denuncias
      */
-    @PreAuthorize("hasAnyRole('CIUDADANO', 'FUNCIONARIO')")
+    @PreAuthorize("hasAnyRole('FUNCIONARIO')")
     @GetMapping
     public ResponseEntity<?> listarDenuncias() {
         try {
@@ -242,7 +242,7 @@ public class DenunciaController {
      * Listar denuncias de un usuario específico por ID
      * GET /api/denuncias/usuario/{usuarioId}
      */
-    @PreAuthorize("hasAnyRole('CIUDADANO', 'FUNCIONARIO')")
+    @PreAuthorize("hasAnyRole('FUNCIONARIO')")
     @GetMapping("/usuario/{usuarioId}")
     public ResponseEntity<?> listarPorUsuario(@PathVariable Long usuarioId) {
         try {
@@ -429,7 +429,7 @@ public class DenunciaController {
      * Eliminar una denuncia
      * DELETE /api/denuncias/{id}
      */
-    @PreAuthorize("hasAnyRole('CIUDADANO', 'FUNCIONARIO')")
+    @PreAuthorize("hasAnyRole('FUNCIONARIO')")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> eliminarDenuncia(@PathVariable Long id) {
         try {
@@ -456,7 +456,7 @@ public class DenunciaController {
      * Obtener comentarios internos de una denuncia
      * GET /api/denuncias/{id}/comentarios
      */
-    @PreAuthorize("hasAnyRole('CIUDADANO', 'FUNCIONARIO')")
+    @PreAuthorize("hasAnyRole('FUNCIONARIO')")
     @GetMapping("/{id}/comentarios")
     public ResponseEntity<?> obtenerComentarios(@PathVariable Long id) {
         try {
@@ -484,7 +484,7 @@ public class DenunciaController {
      * Obtener historial de acciones
      * GET /api/denuncias/{id}/historial
      */
-    @PreAuthorize("hasAnyRole('CIUDADANO', 'FUNCIONARIO')")
+    @PreAuthorize("hasAnyRole('FUNCIONARIO')")
     @GetMapping("/{id}/historial")
     public ResponseEntity<?> obtenerHistorial(@PathVariable Long id) {
         try {
@@ -512,7 +512,7 @@ public class DenunciaController {
      * Listar denuncias que YO he revisado
      * GET /api/denuncias/mis-revisadas?email=funcionario@municipalidad.cl
      */
-    @PreAuthorize("hasAnyRole('CIUDADANO', 'FUNCIONARIO')")
+    @PreAuthorize("hasAnyRole('FUNCIONARIO')")
     @GetMapping("/mis-revisadas")
     public ResponseEntity<?> listarDenunciasRevisadas(@RequestParam String email) {
         try {
@@ -541,7 +541,7 @@ public class DenunciaController {
      * Agregar comentario interno
      * POST /api/denuncias/{id}/comentarios
      */
-    @PreAuthorize("hasAnyRole('CIUDADANO', 'FUNCIONARIO')")
+    @PreAuthorize("hasAnyRole('FUNCIONARIO')")
     @PostMapping("/{id}/comentarios")
     public ResponseEntity<?> agregarComentario(
             @PathVariable Long id,
@@ -607,7 +607,7 @@ public class DenunciaController {
      * Cambiar estado de una denuncia
      * PUT /api/denuncias/{id}/estado
      */
-    @PreAuthorize("hasAnyRole('CIUDADANO', 'FUNCIONARIO')")
+    @PreAuthorize("hasAnyRole('FUNCIONARIO')")
     @PutMapping("/{id}/estado")
     public ResponseEntity<?> cambiarEstado(
             @PathVariable Long id,
