@@ -133,3 +133,51 @@ div[ngIf] {
   font-size: 1.1rem;
   margin-top: 30px;
 }
+
+/* Contenedor de filtros */
+.filtros-container {
+  background: #161b22;
+  border: 1px solid #2c313a;
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+/* Ítem individual */
+.filtro-item {
+  display: flex;
+  flex-direction: column;
+  color: #e5e7eb;
+}
+
+.filtro-item label {
+  font-size: 0.9rem;
+  margin-bottom: 4px;
+  color: #9ca3af;
+}
+
+.filtro-item input,
+.filtro-item select {
+  background: #0d1117;
+  border: 1px solid #2c313a;
+  padding: 8px;
+  border-radius: 8px;
+  color: #e5e7eb;
+  width: 180px;
+}
+
+/* Botones de filtros */
+.btn-filtrar {
+  background: #2563eb;
+  color: white;
+  border-radius: 8px;
+}
+
+.btn-limpiar {
+  background: #374151;
+  color: white;
+  border-radius: 8px;
+}

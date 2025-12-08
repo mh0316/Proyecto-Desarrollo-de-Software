@@ -1,33 +1,63 @@
+<!-- Filtros -->
+<div class="filtros-container">
+  <div class="filtro-item">
+    <label>Estado</label>
+    <select [(ngModel)]="filtroEstado">
+      <option value="">Todos</option>
+      <option value="PENDIENTE">Pendiente</option>
+      <option value="VALIDADA">Validada</option>
+      <option value="RECHAZADA">Rechazada</option>
+    </select>
+  </div>
+
+  <div class="filtro-item">
+    <label>Comuna</label>
+    <input type="text" placeholder="Buscar comuna..." [(ngModel)]="filtroComuna">
+  </div>
+
+  <div class="filtro-item">
+    <label>Ordenar por fecha</label>
+    <select [(ngModel)]="ordenFecha">
+      <option value="desc">Más recientes primero</option>
+      <option value="asc">Más antiguos primero</option>
+    </select>
+  </div>
+
+  <button class="btn btn-filtrar" (click)="aplicarFiltros()">Aplicar</button>
+  <button class="btn btn-limpiar" (click)="limpiarFiltros()">Limpiar</button>
+</div>
+
 <div *ngIf="cargando">Cargando denuncias...</div>
 
-<table *ngIf="!cargando && denuncias.length > 0" class="tabla-denuncias">
+<table *ngIf="!cargando && denunciasFiltradas.length > 0" class="tabla-denuncias">
   <thead>
-    <tr>
-      <th>ID</th>
-      <th>Descripción</th>
-      <th>Dirección</th>
-      <th>Comuna</th>
-      <th>Estado</th>
-      <th>Acciones</th>
-    </tr>
+  <tr>
+    <th>ID</th>
+    <th>Descripción</th>
+    <th>Dirección</th>
+    <th>Comuna</th>
+    <th>Estado</th>
+    <th>Acciones</th>
+  </tr>
   </thead>
+
   <tbody>
-    <tr *ngFor="let d of denuncias">
-      <td>{{ d.id }}</td>
-      <td>{{ d.descripcion }}</td>
-      <td>{{ d.direccion }}</td>
-      <td>{{ d.comuna }}</td>
-      <td>{{ d.estado }}</td>
-      <td>
-        <button class="btn btn-detalle" (click)="verDetalle(d.id)">Ver Detalles</button>
-        <button class="btn btn-validar" (click)="cambiarEstado(d.id, 'VALIDADA')">Validar</button>
-        <button class="btn btn-rechazar" (click)="cambiarEstado(d.id, 'RECHAZADA')">Rechazar</button>
-        <button class="btn btn-pendiente" (click)="cambiarEstado(d.id, 'PENDIENTE')">Pendiente</button>
-      </td>
-    </tr>
+  <tr *ngFor="let d of denunciasFiltradas">
+    <td>{{ d.id }}</td>
+    <td>{{ d.descripcion }}</td>
+    <td>{{ d.direccion }}</td>
+    <td>{{ d.comuna }}</td>
+    <td>{{ d.estado }}</td>
+    <td>
+      <button class="btn btn-detalle" (click)="verDetalle(d.id)">Ver Detalles</button>
+      <button class="btn btn-validar" (click)="cambiarEstado(d.id, 'VALIDADA')">Validar</button>
+      <button class="btn btn-rechazar" (click)="cambiarEstado(d.id, 'RECHAZADA')">Rechazar</button>
+      <button class="btn btn-pendiente" (click)="cambiarEstado(d.id, 'PENDIENTE')">Pendiente</button>
+    </td>
+  </tr>
   </tbody>
 </table>
 
-<div *ngIf="!cargando && denuncias.length === 0" class="sin-denuncias">
+<div *ngIf="!cargando && denunciasFiltradas.length === 0" class="sin-denuncias">
   No hay denuncias registradas.
 </div>

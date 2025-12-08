@@ -3,21 +3,30 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { DenunciaService } from '../../services/denuncia';
 import { HttpClientModule } from '@angular/common/http';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-lista-denuncias',
   standalone: true,
-  imports: [CommonModule, HttpClientModule],
+  imports: [CommonModule, HttpClientModule, FormsModule],
   templateUrl: './lista-denuncias.component.html',
   styleUrl: './lista-denuncias.component.scss'
 })
 export class ListaDenunciasComponent implements OnInit {
+
   denuncias: any[] = [];
+  denunciasFiltradas: any[] = [];
+
   cargando = true;
   error = '';
 
+  // filtros
+  filtroEstado = '';
+  filtroComuna = '';
+  ordenFecha = 'desc';
+
   constructor(private denunciaService: DenunciaService,
-    private router: Router) { }
+              private router: Router) { }
 
   ngOnInit(): void {
     this.obtenerDenuncias();
@@ -29,7 +38,6 @@ export class ListaDenunciasComponent implements OnInit {
 
     this.denunciaService.getAll().subscribe({
       next: (response) => {
-        console.log('Respuesta completa de la API:', response);
 
         if (response && response.denuncias) {
           this.denuncias = response.denuncias;
@@ -39,16 +47,46 @@ export class ListaDenunciasComponent implements OnInit {
           this.denuncias = [];
         }
 
+        this.aplicarFiltros();
         this.cargando = false;
-        console.log('Denuncias cargadas:', this.denuncias);
       },
       error: (err) => {
         console.error('Error al obtener denuncias:', err);
         this.error = 'Error al cargar las denuncias. Por favor, intenta nuevamente.';
         this.cargando = false;
         this.denuncias = [];
+        this.denunciasFiltradas = [];
       }
     });
+  }
+
+  aplicarFiltros(): void {
+    let resultado = [...this.denuncias];
+
+    if (this.filtroEstado) {
+      resultado = resultado.filter(d => d.estado === this.filtroEstado);
+    }
+
+    if (this.filtroComuna.trim() !== '') {
+      const texto = this.filtroComuna.toLowerCase();
+      resultado = resultado.filter(d => d.comuna.toLowerCase().includes(texto));
+    }
+
+    // ordenar por fecha si existe el campo d.fecha
+    resultado.sort((a, b) => {
+      const fa = new Date(a.fecha).getTime();
+      const fb = new Date(b.fecha).getTime();
+      return this.ordenFecha === 'desc' ? fb - fa : fa - fb;
+    });
+
+    this.denunciasFiltradas = resultado;
+  }
+
+  limpiarFiltros(): void {
+    this.filtroEstado = '';
+    this.filtroComuna = '';
+    this.ordenFecha = 'desc';
+    this.aplicarFiltros();
   }
 
   verDetalle(id: number): void {
@@ -62,12 +100,10 @@ export class ListaDenunciasComponent implements OnInit {
 
     this.denunciaService.cambiarEstado(id, estado).subscribe({
       next: (response) => {
-        console.log('Estado cambiado exitosamente:', response);
         alert(`Denuncia #${id} actualizada a ${estado}`);
-        this.obtenerDenuncias(); // Recargar la lista
+        this.obtenerDenuncias();
       },
       error: (err) => {
-        console.error('Error al cambiar estado:', err);
         alert('Error al cambiar el estado de la denuncia');
       }
     });
