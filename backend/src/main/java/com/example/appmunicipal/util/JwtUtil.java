@@ -2,7 +2,6 @@ package com.example.appmunicipal.util;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -18,7 +17,8 @@ import java.util.function.Function;
 @Slf4j
 public class JwtUtil {
 
-    // Clave secreta para firmar el JWT (en producción debe estar en application.yml)
+    // Clave secreta para firmar el JWT (en producción debe estar en
+    // application.yml)
     private static final String SECRET_KEY = "municipal-app-secret-key-2024-super-secure-change-in-production-12345";
 
     // Tiempo de expiración del token: 24 horas (en milisegundos)
@@ -28,10 +28,10 @@ public class JwtUtil {
      * Generar token JWT para un usuario
      *
      * @param usuarioId ID del usuario
-     * @param email Email del usuario
-     * @param username Username del usuario
-     * @param nombre Nombre del usuario
-     * @param rol Rol del usuario
+     * @param email     Email del usuario
+     * @param username  Username del usuario
+     * @param nombre    Nombre del usuario
+     * @param rol       Rol del usuario
      * @return Token JWT firmado
      */
     public String generarToken(Long usuarioId, String email, String username, String nombre, String rol) {
@@ -59,7 +59,7 @@ public class JwtUtil {
                 .subject(subject)
                 .issuedAt(ahora)
                 .expiration(expiracion)
-                .signWith(key, SignatureAlgorithm.HS256)
+                .signWith(key) // El algoritmo se infiere automáticamente de la clave
                 .compact();
     }
 

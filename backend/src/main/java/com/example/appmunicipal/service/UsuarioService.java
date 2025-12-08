@@ -29,6 +29,9 @@ public class UsuarioService {
     private final RolRepository rolRepository;
     private final JwtUtil jwtUtil;
     private final RutUtil rutUtil;
+    // 🔒 PasswordEncoder para encriptar contraseñas
+    // private final PasswordEncoder passwordEncoder; // 👈 Descomentar cuando
+    // quieras activar encriptación
     private final Random random = new Random();
 
     /**
@@ -57,11 +60,19 @@ public class UsuarioService {
                 return new LoginResponse(false, "Tu cuenta está inactiva. Contacta al administrador", null, null);
             }
 
-            // Verificar contraseña (sin encriptar)
+            // 🔒 Verificar contraseña
+            // OPCIÓN 1: Sin encriptar (DESARROLLO - ACTUAL)
             if (!request.getPassword().equals(usuario.getPassword())) {
                 log.warn("❌ Intento de login fallido - contraseña incorrecta para: {}", request.getEmail());
                 return new LoginResponse(false, "Contraseña incorrecta", null, null);
             }
+
+            // OPCIÓN 2: Con BCrypt (PRODUCCIÓN - DESCOMENTAR)
+            // if (!passwordEncoder.matches(request.getPassword(), usuario.getPassword())) {
+            // log.warn("❌ Intento de login fallido - contraseña incorrecta para: {}",
+            // request.getEmail());
+            // return new LoginResponse(false, "Contraseña incorrecta", null, null);
+            // }
 
             // Actualizar última conexión
             usuario.setUltimaConexion(LocalDateTime.now());
@@ -73,8 +84,7 @@ public class UsuarioService {
                     usuario.getEmail(),
                     usuario.getUsername(),
                     usuario.getNombre(),
-                    usuario.getRol().getNombre()
-            );
+                    usuario.getRol().getNombre());
 
             log.info("✅ Login exitoso para: {} (ID: {})", usuario.getEmail(), usuario.getId());
 
@@ -83,8 +93,7 @@ public class UsuarioService {
                     true,
                     "Login exitoso",
                     token,
-                    usuario.getEmail()
-            );
+                    usuario.getEmail());
 
         } catch (RuntimeException e) {
             log.error("❌ Error en login: {}", e.getMessage());
@@ -93,7 +102,8 @@ public class UsuarioService {
     }
 
     /**
-     * Registro de usuarios o funcionario segun parametro ingresado por UsuarioController
+     * Registro de usuarios o funcionario segun parametro ingresado por
+     * UsuarioController
      */
     @Transactional
     public UsuarioResponse registrar(RegistroRequest request, String rolNombre) {
@@ -121,13 +131,15 @@ public class UsuarioService {
         }
 
         // Validar formato RUT
-    //    if (!rutUtil.validarFormato(request.getRut())) {
-    //        throw new RuntimeException("El formato del RUT es inválido. Formato esperado: 12.345.678-9 o 12345678-9");
-    //    }
+        // if (!rutUtil.validarFormato(request.getRut())) {
+        // throw new RuntimeException("El formato del RUT es inválido. Formato esperado:
+        // 12.345.678-9 o 12345678-9");
+        // }
 
-    //    if (!rutUtil.validarDigitoVerificador(request.getRut())) {
-    //        throw new RuntimeException("El RUT ingresado no es válido. Verifica el dígito verificador");
-    //    }
+        // if (!rutUtil.validarDigitoVerificador(request.getRut())) {
+        // throw new RuntimeException("El RUT ingresado no es válido. Verifica el dígito
+        // verificador");
+        // }
 
         String rutNormalizado = rutUtil.normalizarRut(request.getRut());
 
@@ -154,7 +166,14 @@ public class UsuarioService {
         // Crear Usuario
         Usuario usuario = new Usuario();
         usuario.setUsername(username);
+
+        // 🔒 Guardar contraseña
+        // OPCIÓN 1: Sin encriptar (DESARROLLO - ACTUAL)
         usuario.setPassword(request.getPassword());
+
+        // OPCIÓN 2: Con BCrypt (PRODUCCIÓN - DESCOMENTAR)
+        // usuario.setPassword(passwordEncoder.encode(request.getPassword()));
+
         usuario.setNombre(request.getNombre());
         usuario.setApellido(request.getApellido());
         usuario.setEmail(request.getEmail());
@@ -175,8 +194,6 @@ public class UsuarioService {
 
         return new UsuarioResponse(guardado);
     }
-
-
 
     private String generarUsername(String nombre, String apellido) {
         if (nombre == null || nombre.trim().isEmpty()) {

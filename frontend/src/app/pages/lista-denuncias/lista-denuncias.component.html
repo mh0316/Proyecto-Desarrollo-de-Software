@@ -1,181 +1,33 @@
-<div class="container">
-  <div class="header">
-    <h1>Gestión de Denuncias</h1>
-  </div>
+<div *ngIf="cargando">Cargando denuncias...</div>
 
-  <div class="filtros-container">
-    <form [formGroup]="filtrosForm">
-      <div class="filtros-row">
-        <div class="filtro-group">
-          <label>Estado</label>
-          <select formControlName="estado" class="form-control">
-            <option value="">Todos los estados</option>
-            <option *ngFor="let estado of estados" [value]="estado">{{estado}}</option>
-          </select>
-        </div>
-        <div class="filtro-group">
-          <label>Patente</label>
-          <input type="text" formControlName="patente" class="form-control" placeholder="Buscar por patente...">
-        </div>
-        <div class="filtro-group">
-          <label>Ordenar por fecha</label>
-          <select formControlName="ordenFecha" class="form-control">
-            <option value="recientes">Más recientes primero</option>
-            <option value="antiguos">Más antiguos primero</option>
-          </select>
-        </div>
+<table *ngIf="!cargando && denuncias.length > 0" class="tabla-denuncias">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Descripción</th>
+      <th>Dirección</th>
+      <th>Comuna</th>
+      <th>Estado</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let d of denuncias">
+      <td>{{ d.id }}</td>
+      <td>{{ d.descripcion }}</td>
+      <td>{{ d.direccion }}</td>
+      <td>{{ d.comuna }}</td>
+      <td>{{ d.estado }}</td>
+      <td>
+        <button class="btn btn-detalle" (click)="verDetalle(d.id)">Ver Detalles</button>
+        <button class="btn btn-validar" (click)="cambiarEstado(d.id, 'VALIDADA')">Validar</button>
+        <button class="btn btn-rechazar" (click)="cambiarEstado(d.id, 'RECHAZADA')">Rechazar</button>
+        <button class="btn btn-pendiente" (click)="cambiarEstado(d.id, 'PENDIENTE')">Pendiente</button>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
-        <div class="filtro-group">
-          <label>Comuna</label>
-          <input type="text" formControlName="comuna" class="form-control" placeholder="Buscar por comuna...">
-        </div>
-      </div>
-
-      <div class="filtros-buttons">
-        <button type="button" class="btn btn-primary" (click)="aplicarFiltros()">
-          Aplicar Filtros
-        </button>
-        <button type="button" class="btn btn-secondary" (click)="limpiarFiltros()">
-          Limpiar Filtros
-        </button>
-      </div>
-    </form>
-  </div>
-
-  <!-- Mensaje de error -->
-  <div *ngIf="error" class="error-message">
-    {{ error }}
-  </div>
-
-  <!-- Tabla de denuncias -->
-  <div *ngIf="cargando">Cargando denuncias...</div>
-
-  <div *ngIf="!cargando && denuncias.length > 0" class="tabla-container">
-    <table class="tabla-denuncias">
-      <thead>
-      <tr>
-        <th>ID</th>
-        <th>Descripción</th>
-        <th>Patente</th>
-        <th>Email</th>
-        <th>Dirección</th>
-        <th>Comuna</th>
-        <th>Estado</th>
-        <th>Acciones</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr *ngFor="let d of denuncias">
-        <td>{{ d.id }}</td>
-        <td>{{ d.descripcion }}</td>
-        <td>{{ d.patente || 'N/A' }}</td>
-        <td>{{ d.email }}</td>
-        <td>{{ d.direccion || 'No especificada' }}</td>
-        <td>{{ d.comuna || 'No especificada' }}</td>
-        <td>
-              <span class="badge-estado" [ngClass]="getEstadoClass(d.estado)">
-                {{ d.estado }}
-              </span>
-        </td>
-        <td>
-          <div class="acciones-group">
-            <button class="btn btn-detalles" (click)="verDetalles(d)" title="Ver detalles">
-              📋
-            </button>
-
-            <button *ngIf="d.estado === 'PENDIENTE'"
-                    class="btn btn-validar"
-                    (click)="validar(d.id)"
-                    title="Validar denuncia">
-              ✓
-            </button>
-
-            <button *ngIf="d.estado === 'PENDIENTE'"
-                    class="btn btn-rechazar"
-                    (click)="rechazar(d.id)"
-                    title="Rechazar denuncia">
-              ✗
-            </button>
-
-            <button class="btn btn-pendiente" (click)="cambiarEstado(d.id, 'PENDIENTE')">
-              Pendiente
-            </button>
-          </div>
-        </td>
-      </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div *ngIf="!cargando && denuncias.length === 0" class="sin-denuncias">
-    No hay denuncias que coincidan con los filtros.
-  </div>
-
-  <div class="modal-backdrop" *ngIf="mostrarModal" (click)="cerrarModal()"></div>
-  <div class="modal" [class.show]="mostrarModal">
-    <div class="modal-content" *ngIf="denunciaSeleccionada">
-      <div class="modal-header">
-        <h5 class="modal-title">Detalles de Denuncia #{{ denunciaSeleccionada.id }}</h5>
-        <button type="button" class="close" (click)="cerrarModal()">&times;</button>
-      </div>
-      <div class="modal-body">
-        <div class="detalles-info">
-          <div class="info-group">
-            <h6>Información de Contacto</h6>
-            <p><strong>Email del denunciante:</strong> {{ denunciaSeleccionada.email }}</p>
-            <p><strong>Estado:</strong>
-              <span class="badge-estado" [ngClass]="getEstadoClass(denunciaSeleccionada.estado)">
-                  {{ denunciaSeleccionada.estado }}
-                </span>
-            </p>
-          </div>
-
-          <div class="info-group">
-            <h6>Información del Vehículo</h6>
-            <p><strong>Patente:</strong> {{ denunciaSeleccionada.patente || 'No especificada' }}</p>
-            <p><strong>Descripción:</strong> {{ denunciaSeleccionada.descripcion }}</p>
-          </div>
-
-          <div class="info-group">
-            <h6>Ubicación</h6>
-            <p><strong>Dirección:</strong> {{ denunciaSeleccionada.direccion || 'No especificada' }}</p>
-            <p><strong>Sector:</strong> {{ denunciaSeleccionada.sector || 'No especificado' }}</p>
-            <p><strong>Comuna:</strong> {{ denunciaSeleccionada.comuna || 'No especificada' }}</p>
-            <p><strong>Coordenadas:</strong> {{ denunciaSeleccionada.latitud }}, {{ denunciaSeleccionada.longitud }}</p>
-          </div>
-
-          <div class="info-group" *ngIf="denunciaSeleccionada.fotos && denunciaSeleccionada.fotos.length > 0">
-            <h6>Fotos de Evidencia</h6>
-            <div class="fotos-grid">
-              <img *ngFor="let foto of denunciaSeleccionada.fotos"
-                   [src]="foto"
-                   alt="Evidencia"
-                   class="foto-evidencia">
-            </div>
-          </div>
-
-          <div class="info-group" *ngIf="!denunciaSeleccionada.fotos || denunciaSeleccionada.fotos.length === 0">
-            <p class="sin-fotos">No hay fotos de evidencia disponibles para esta denuncia.</p>
-          </div>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-validar"
-                *ngIf="denunciaSeleccionada.estado === 'PENDIENTE'"
-                (click)="validar(denunciaSeleccionada.id); cerrarModal()">
-          Validar Denuncia
-        </button>
-        <button class="btn btn-rechazar"
-                *ngIf="denunciaSeleccionada.estado === 'PENDIENTE'"
-                (click)="rechazar(denunciaSeleccionada.id); cerrarModal()">
-          Rechazar Denuncia
-        </button>
-        <button class="btn btn-pendiente"
-                (click)="cambiarEstado(denunciaSeleccionada.id, 'PENDIENTE'); cerrarModal()">
-          Marcar como Pendiente
-        </button>
-        <button type="button" class="btn btn-secondary" (click)="cerrarModal()">Cerrar</button>
-      </div>
-    </div>
-  </div>
+<div *ngIf="!cargando && denuncias.length === 0" class="sin-denuncias">
+  No hay denuncias registradas.
 </div>

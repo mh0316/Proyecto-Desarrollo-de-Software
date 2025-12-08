@@ -17,7 +17,6 @@ import java.util.Map;
 @RequestMapping("/api/usuarios")
 @RequiredArgsConstructor
 @Slf4j
-@CrossOrigin(origins = "*")
 public class UsuarioController {
 
     private final UsuarioService usuarioService;
@@ -71,7 +70,6 @@ public class UsuarioController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
         }
     }
-
 
     /**
      * Login universal (móvil y web) con email y password
@@ -204,7 +202,6 @@ public class UsuarioController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
         }
     }
-
 
     /**
      * Listar todos los usuarios

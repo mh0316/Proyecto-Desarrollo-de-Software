@@ -1,3 +1,4 @@
+/* Fondo general */
 :host {
   display: block;
   padding: 20px;
@@ -7,7 +8,7 @@
   border: none;
 }
 
-
+/* Tabla */
 .tabla-denuncias {
   width: 100%;
   border-collapse: collapse;
@@ -15,7 +16,7 @@
   color: #e5e7eb;
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
   border: none;
 
   th {
@@ -39,6 +40,7 @@
   }
 }
 
+/* Chips de estado */
 td:nth-child(5) {
   font-weight: 600;
   text-transform: capitalize;
@@ -112,9 +114,18 @@ button {
       background: #d97706;
     }
   }
+
+  &.btn-detalle {
+    background: #3b82f6;
+    color: white;
+
+    &:hover {
+      background: #2563eb;
+    }
+  }
 }
 
-
+/* Mensajes */
 .sin-denuncias,
 div[ngIf] {
   text-align: center;
@@ -122,89 +133,3 @@ div[ngIf] {
   font-size: 1.1rem;
   margin-top: 30px;
 }
-
-
-.filtros-container {
-  background: #161b22;
-  border: 1px solid #2c313a;
-  padding: 18px;
-  border-radius: 12px;
-  margin-bottom: 22px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.25);
-}
-
-.filtros-row {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 16px;
-  margin-bottom: 14px;
-}
-
-.filtro-group {
-  display: flex;
-  flex-direction: column;
-}
-
-.filtro-group > label {
-  color: #9ca3af;
-  font-size: 0.85rem;
-  margin-bottom: 6px;
-}
-
-.form-control {
-  background: #0d1117;
-  border: 1px solid #2c313a;
-  padding: 10px 12px;
-  border-radius: 8px;
-  color: #e5e7eb;
-  transition: border-color 0.2s, box-shadow 0.2s;
-  font-size: 0.9rem;
-}
-
-.form-control::placeholder {
-  color: #6b7280;
-}
-
-.form-control:focus {
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59,130,246,0.2);
-}
-
-.filtros-buttons {
-  display: flex;
-  gap: 12px;
-  justify-content: flex-end;
-}
-
-.filtros-buttons .btn-primary {
-  background: #2563eb;
-  color: white;
-  padding: 8px 16px;
-  border-radius: 8px;
-  font-weight: 600;
-}
-
-.filtros-buttons .btn-secondary {
-  background: #374151;
-  color: #e5e7eb;
-  padding: 8px 16px;
-  border-radius: 8px;
-  font-weight: 600;
-}
-
-@media (max-width: 600px) {
-  .filtros-buttons {
-    flex-direction: column;
-  }
-
-  .filtros-buttons button {
-    width: 100%;
-  }
-}
-h1 {
-  color: #ffffff;       // título blanco
-  font-size: 2rem;
-  font-weight: 700;
-  margin-bottom: 20px;
-}
-
