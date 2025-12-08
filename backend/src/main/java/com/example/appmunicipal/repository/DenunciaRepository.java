@@ -2,6 +2,8 @@ package com.example.appmunicipal.repository;
 
 import com.example.appmunicipal.domain.Denuncia;
 import com.example.appmunicipal.domain.Denuncia.EstadoDenuncia;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -43,4 +45,7 @@ public interface DenunciaRepository extends JpaRepository<Denuncia, Long> {
 
     // Contar denuncias por estado
     Long countByEstado(EstadoDenuncia estado);
+
+    // Paginación - Listar todas las denuncias ordenadas por fecha descendente
+    Page<Denuncia> findAllByOrderByFechaDenunciaDesc(Pageable pageable);
 }

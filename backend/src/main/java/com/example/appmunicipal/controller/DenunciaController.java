@@ -88,20 +88,29 @@ public class DenunciaController {
     }
 
     /**
-     * Listar todas las denuncias
-     * GET /api/denuncias
+     * Listar todas las denuncias con paginación opcional
+     * GET /api/denuncias?page=0&size=20
      */
     @PreAuthorize("hasAnyRole('FUNCIONARIO')")
     @GetMapping
-    public ResponseEntity<?> listarDenuncias() {
+    public ResponseEntity<?> listarDenuncias(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
         try {
-            log.info("Solicitud de listar denuncias");
-            List<DenunciaResponse> denuncias = denunciaService.listarTodasLasDenuncias();
+            log.info("Solicitud de listar denuncias - Página: {}, Tamaño: {}", page, size);
+
+            Map<String, Object> paginatedData = denunciaService.listarDenunciasPaginadas(page, size);
 
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
-            response.put("count", denuncias.size());
-            response.put("denuncias", denuncias);
+            response.put("denuncias", paginatedData.get("denuncias"));
+            response.put("pagination", Map.of(
+                    "currentPage", paginatedData.get("currentPage"),
+                    "totalPages", paginatedData.get("totalPages"),
+                    "totalElements", paginatedData.get("totalElements"),
+                    "pageSize", paginatedData.get("pageSize"),
+                    "hasNext", paginatedData.get("hasNext"),
+                    "hasPrevious", paginatedData.get("hasPrevious")));
 
             return ResponseEntity.ok()
                     .header("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0")

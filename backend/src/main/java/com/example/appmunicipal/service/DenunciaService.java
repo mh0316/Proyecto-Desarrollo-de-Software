@@ -13,6 +13,9 @@ import com.example.appmunicipal.repository.UsuarioRepository;
 import com.example.appmunicipal.repository.EvidenciaRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
@@ -22,6 +25,7 @@ import org.springframework.core.io.ClassPathResource;
 import java.io.IOException;
 import com.example.appmunicipal.DTO.DashboardStatsResponse;
 import java.util.Map;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
@@ -175,6 +179,42 @@ public class DenunciaService {
         return denuncias.stream()
                 .map(DenunciaResponse::new)
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Listar denuncias paginadas (ordenadas por fecha descendente)
+     *
+     * @param page Número de página (0-indexed)
+     * @param size Tamaño de página
+     * @return Map con denuncias y metadata de paginación
+     */
+    @Transactional(readOnly = true)
+    public Map<String, Object> listarDenunciasPaginadas(int page, int size) {
+        log.info("📋 Listando denuncias paginadas - Página: {}, Tamaño: {}", page, size);
+
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Denuncia> denunciasPage = denunciaRepository.findAllByOrderByFechaDenunciaDesc(pageable);
+
+        List<DenunciaResponse> denuncias = denunciasPage.getContent().stream()
+                .map(DenunciaResponse::new)
+                .collect(Collectors.toList());
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("denuncias", denuncias);
+        response.put("currentPage", denunciasPage.getNumber());
+        response.put("totalPages", denunciasPage.getTotalPages());
+        response.put("totalElements", denunciasPage.getTotalElements());
+        response.put("pageSize", denunciasPage.getSize());
+        response.put("hasNext", denunciasPage.hasNext());
+        response.put("hasPrevious", denunciasPage.hasPrevious());
+
+        log.info("✅ Página {}/{} - {} denuncias en esta página, {} total",
+                denunciasPage.getNumber() + 1,
+                denunciasPage.getTotalPages(),
+                denuncias.size(),
+                denunciasPage.getTotalElements());
+
+        return response;
     }
 
     /**

@@ -20,6 +20,17 @@ export class ListaDenunciasComponent implements OnInit {
   cargando = true;
   error = '';
 
+  // Paginación
+  currentPage = 0;
+  pageSize = 20;
+  totalPages = 0;
+  totalElements = 0;
+  hasNext = false;
+  hasPrevious = false;
+
+  // Math object for template
+  Math = Math;
+
   // Formulario de filtros
   filtrosForm: FormGroup;
   estados: string[] = ['PENDIENTE', 'EN_REVISION', 'VALIDADA', 'RECHAZADA'];
@@ -48,12 +59,22 @@ export class ListaDenunciasComponent implements OnInit {
     this.cargando = true;
     this.error = '';
 
-    this.denunciaService.getAll().subscribe({
+    this.denunciaService.getAll(undefined, this.currentPage, this.pageSize).subscribe({
       next: (response) => {
         console.log('Respuesta completa de la API:', response);
 
         if (response && response.denuncias) {
           this.denunciasOriginales = response.denuncias;
+
+          // Actualizar metadata de paginación
+          if (response.pagination) {
+            this.currentPage = response.pagination.currentPage;
+            this.totalPages = response.pagination.totalPages;
+            this.totalElements = response.pagination.totalElements;
+            this.pageSize = response.pagination.pageSize;
+            this.hasNext = response.pagination.hasNext;
+            this.hasPrevious = response.pagination.hasPrevious;
+          }
         } else if (Array.isArray(response)) {
           this.denunciasOriginales = response;
         } else {
@@ -64,6 +85,7 @@ export class ListaDenunciasComponent implements OnInit {
         this.aplicarFiltros();
         this.cargando = false;
         console.log('Denuncias cargadas:', this.denuncias);
+        console.log('Paginación:', { currentPage: this.currentPage, totalPages: this.totalPages, totalElements: this.totalElements });
       },
       error: (err) => {
         console.error('Error al obtener denuncias:', err);
@@ -213,6 +235,56 @@ export class ListaDenunciasComponent implements OnInit {
       'CERRADA': 'estado-cerrada'
     };
     return clases[estado] || '';
+  }
+
+  // Métodos de paginación
+  nextPage(): void {
+    if (this.hasNext) {
+      this.currentPage++;
+      this.obtenerDenuncias();
+    }
+  }
+
+  previousPage(): void {
+    if (this.hasPrevious) {
+      this.currentPage--;
+      this.obtenerDenuncias();
+    }
+  }
+
+  goToPage(page: number): void {
+    if (page >= 0 && page < this.totalPages) {
+      this.currentPage = page;
+      this.obtenerDenuncias();
+    }
+  }
+
+  changePageSize(newSize: number): void {
+    this.pageSize = newSize;
+    this.currentPage = 0; // Reset to first page
+    this.obtenerDenuncias();
+  }
+
+  getPageNumbers(): number[] {
+    const pages: number[] = [];
+    const maxPagesToShow = 5;
+
+    if (this.totalPages <= maxPagesToShow) {
+      // Show all pages
+      for (let i = 0; i < this.totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      // Show current page and surrounding pages
+      const startPage = Math.max(0, this.currentPage - 2);
+      const endPage = Math.min(this.totalPages - 1, this.currentPage + 2);
+
+      for (let i = startPage; i <= endPage; i++) {
+        pages.push(i);
+      }
+    }
+
+    return pages;
   }
 
   onModalConfirm(value?: string | void): void {
