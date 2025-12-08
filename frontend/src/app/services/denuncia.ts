@@ -35,7 +35,7 @@ export interface FiltrosDenuncia {
 })
 export class DenunciaService {
   private baseUrl = `${environment.apiUrl}/api/denuncias`;
-  private funcionarioUrl = `${environment.apiUrl}/api/funcionario/denuncias`;
+  private funcionarioUrl = `${environment.apiUrl}/api/denuncias`;
 
   constructor(private http: HttpClient) { }
 
@@ -59,13 +59,13 @@ export class DenunciaService {
       if (filtros.patente) {
         params = params.set('patente', filtros.patente);
       }
-      if (filtros. email) {
-        params = params.set('email', filtros. email);
+      if (filtros.email) {
+        params = params.set('email', filtros.email);
       }
       if (filtros.comuna) {
         params = params.set('comuna', filtros.comuna);
       }
-      if (filtros. fechaDesde) {
+      if (filtros.fechaDesde) {
         params = params.set('fechaDesde', filtros.fechaDesde);
       }
       if (filtros.fechaHasta) {
@@ -85,7 +85,7 @@ export class DenunciaService {
    * @returns Observable con las denuncias asignadas
    */
   getDenunciasFuncionario(email: string = 'funcionario@municipalidad. cl'): Observable<any> {
-    const params = new HttpParams(). set('email', email);
+    const params = new HttpParams().set('email', email);
     return this.http.get<any>(this.funcionarioUrl, { params });
   }
 
@@ -101,11 +101,16 @@ export class DenunciaService {
   /**
    * Cambia el estado de una denuncia
    * @param id ID de la denuncia
-   * @param estado Nuevo estado (PENDIENTE, VALIDADA, RECHAZADA)
+   * @param estado Nuevo estado (PENDIENTE, EN_REVISION, VALIDADA, RECHAZADA)
+   * @param comentario Comentario opcional (requerido para RECHAZADA)
    * @returns Observable con la respuesta del servidor
    */
-  cambiarEstado(id: number, estado: string): Observable<any> {
-    return this.http.put<any>(`${this.baseUrl}/${id}/estado`, { estado });
+  cambiarEstado(id: number, estado: string, comentario?: string): Observable<any> {
+    const body: any = { estado };
+    if (comentario) {
+      body.comentario = comentario;
+    }
+    return this.http.put<any>(`${this.baseUrl}/${id}/estado`, body);
   }
 
   /**
@@ -125,7 +130,7 @@ export class DenunciaService {
    */
   rechazarDenuncia(id: number): Observable<any> {
     // Usa la URL base del environment
-    return this.http.put(`${environment. apiUrl}/api/funcionario/denuncias/${id}/rechazar`, {});
+    return this.http.put(`${environment.apiUrl}/api/funcionario/denuncias/${id}/rechazar`, {});
   }
 
   /**

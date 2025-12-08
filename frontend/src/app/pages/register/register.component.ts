@@ -22,15 +22,24 @@ export class RegisterComponent {
   mensaje = '';
   error = '';
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(private authService: AuthService, private router: Router) { }
+
+  capitalizeFirstLetter(text: string): string {
+    if (!text) return '';
+    return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
+  }
 
   registrar() {
     this.error = '';
     this.mensaje = '';
 
+    // Capitalizar nombre y apellido
+    const nombreCapitalizado = this.capitalizeFirstLetter(this.nombre.trim());
+    const apellidoCapitalizado = this.capitalizeFirstLetter(this.apellido.trim());
+
     const nuevoUsuario = {
-      nombre: this.nombre,
-      apellido: this.apellido,
+      nombre: nombreCapitalizado,
+      apellido: apellidoCapitalizado,
       email: this.email,
       password: this.password,
       telefono: this.telefono,

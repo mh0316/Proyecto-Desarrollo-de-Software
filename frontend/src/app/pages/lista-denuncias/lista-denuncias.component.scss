@@ -147,6 +147,22 @@
   padding: 40px;
 }
 
+/* Disabled Button State */
+.btn-disabled {
+  background: #9ca3af !important;
+  color: #d1d5db !important;
+  opacity: 1 !important;
+  cursor: not-allowed !important;
+  pointer-events: none;
+  border-color: #9ca3af !important;
+
+  &:hover {
+    background: #9ca3af !important;
+    transform: none !important;
+    box-shadow: none !important;
+  }
+}
+
 /* Tabla de denuncias */
 .tabla-denuncias {
   width: 100%;
@@ -212,6 +228,12 @@
   border: 1px solid rgba(251, 191, 36, 0.3);
 }
 
+.estado-en-revision {
+  background: rgba(249, 115, 22, 0.15);
+  color: #f97316;
+  border: 1px solid rgba(249, 115, 22, 0.3);
+}
+
 .estado-validada {
   background: rgba(16, 185, 129, 0.15);
   color: #10b981;
@@ -222,6 +244,12 @@
   background: rgba(239, 68, 68, 0.15);
   color: #ef4444;
   border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.estado-cerrada {
+  background: rgba(107, 114, 128, 0.15);
+  color: #6b7280;
+  border: 1px solid rgba(107, 114, 128, 0.3);
 }
 
 /* Botones de acción */

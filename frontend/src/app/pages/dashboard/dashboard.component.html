@@ -1,0 +1,50 @@
+<div class="dashboard-container">
+    <div class="welcome-section">
+        <h1 class="welcome-title">¡Bienvenido, {{ userName }}! 👋</h1>
+        <p class="welcome-subtitle">Sistema Municipal de Gestión de Denuncias</p>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon">📋</div>
+            <div class="stat-content">
+                <h3 class="stat-title">Denuncias</h3>
+                <p class="stat-description">Gestiona todas las denuncias del sistema</p>
+                <button class="btn-primary" (click)="navigateToDenuncias()">
+                    Ver Denuncias
+                </button>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon">⏱️</div>
+            <div class="stat-content">
+                <h3 class="stat-title">Pendientes</h3>
+                <p class="stat-description">Denuncias esperando validación</p>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon">✅</div>
+            <div class="stat-content">
+                <h3 class="stat-title">Validadas</h3>
+                <p class="stat-description">Denuncias aprobadas</p>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon">❌</div>
+            <div class="stat-content">
+                <h3 class="stat-title">Rechazadas</h3>
+                <p class="stat-description">Denuncias rechazadas</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="info-section">
+        <div class="info-card">
+            <h2>🎯 Acceso Rápido</h2>
+            <p>Utiliza el menú lateral para navegar entre las diferentes secciones del sistema.</p>
+        </div>
+    </div>
+</div>

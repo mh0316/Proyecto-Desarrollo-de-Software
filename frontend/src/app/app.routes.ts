@@ -3,6 +3,7 @@ import { ListaDenunciasComponent } from './pages/lista-denuncias/lista-denuncias
 import { DenunciaDetalleComponent } from './pages/denuncia-detalle/denuncia-detalle';
 import { LoginComponent } from './pages/login/login.component';
 import { RegisterComponent } from './pages/register/register.component';
+import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { AuthGuard } from './services/auth.guard'; // 👈 Importar el Guard
 
 export const routes: Routes = [
@@ -14,6 +15,11 @@ export const routes: Routes = [
   { path: 'registro', component: RegisterComponent },
 
   // Rutas protegidas
+  {
+    path: 'dashboard',
+    component: DashboardComponent,
+    canActivate: [AuthGuard]
+  },
   {
     path: 'denuncias',
     component: ListaDenunciasComponent,
@@ -28,3 +34,4 @@ export const routes: Routes = [
   // Ruta comodín (siempre al final)
   { path: '**', redirectTo: '/login' }
 ];
+

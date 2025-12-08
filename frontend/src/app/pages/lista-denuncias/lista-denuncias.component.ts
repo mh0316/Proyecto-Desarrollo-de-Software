@@ -4,13 +4,15 @@ import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup } from '@angul
 import { Router } from '@angular/router';
 import { DenunciaService } from '../../services/denuncia';
 import { HttpClientModule } from '@angular/common/http';
+import { ModalComponent } from '../../components/modal/modal.component';
+import { ModalService } from '../../services/modal.service';
 
 @Component({
   selector: 'app-lista-denuncias',
   standalone: true,
-  imports: [CommonModule, HttpClientModule, FormsModule, ReactiveFormsModule],
+  imports: [CommonModule, HttpClientModule, ReactiveFormsModule, ModalComponent],
   templateUrl: './lista-denuncias.component.html',
-  styleUrl: './lista-denuncias.component.scss'
+  styleUrls: ['./lista-denuncias.component.scss']
 })
 export class ListaDenunciasComponent implements OnInit {
   denuncias: any[] = [];
@@ -20,19 +22,21 @@ export class ListaDenunciasComponent implements OnInit {
 
   // Formulario de filtros
   filtrosForm: FormGroup;
-  estados: string[] = ['PENDIENTE', 'VALIDADA', 'RECHAZADA'];
+  estados: string[] = ['PENDIENTE', 'EN_REVISION', 'VALIDADA', 'RECHAZADA'];
 
   constructor(
     private denunciaService: DenunciaService,
     private router: Router,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    public modalService: ModalService
   ) {
     // Inicializar el formulario de filtros
     this.filtrosForm = this.fb.group({
       estado: [''],
       patente: [''],
       comuna: [''],
-      ordenFecha: ['recientes']
+      ordenFecha: ['recientes'],
+      tieneEvidencias: ['']
     });
   }
 
@@ -72,51 +76,62 @@ export class ListaDenunciasComponent implements OnInit {
   }
 
   aplicarFiltros(): void {
-    const filtros = this.filtrosForm.value;
-    let resultado = [...this.denunciasOriginales];
+    let denunciasFiltradas = [...this.denunciasOriginales];
 
-    // Filtrar por estado
-    if (filtros.estado) {
-      resultado = resultado.filter(d => d.estado === filtros.estado);
-    }
-
-    // Filtrar por patente (búsqueda parcial, case-insensitive)
-    if (filtros.patente && filtros.patente.trim() !== '') {
-      const patenteBusqueda = filtros.patente.toLowerCase(). trim();
-      resultado = resultado. filter(d =>
-        d.patente && d.patente.toLowerCase().includes(patenteBusqueda)
+    // Filtro por estado
+    const estadoSeleccionado = this.filtrosForm.get('estado')?.value;
+    if (estadoSeleccionado) {
+      denunciasFiltradas = denunciasFiltradas.filter(
+        (d) => d.estado === estadoSeleccionado
       );
     }
 
-    // Filtrar por comuna (búsqueda parcial, case-insensitive)
-    if (filtros.comuna && filtros.comuna.trim() !== '') {
-      const comunaBusqueda = filtros.comuna.toLowerCase().trim();
-      resultado = resultado.filter(d =>
-        d.comuna && d.comuna. toLowerCase().includes(comunaBusqueda)
+    // Filtro por patente
+    const patenteIngresada = this.filtrosForm.get('patente')?.value?.toLowerCase();
+    if (patenteIngresada) {
+      denunciasFiltradas = denunciasFiltradas.filter((d) =>
+        d.patente && d.patente.toLowerCase().includes(patenteIngresada)
       );
+    }
+
+    // Filtro por comuna
+    const comunaIngresada = this.filtrosForm.get('comuna')?.value?.toLowerCase();
+    if (comunaIngresada) {
+      denunciasFiltradas = denunciasFiltradas.filter((d) =>
+        d.comuna && d.comuna.toLowerCase().includes(comunaIngresada)
+      );
+    }
+
+    // Filtro por evidencias
+    const tieneEvidencias = this.filtrosForm.get('tieneEvidencias')?.value;
+    if (tieneEvidencias === 'si') {
+      denunciasFiltradas = denunciasFiltradas.filter((d) => d.cantidadEvidencias > 0);
+    } else if (tieneEvidencias === 'no') {
+      denunciasFiltradas = denunciasFiltradas.filter((d) => d.cantidadEvidencias === 0);
     }
 
     // Ordenar por fecha
-    if (filtros.ordenFecha === 'recientes') {
-      resultado. sort((a, b) => {
+    const ordenFecha = this.filtrosForm.get('ordenFecha')?.value;
+    if (ordenFecha === 'recientes') {
+      denunciasFiltradas.sort((a, b) => {
         const fechaA = new Date(a.fechaCreacion || a.id || 0);
-        const fechaB = new Date(b. fechaCreacion || b.id || 0);
+        const fechaB = new Date(b.fechaCreacion || b.id || 0);
         return fechaB.getTime() - fechaA.getTime();
       });
-    } else if (filtros.ordenFecha === 'antiguos') {
-      resultado.sort((a, b) => {
+    } else if (ordenFecha === 'antiguos') {
+      denunciasFiltradas.sort((a, b) => {
         const fechaA = new Date(a.fechaCreacion || a.id || 0);
         const fechaB = new Date(b.fechaCreacion || b.id || 0);
         return fechaA.getTime() - fechaB.getTime();
       });
     }
 
-    this.denuncias = resultado;
-    console.log('Filtros aplicados.  Resultados:', this.denuncias. length);
+    this.denuncias = denunciasFiltradas;
+    console.log('Filtros aplicados.  Resultados:', this.denuncias.length);
   }
 
   limpiarFiltros(): void {
-    this.filtrosForm. reset({
+    this.filtrosForm.reset({
       estado: '',
       patente: '',
       comuna: '',
@@ -126,18 +141,37 @@ export class ListaDenunciasComponent implements OnInit {
   }
 
   verDetalle(id: number): void {
-    this. router.navigate(['/denuncias', id]);
+    this.router.navigate(['/denuncias', id]);
   }
 
-  cambiarEstado(id: number, estado: string): void {
-    if (!confirm(`¿Estás seguro de cambiar el estado a ${estado}?`)) {
-      return;
+  async cambiarEstado(id: number, estado: string): Promise<void> {
+    let comentario = '';
+
+    // Si es rechazo, solicitar motivo con modal
+    if (estado === 'RECHAZADA') {
+      const motivo = await this.modalService.showInput(
+        'Motivo de Rechazo',
+        'Por favor, ingrese el motivo por el cual está rechazando esta denuncia:',
+        'Ej: Información insuficiente, fuera de jurisdicción, etc.'
+      );
+
+      if (!motivo) {
+        return; // Usuario canceló
+      }
+
+      comentario = motivo;
+    } else {
+      const confirmed = await this.modalService.showConfirm(
+        'Confirmar cambio de estado',
+        `¿Estás seguro de cambiar el estado a ${this.getEstadoLabel(estado)}?`
+      );
+      if (!confirmed) return;
     }
 
-    this.denunciaService.cambiarEstado(id, estado).subscribe({
-      next: (response) => {
+    this.denunciaService.cambiarEstado(id, estado, comentario).subscribe({
+      next: async (response) => {
         console.log('Estado cambiado exitosamente:', response);
-        alert(`Denuncia #${id} actualizada a ${estado}`);
+        await this.modalService.showAlert('Éxito', `Denuncia #${id} actualizada a ${this.getEstadoLabel(estado)}`, 'success');
 
         // Actualizar el estado localmente sin recargar todo
         const denuncia = this.denunciasOriginales.find(d => d.id === id);
@@ -147,19 +181,49 @@ export class ListaDenunciasComponent implements OnInit {
 
         this.aplicarFiltros(); // Volver a aplicar filtros
       },
-      error: (err) => {
+      error: async (err) => {
         console.error('Error al cambiar estado:', err);
-        alert('Error al cambiar el estado de la denuncia');
+        await this.modalService.showAlert('Error', 'Error al cambiar el estado de la denuncia', 'error');
       }
     });
+  }
+
+  getEstadoLabel(estado: string): string {
+    const labels: { [key: string]: string } = {
+      'PENDIENTE': 'Pendiente',
+      'EN_REVISION': 'En Revisión',
+      'VALIDADA': 'Validada',
+      'RECHAZADA': 'Rechazada',
+      'CERRADA': 'Cerrada'
+    };
+    return labels[estado] || estado;
+  }
+
+  isBotonDeshabilitado(denuncia: any, accion: string): boolean {
+    // Deshabilitar el botón si la denuncia ya está en ese estado
+    return denuncia.estado === accion;
   }
 
   getEstadoClass(estado: string): string {
     const clases: { [key: string]: string } = {
       'PENDIENTE': 'estado-pendiente',
+      'EN_REVISION': 'estado-en-revision',
       'VALIDADA': 'estado-validada',
-      'RECHAZADA': 'estado-rechazada'
+      'RECHAZADA': 'estado-rechazada',
+      'CERRADA': 'estado-cerrada'
     };
     return clases[estado] || '';
+  }
+
+  onModalConfirm(value?: string | void): void {
+    if (typeof value === 'string') {
+      this.modalService.confirm(value);
+    } else {
+      this.modalService.confirm();
+    }
+  }
+
+  onModalCancel(): void {
+    this.modalService.cancel();
   }
 }
