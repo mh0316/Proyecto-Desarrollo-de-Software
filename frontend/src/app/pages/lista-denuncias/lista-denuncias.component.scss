@@ -309,6 +309,124 @@ button {
   }
 }
 
+/* Controles de Paginación */
+.pagination-container {
+  margin-top: 24px;
+  padding: 20px;
+  background: #161b22;
+  border: 1px solid #2c313a;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.pagination-info {
+  text-align: center;
+  color: #9ca3af;
+  font-size: 0.9rem;
+  margin-bottom: 16px;
+  font-weight: 500;
+}
+
+.pagination-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.page-size-selector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #9ca3af;
+  font-size: 0.9rem;
+
+  label {
+    font-weight: 600;
+  }
+
+  select {
+    background: #0d1117;
+    border: 1px solid #2c313a;
+    padding: 6px 10px;
+    border-radius: 6px;
+    color: #e5e7eb;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    outline: none;
+
+    &:hover {
+      border-color: #374151;
+    }
+
+    &:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    }
+  }
+}
+
+.page-navigation {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-page {
+  background: #1f2937;
+  color: #e5e7eb;
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 1px solid #2c313a;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 500;
+  font-size: 0.9rem;
+
+  &:hover:not(:disabled) {
+    background: #374151;
+    border-color: #3b82f6;
+    transform: translateY(-1px);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: #1f2937;
+  }
+}
+
+.page-numbers {
+  display: flex;
+  gap: 4px;
+}
+
+.btn-page-number {
+  background: #1f2937;
+  color: #e5e7eb;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #2c313a;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 500;
+  font-size: 0.9rem;
+  min-width: 40px;
+
+  &:hover {
+    background: #374151;
+    border-color: #3b82f6;
+  }
+
+  &.active {
+    background: #2563eb;
+    color: white;
+    border-color: #2563eb;
+    font-weight: 600;
+  }
+}
+
 /* Mensaje sin denuncias */
 .sin-denuncias {
   text-align: center;
@@ -358,6 +476,20 @@ button {
     font-size: 0.8rem;
     margin-right: 4px;
     margin-bottom: 4px;
+  }
+
+  .pagination-controls {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .page-navigation {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .page-size-selector {
+    justify-content: center;
   }
 }
 

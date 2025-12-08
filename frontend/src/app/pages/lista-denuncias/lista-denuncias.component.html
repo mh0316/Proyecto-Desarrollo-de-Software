@@ -114,6 +114,45 @@
     </tbody>
   </table>
 
+  <!-- Controles de Paginación -->
+  <div *ngIf="!cargando && totalElements > 0" class="pagination-container">
+    <div class="pagination-info">
+      <span>Mostrando {{ (currentPage * pageSize) + 1 }} - {{ Math.min((currentPage + 1) * pageSize, totalElements) }}
+        de {{ totalElements }} denuncias</span>
+    </div>
+
+    <div class="pagination-controls">
+      <div class="page-size-selector">
+        <label>Mostrar:</label>
+        <select (change)="changePageSize(+$any($event.target).value)" [value]="pageSize" class="form-control-sm">
+          <option [value]="10">10</option>
+          <option [value]="20">20</option>
+          <option [value]="50">50</option>
+          <option [value]="100">100</option>
+        </select>
+        <span>por página</span>
+      </div>
+
+      <div class="page-navigation">
+        <button class="btn btn-page" (click)="previousPage()" [disabled]="!hasPrevious"
+          [class.btn-disabled]="!hasPrevious">
+          ← Anterior
+        </button>
+
+        <div class="page-numbers">
+          <button *ngFor="let page of getPageNumbers()" class="btn btn-page-number"
+            [class.active]="page === currentPage" (click)="goToPage(page)">
+            {{ page + 1 }}
+          </button>
+        </div>
+
+        <button class="btn btn-page" (click)="nextPage()" [disabled]="!hasNext" [class.btn-disabled]="!hasNext">
+          Siguiente →
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Sin denuncias -->
   <div *ngIf="!cargando && denuncias.length === 0" class="sin-denuncias">
     <p>No se encontraron denuncias con los filtros aplicados.</p>

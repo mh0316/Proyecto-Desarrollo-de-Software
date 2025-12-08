@@ -40,12 +40,18 @@ export class DenunciaService {
   constructor(private http: HttpClient) { }
 
   /**
-   * Obtiene todas las denuncias con filtros opcionales
+   * Obtiene todas las denuncias con filtros opcionales y paginación
    * @param filtros Objeto con los filtros a aplicar
-   * @returns Observable con el listado de denuncias
+   * @param page Número de página (0-indexed)
+   * @param size Tamaño de página
+   * @returns Observable con el listado de denuncias paginadas
    */
-  getAll(filtros?: FiltrosDenuncia): Observable<any> {
+  getAll(filtros?: FiltrosDenuncia, page: number = 0, size: number = 20): Observable<any> {
     let params = new HttpParams();
+
+    // Agregar parámetros de paginación
+    params = params.set('page', page.toString());
+    params = params.set('size', size.toString());
 
     // Agregar timestamp para cache-busting
     const timestamp = new Date().getTime();
