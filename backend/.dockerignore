@@ -1,0 +1,9 @@
+# MÍNIMO ESENCIAL para tu configuración:
+src/main/resources/static/uploads/
+target/
+*.jar
+.git/
+.idea/
+.vscode/
+*.log
+.env
