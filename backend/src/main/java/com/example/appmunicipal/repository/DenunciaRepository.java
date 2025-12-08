@@ -48,4 +48,41 @@ public interface DenunciaRepository extends JpaRepository<Denuncia, Long> {
 
     // Paginación - Listar todas las denuncias ordenadas por fecha descendente
     Page<Denuncia> findAllByOrderByFechaDenunciaDesc(Pageable pageable);
+
+    // ==========================================
+    // ESTADÍSTICAS OPTIMIZADAS (JPQL)
+    // ==========================================
+
+    // Cantidad de denuncias por Mes (últimos 12 meses)
+    // Nota: FUNCTION('MONTH', ...) es estándar JPA. Para H2/MySQL funciona bien.
+    @Query("SELECT FUNCTION('MONTH', d.fechaDenuncia) as mes, COUNT(d) as cantidad " +
+            "FROM Denuncia d " +
+            "WHERE d.fechaDenuncia >= :fechaInicio " +
+            "GROUP BY FUNCTION('MONTH', d.fechaDenuncia)")
+    List<Object[]> countDenunciasByMes(@Param("fechaInicio") LocalDateTime fechaInicio);
+
+    // Cantidad de denuncias por Estado
+    @Query("SELECT d.estado, COUNT(d) FROM Denuncia d GROUP BY d.estado")
+    List<Object[]> countDenunciasByEstadoGrouped();
+
+    // Cantidad de denuncias por Comuna
+    @Query("SELECT UPPER(d.comuna), COUNT(d) FROM Denuncia d WHERE d.comuna IS NOT NULL GROUP BY UPPER(d.comuna)")
+    List<Object[]> countDenunciasByComuna();
+
+    // Cantidad de denuncias por Horario (Hora del día 0-23)
+    @Query("SELECT FUNCTION('HOUR', d.fechaDenuncia), COUNT(d) FROM Denuncia d GROUP BY FUNCTION('HOUR', d.fechaDenuncia)")
+    List<Object[]> countDenunciasByHora();
+
+    // Cantidad de denuncias por Sector (Solo Temuco)
+    @Query("SELECT UPPER(d.sector), COUNT(d) FROM Denuncia d " +
+            "WHERE d.sector IS NOT NULL AND UPPER(d.comuna) LIKE '%TEMUCO%' " +
+            "GROUP BY UPPER(d.sector)")
+    List<Object[]> countDenunciasBySectorTemuco();
+
+    // Top usuarios denunciantes
+    @Query("SELECT CONCAT(u.nombre, ' ', u.apellido, ' (', u.email, ')'), COUNT(d) " +
+            "FROM Denuncia d JOIN d.usuario u " +
+            "GROUP BY u.id, u.nombre, u.apellido, u.email " +
+            "ORDER BY COUNT(d) DESC")
+    List<Object[]> countDenunciasByUsuarioTop10(Pageable pageable);
 }

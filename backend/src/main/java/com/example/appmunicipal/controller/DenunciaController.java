@@ -287,13 +287,6 @@ public class DenunciaController {
             log.info("📊 Solicitud de estadísticas");
             log.info("🔑 Rol del usuario: {}", rol != null ? rol : "SIN TOKEN");
 
-            // 🔒 VERIFICACIÓN DE ROL (COMENTADA - ACTIVAR CUANDO SEA NECESARIO)
-            // ResponseEntity<?> errorResponse =
-            // roleValidator.verificarRolFuncionario(authHeader);
-            // if (errorResponse != null) {
-            // return errorResponse;
-            // }
-
             Map<String, Object> estadisticas = new HashMap<>();
             estadisticas.put("total", denunciaService.listarTodasLasDenuncias().size());
             estadisticas.put("pendientes", denunciaService.contarDenunciasPorEstado("PENDIENTE"));
@@ -305,7 +298,11 @@ public class DenunciaController {
             response.put("success", true);
             response.put("estadisticas", estadisticas);
 
-            return ResponseEntity.ok(response);
+            // Cache por 1 minuto (60 segundos)
+            return ResponseEntity.ok()
+                    .cacheControl(
+                            org.springframework.http.CacheControl.maxAge(60, java.util.concurrent.TimeUnit.SECONDS))
+                    .body(response);
 
         } catch (Exception e) {
             log.error("❌ Error al obtener estadísticas: {}", e.getMessage());
@@ -659,7 +656,11 @@ public class DenunciaController {
             response.put("success", true);
             response.put("estadisticas", stats);
 
-            return ResponseEntity.ok(response);
+            // Cache por 5 minutos (300 segundos) para analíticas pesadas
+            return ResponseEntity.ok()
+                    .cacheControl(
+                            org.springframework.http.CacheControl.maxAge(300, java.util.concurrent.TimeUnit.SECONDS))
+                    .body(response);
 
         } catch (Exception e) {
             log.error("❌ Error al obtener estadísticas avanzadas: {}", e.getMessage());
@@ -669,5 +670,4 @@ public class DenunciaController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
         }
     }
-
 }

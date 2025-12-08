@@ -10,18 +10,16 @@ import java.util.Map;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DashboardStatsResponse {
+    private Long totalDenuncias;
     private Map<String, Long> denunciasPorMes;
     private Map<String, Long> denunciasPorCategoria;
+    private Map<String, Long> denunciasPorEstado;
     private Double tasaValidacion;
     private Double tasaRechazo;
-    private Double tiempoPromedioValidacion; // En horas
+    private Double tiempoPromedioValidacion;
     private Map<Integer, Long> denunciasPorHorario;
-    private Map<String, Long> denunciasPorComuna; // E9
-    private Map<String, Long> denunciasPorSector; // E8 (Temuco priority)
-
-    // T4: Top usuarios denunciantes (Email/Nombre -> Cantidad)
+    private Map<String, Long> denunciasPorComuna;
+    private Map<String, Long> denunciasPorSector;
     private Map<String, Long> topUsuarios;
-
-    // E10: Reincidencia por patente (Patente -> Cantidad)
     private Map<String, Long> reincidenciaPatentes;
 }

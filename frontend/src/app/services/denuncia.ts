@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+// RxJS
+import { Observable, timer, of } from 'rxjs';
+import { shareReplay, tap, switchMap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 
 // Interfaces
@@ -37,7 +39,22 @@ export class DenunciaService {
   private baseUrl = `${environment.apiUrl}/api/denuncias`;
   private funcionarioUrl = `${environment.apiUrl}/api/denuncias`;
 
+  // --- Caching ---
+  // Cache for basic stats (1 min)
+  private statsCache$: Observable<any> | null = null;
+  // Cache for advanced stats (5 min)
+  private advancedStatsCache$: Observable<any> | null = null;
+
   constructor(private http: HttpClient) { }
+
+  /**
+   * Helper to clear caches when data mutates
+   */
+  private clearCaches() {
+    console.log('🧹 Limpiando cache de estadísticas...');
+    this.statsCache$ = null;
+    this.advancedStatsCache$ = null;
+  }
 
   /**
    * Obtiene todas las denuncias con filtros opcionales y paginación
@@ -116,7 +133,9 @@ export class DenunciaService {
     if (comentario) {
       body.comentario = comentario;
     }
-    return this.http.put<any>(`${this.baseUrl}/${id}/estado`, body);
+    return this.http.put<any>(`${this.baseUrl}/${id}/estado`, body).pipe(
+      tap(() => this.clearCaches()) // Invalidate cache on change
+    );
   }
 
   /**
@@ -125,8 +144,9 @@ export class DenunciaService {
    * @returns Observable con la respuesta del servidor
    */
   validarDenuncia(id: number): Observable<any> {
-    // Usa la URL base del environment
-    return this.http.put(`${environment.apiUrl}/api/funcionario/denuncias/${id}/validar`, {});
+    return this.http.put(`${environment.apiUrl}/api/funcionario/denuncias/${id}/validar`, {}).pipe(
+      tap(() => this.clearCaches())
+    );
   }
 
   /**
@@ -135,8 +155,9 @@ export class DenunciaService {
    * @returns Observable con la respuesta del servidor
    */
   rechazarDenuncia(id: number): Observable<any> {
-    // Usa la URL base del environment
-    return this.http.put(`${environment.apiUrl}/api/funcionario/denuncias/${id}/rechazar`, {});
+    return this.http.put(`${environment.apiUrl}/api/funcionario/denuncias/${id}/rechazar`, {}).pipe(
+      tap(() => this.clearCaches())
+    );
   }
 
   /**
@@ -163,7 +184,9 @@ export class DenunciaService {
    * @returns Observable con la denuncia creada
    */
   crear(denuncia: Partial<Denuncia>): Observable<Denuncia> {
-    return this.http.post<Denuncia>(this.baseUrl, denuncia);
+    return this.http.post<Denuncia>(this.baseUrl, denuncia).pipe(
+      tap(() => this.clearCaches())
+    );
   }
 
   /**
@@ -173,7 +196,9 @@ export class DenunciaService {
    * @returns Observable con la denuncia actualizada
    */
   actualizar(id: number, denuncia: Partial<Denuncia>): Observable<Denuncia> {
-    return this.http.put<Denuncia>(`${this.baseUrl}/${id}`, denuncia);
+    return this.http.put<Denuncia>(`${this.baseUrl}/${id}`, denuncia).pipe(
+      tap(() => this.clearCaches())
+    );
   }
 
   /**
@@ -182,21 +207,60 @@ export class DenunciaService {
    * @returns Observable con la respuesta del servidor
    */
   eliminar(id: number): Observable<any> {
-    return this.http.delete(`${this.baseUrl}/${id}`);
+    return this.http.delete(`${this.baseUrl}/${id}`).pipe(
+      tap(() => this.clearCaches())
+    );
   }
 
   /**
    * Obtiene estadísticas de denuncias
+   * Caches response for 1 minute
    * @returns Observable con las estadísticas
    */
   getEstadisticas(): Observable<any> {
-    return this.http.get(`${this.baseUrl}/estadisticas`);
+    // If cache exists, return it
+    if (this.statsCache$) {
+      return this.statsCache$;
+    }
+
+    // Create request with caching
+    // Usamos pipe(shareReplay(1)) para compartir la última respuesta a nuevos suscriptores
+    this.statsCache$ = this.http.get(`${this.baseUrl}/estadisticas`).pipe(
+      shareReplay(1)
+    );
+
+    // Auto-expire cache after 1 minute (60000ms)
+    // Usamos timer para limpiar la variable de cache, forzando un nuevo request la próxima vez
+    timer(60000).subscribe(() => {
+      this.statsCache$ = null;
+    });
+
+    return this.statsCache$;
   }
+
   /**
    * Obtiene estadísticas avanzadas para el dashboard
+   * Caches response for 5 minutes
    * @returns Observable con las estadísticas avanzadas
    */
   getEstadisticasAvanzadas(): Observable<any> {
-    return this.http.get(`${this.baseUrl}/estadisticas-avanzadas`);
+    // If cache exists, return it
+    if (this.advancedStatsCache$) {
+      return this.advancedStatsCache$;
+    }
+
+    // Create request with caching
+    // shareReplay(1) "replays" the last emission (the HTTP response) to any number of subscribers
+    // without making a new network request.
+    this.advancedStatsCache$ = this.http.get(`${this.baseUrl}/estadisticas-avanzadas`).pipe(
+      shareReplay(1)
+    );
+
+    // Auto-expire cache after 5 minutes (300000ms)
+    timer(300000).subscribe(() => {
+      this.advancedStatsCache$ = null;
+    });
+
+    return this.advancedStatsCache$;
   }
 }
