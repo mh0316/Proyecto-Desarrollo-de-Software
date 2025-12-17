@@ -1,0 +1,514 @@
+type: collection.insomnia.rest/5.0
+name: APP-login-registro
+meta:
+  id: wrk_35e85d71e3aa4657a26eae69975a7f3b
+  created: 1762783005317
+  modified: 1762783005317
+  description: ""
+collection:
+  - name: DENUNCIA
+    meta:
+      id: fld_f12b79689be94dd6935fbca3540343a2
+      created: 1762818651026
+      modified: 1763479416470
+      sortKey: -1762818651026
+      description: ""
+    children:
+      - name: FUNCIONARIO
+        meta:
+          id: fld_5466bab81bd7499bb0ec0b501e7e8f5a
+          created: 1762899967569
+          modified: 1762899967569
+          sortKey: -1762899967569
+          description: ""
+        children:
+          - url: http://200.13.5.5:8091/api/denuncias/3
+            name: OBTENER una denuncia
+            meta:
+              id: req_672acfe158174ceab482e9bc28c4976a
+              created: 1762818679637
+              modified: 1765922294679
+              isPrivate: false
+              description: ""
+              sortKey: -1762951356944
+            method: GET
+            headers:
+              - name: User-Agent
+                value: insomnia/12.0.0
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: http://200.13.5.5:8091/api/funcionario/denuncias?email=funcionario@municipalidad.cl
+            name: OBTENER TODAS las denuncias
+            meta:
+              id: req_f71301c6bfdf41afb467a765300096d9
+              created: 1762818702475
+              modified: 1765922289671
+              isPrivate: false
+              description: ""
+              sortKey: -1762951356994
+            method: GET
+            headers:
+              - name: User-Agent
+                value: insomnia/12.0.0
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: http://200.13.5.5:8091/api/funcionario/denuncias/1/validar
+            name: VALIDAR una denuncia
+            meta:
+              id: req_ec319d0eb4ee4f8d838c70fc8bfefaf1
+              created: 1762951356894
+              modified: 1765922300191
+              isPrivate: false
+              description: ""
+              sortKey: -1762951356894
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                    "emailRevisor": "funcionario@municipalidad.cl",
+                    "accion": "VALIDAR"
+                  }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: User-Agent
+                value: insomnia/12.0.0
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: http://200.13.5.5:8091/api/funcionario/denuncias/2/validar
+            name: RECHAZAR una denuncia
+            meta:
+              id: req_d4e4661e8de34028910e26a6399a954f
+              created: 1762951541180
+              modified: 1765922305953
+              isPrivate: false
+              description: ""
+              sortKey: -1762951356794
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                    "emailRevisor": "funcionario@municipalidad.cl",
+                    "accion": "RECHAZAR",
+                    "motivo": "Falta evidencia clara del vehículo infractor"
+                  }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: User-Agent
+                value: insomnia/12.0.0
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: http://200.13.5.5:8091api/evidencia/denuncia/2
+            name: OBTENER evidencia
+            meta:
+              id: req_6e4d4799566440ee84e33dab3589301d
+              created: 1763671432685
+              modified: 1765922282402
+              isPrivate: false
+              description: ""
+              sortKey: -1762951357094
+            method: GET
+            headers:
+              - name: User-Agent
+                value: insomnia/12.0.0
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+      - name: CIUDADANO
+        meta:
+          id: fld_113c2aeeb5b642068a0f2cea482137ea
+          created: 1762899980332
+          modified: 1762951368119
+          sortKey: -1762899980332
+          description: ""
+        children:
+          - url: http://200.13.5.5:8091/api/denuncias
+            name: CREAR denuncia user1 (CIMUNA, DIRECCION, COORDENADAS)
+            meta:
+              id: req_e3989d8bfe0649f1bbd89242798c3984
+              created: 1762818655746
+              modified: 1765936953861
+              isPrivate: false
+              description: ""
+              sortKey: -1762951399188
+            method: POST
+            body:
+              mimeType: application/json
+              text: >-
+                {
+                    "email": "fun@correo.com",
+                    "categoriaId": 1,
+                    "descripcion": "Vehículo estacionado en zona prohibida frente al edificio municipal",
+                    "patente": "ABCD12",
+                    "latitud": -38.7359,
+                    "longitud": -72.5904,
+                    "direccion": "Av. Alemania 0321, Temuco",
+                    "sector": "Centro",
+                    "comuna": "Temuco"
+                  }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: User-Agent
+                value: insomnia/12.0.0
+            authentication:
+              type: bearer
+              token: eyJhbGciOiJIUzUxMiJ9.eyJhcGVsbGlkbyI6IkFjZXZlZG8iLCJ1c3VhcmlvSWQiOjEwMDA1LCJub21icmUiOiJKZXN1cyIsImVtYWlsIjoiZnVuQGNvcnJlby5jb20iLCJyb2wiOiJGVU5DSU9OQVJJTyIsInVzZXJuYW1lIjoiamEzNzEiLCJzdWIiOiJmdW5AY29ycmVvLmNvbSIsImlhdCI6MTc2NTkzNjkxMywiZXhwIjoxNzY2MDIzMzEzfQ.2tn3_VX6hGN9W-kYCe98knvWbpVkXI-sO1oFHP9CAPixA81RNHInuS-8ZFY64-nwWaIiqn1Yto4yCeUM667JhQ
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: http://200.13.5.5:8091/api/denuncias
+            name: CREAR denuncia user2 (COORDENADAS y DIRECCION)
+            meta:
+              id: req_f3adb552309848ca9ffe5f1748cfa911
+              created: 1762890184408
+              modified: 1765922222959
+              isPrivate: false
+              description: ""
+              sortKey: -1762951399038
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                    "email": "marcelo@correo.com",
+                    "categoriaId": 1,
+                    "descripcion": "Auto ocupando 2 plazas de estacionamiento",
+                    "patente": "ABCD12",
+                    "latitud": -32.7359,
+                    "longitud": -72.5904,
+                    "direccion": "Manuel Montt 123"
+                  }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: User-Agent
+                value: insomnia/12.0.0
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: http://200.13.5.5:8091/api/denuncias
+            name: CREAR denuncia user1 (solo COORDENADAS)
+            meta:
+              id: req_3dca19816ba64b9b940b5c9d859c855b
+              created: 1762950027290
+              modified: 1765922217794
+              isPrivate: false
+              description: ""
+              sortKey: -1762951399088
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                    "email": "jesus@correo.com",
+                    "categoriaId": 1,
+                    "descripcion": "Auto estacionado en linea amarilla",
+                    "patente": "ABCD12",
+                    "latitud": -32.7359,
+                    "longitud": -72.5904
+                  }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: User-Agent
+                value: insomnia/12.0.0
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: http://200.13.5.5:8091/api/denuncias/mis-denuncias?email=jesus@correo.com
+            name: OBTENER mis denuncias
+            meta:
+              id: req_8617656b95a94e2fa012f44f66c946a8
+              created: 1762950700069
+              modified: 1765922230763
+              isPrivate: false
+              description: ""
+              sortKey: -1762951398988
+            method: GET
+            headers:
+              - name: User-Agent
+                value: insomnia/12.0.0
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+  - name: USUARIOS
+    meta:
+      id: fld_e9232fc45de744b79ee5946f5b6ea263
+      created: 1762898414549
+      modified: 1765945286684
+      sortKey: -1762898414549
+      description: ""
+    children:
+      - url: http://200.13.5.5:8091/api/usuarios/registro-funcionario
+        name: REGISTRO user2 con username (SOLO CIUDADANOS)
+        meta:
+          id: req_e49725f1f4c84c7c837e7b336866bfe1
+          created: 1762778362963
+          modified: 1763957501113
+          isPrivate: false
+          description: ""
+          sortKey: -1762898423135
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+                "username": "shelo123",
+                "password": "prueba123",
+                "nombre": "marcelo",
+                "apellido": "henriquez",
+                "email": "marcelo@correo.com",
+                "telefono": "912345678",
+                "rut": "20.886.090-9"
+              }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/12.0.0
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://200.13.5.5:8091/api/usuarios/login
+        name: LOGIN user2 con username
+        meta:
+          id: req_9fb28a8176b54fae97ff337be06861c4
+          created: 1762778712601
+          modified: 1765922143165
+          isPrivate: false
+          description: ""
+          sortKey: -1762898422860
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+                "email": "marcelo@correo.com",
+                "password": "prueba123"
+              }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/12.0.0
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://200.13.5.5:8091/api/usuarios/registro
+        name: REGISTRO user1 (solo CIUDADANOS)
+        meta:
+          id: req_2fe1bbe4f28c4d769d658097b1fd24ff
+          created: 1762780405616
+          modified: 1765922157987
+          isPrivate: false
+          description: ""
+          sortKey: -1762898423160
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+                "password": "prueba123",
+                "nombre": "Jesus",
+                "apellido": "Acevedo",
+                "email": "jesus@correo.com",
+            	  "telefono": "999999999",
+            		"rut" : "20281663-0"
+              }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/12.0.0
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://200.13.5.5:8091/api/usuarios/login
+        name: LOGIN user1 (ideal extraer email desde el token comoen www.jwt.io)
+        meta:
+          id: req_f877f5a995334ca5a4e788b18c568a5d
+          created: 1762780543897
+          modified: 1765937049344
+          isPrivate: false
+          description: ""
+          sortKey: -1762898422960
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+                "email": "fun@correo.com",
+                "password": "prueba123"
+              }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/12.0.0
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://200.13.5.5:8091/api/usuarios/listar
+        name: OBTENER usuarios
+        meta:
+          id: req_373ed634b3b54d148882bb528339639b
+          created: 1762897608240
+          modified: 1765922174500
+          isPrivate: false
+          description: ""
+          sortKey: -1762898423210
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/12.0.0
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://200.13.5.5:8091/api/usuarios/1
+        name: OBTENER un usuario
+        meta:
+          id: req_e1189fd3d3a243c9914e22b56cf3776a
+          created: 1762898480785
+          modified: 1765922169329
+          isPrivate: false
+          description: ""
+          sortKey: -1762898423185
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/12.0.0
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://200.13.5.5:8091/api/usuarios/registro-funcionario
+        name: REGISTRO user3 (solo FUNCIONARIO)
+        meta:
+          id: req_03f14a2311204a89879d17856032a6b7
+          created: 1763954634369
+          modified: 1765922361182
+          isPrivate: false
+          description: ""
+          sortKey: -1762898423047.5
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+                "password": "prueba123",
+                "nombre": "Jesus",
+                "apellido": "Acevedo",
+                "email": "fun@correo.com",
+            	  "telefono": "999999999",
+            		"rut" : "20281663-0"
+              }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/12.0.0
+        authentication:
+          type: bearer
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+cookieJar:
+  name: Default Jar
+  meta:
+    id: jar_8c39eef76252419d8258c267dbab021c
+    created: 1762778354218
+    modified: 1762778354218
+environments:
+  name: Base Environment
+  meta:
+    id: env_fb81e4b2286c46de85c828ec621825a8
+    created: 1762778354197
+    modified: 1762778354197
+    isPrivate: false
